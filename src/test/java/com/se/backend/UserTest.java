@@ -1,14 +1,12 @@
 package com.se.backend;
 
 import com.se.backend.models.User;
-import com.se.backend.repositories.UserRepository;
 import com.se.backend.services.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class UserTest extends BackendApplicationTests {
     @Autowired
@@ -16,7 +14,7 @@ public class UserTest extends BackendApplicationTests {
 
     @Test
     @Transactional
-    void contextLoads() {
+    void createUser() {
         // Create and configure new user
         User user = new User();
         user.setName("test");
@@ -30,6 +28,6 @@ public class UserTest extends BackendApplicationTests {
         User targetUser = this.userService.getUserById(user.getId());
 
         // Log test result
-        logger.info("user={}", targetUser);
+        logger.info("User test pass.");
     }
 }
