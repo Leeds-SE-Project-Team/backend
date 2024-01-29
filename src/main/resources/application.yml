@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    name: se_project
+    url: jdbc:mysql://server.wmzspace.space:3306/se_project
+    ## TODO: Use ENV variables
+    username: se_project
+    password: se_project
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+#    generate-ddl: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    hibernate:
+        ddl-auto: create
+#        create:不管表是否存在，每次启动都会重新建表（会导致数据丢失）。
+#        create-drop：启动的时候创建表，程序退出（SessionFactory 关闭）的时候删除表。
+#        none：不进行任何操作。
+#        update：如果数据表不存在则创建，在实体对象被修改后，下次启动重新修改表结构（不会删除已经存在的数据）。
+#        validate：启动的时候验证数据表的结构。
+#        format_sql: true
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: TRACE
+server:
+  port: 8081
