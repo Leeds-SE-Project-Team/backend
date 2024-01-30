@@ -30,7 +30,7 @@ public class UserService {
 
     public User createUser(User user) {
         // You can add additional logic/validation before saving the user
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
     public User updateUser(User user) {
