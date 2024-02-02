@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+//spring data JPA
+
 @Entity
 @Table(name = "user")
 @Getter
