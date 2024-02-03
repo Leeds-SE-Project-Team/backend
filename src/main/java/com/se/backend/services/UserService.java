@@ -3,13 +3,16 @@
  */
 package com.se.backend.services;
 
+import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
+import static com.se.backend.exceptions.AuthException.ErrorType.USER_NOT_FOUND;
 
 @Service
 public class UserService {
@@ -24,21 +27,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long userId) {
+    public User getUserById(Long userId) throws AuthException {
         return userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found with id: " + userId)
+                () -> new AuthException(USER_NOT_FOUND)
         );
     }
 
     public User createUser(User user) {
-        // You can add additional logic/validation before saving the user
         return userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(User user) {
+    public User updateUser(User user) throws AuthException {
         User existingUser = getUserById(user.getId());
         // Update the properties of the existing user
-        existingUser.setName(user.getName());
+        existingUser.setNickname(user.getNickname());
         existingUser.setEmail(user.getEmail());
         // Update other properties as needed
         return userRepository.save(existingUser);
@@ -47,4 +49,14 @@ public class UserService {
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
+
+    public void pwdLogin(String email, String password) throws AuthException {
+        User targetUser = userRepository.findByEmail(email).orElseThrow(
+                () -> new AuthException(USER_NOT_FOUND)
+        );
+        if (!targetUser.getPassword().equals(password)){
+            throw new AuthException(PASSWORD_NOT_MATCH);
+        }
+    }
+
 }

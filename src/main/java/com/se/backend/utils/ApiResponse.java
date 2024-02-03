@@ -35,6 +35,11 @@ public final class ApiResponse<T> {
         return new ApiResponse<>(message, data, true);
     }
 
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>(message, null, true);
+    }
+
+
     /**
      * Creates an error ApiResponse with a message.
      *

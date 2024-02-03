@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 //spring data JPA
 
@@ -18,7 +19,7 @@ public class User {
     private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
-    private String name;
+    private String nickname;
 
     @Column(length = 50, unique = true)
     private String email;
@@ -31,4 +32,10 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime latestLoginTime;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Token> tokens;
 }
+
+
+

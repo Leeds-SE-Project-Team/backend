@@ -3,6 +3,7 @@
  */
 package com.se.backend.controllers;
 
+import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
@@ -49,7 +50,7 @@ public class UserController {
      * @return 对应ID的用户信息
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public User getUser(@PathVariable Long id) {
+    public User getUser(@PathVariable Long id) throws AuthException {
         return service.getUserById(id);
     }
 
@@ -61,7 +62,7 @@ public class UserController {
      * @return 更新后的用户信息
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    User updateUser(@PathVariable Long id, @RequestBody User updatedUser) throws AuthException {
         return service.updateUser(updatedUser);
     }
 
