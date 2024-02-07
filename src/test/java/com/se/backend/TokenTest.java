@@ -4,13 +4,13 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
+import com.se.backend.utils.TimeUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class TokenTest extends BackendApplicationTests {
@@ -28,8 +28,8 @@ public class TokenTest extends BackendApplicationTests {
         user.setNickname("test");
         user.setPassword("test");
         user.setEmail("email@se.test");
-        user.setRegisterTime(LocalDateTime.now());
-        user.setLatestLoginTime(LocalDateTime.now());
+        user.setRegisterTime(TimeUtil.getCurrentTimeString());
+        user.setLatestLoginTime(TimeUtil.getCurrentTimeString());
 
         // Save and test created user
         userService.createUser(user);

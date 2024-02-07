@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 //spring data JPA
@@ -18,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false)
     private String nickname;
 
     @Column(length = 50, unique = true)
@@ -27,11 +26,11 @@ public class User {
     @Column(length = 20)
     private String password;
 
-    @Column(nullable = false)
-    private LocalDateTime registerTime;
+    @Column(length = 50, nullable = false)
+    private String registerTime;
 
-    @Column(nullable = false)
-    private LocalDateTime latestLoginTime;
+    @Column(length = 50, nullable = false)
+    private String latestLoginTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;

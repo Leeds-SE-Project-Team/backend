@@ -28,9 +28,11 @@ public class UserService {
     }
 
     public User getUserById(Long userId) throws AuthException {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new AuthException(USER_NOT_FOUND)
-        );
+        return userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    }
+
+    public User getUserByEmail(String email) throws AuthException {
+        return userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
     }
 
     public User createUser(User user) {
@@ -51,10 +53,8 @@ public class UserService {
     }
 
     public void pwdLogin(String email, String password) throws AuthException {
-        User targetUser = userRepository.findByEmail(email).orElseThrow(
-                () -> new AuthException(USER_NOT_FOUND)
-        );
-        if (!targetUser.getPassword().equals(password)){
+        User targetUser = userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+        if (!targetUser.getPassword().equals(password)) {
             throw new AuthException(PASSWORD_NOT_MATCH);
         }
     }

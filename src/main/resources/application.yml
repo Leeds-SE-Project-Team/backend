@@ -5,14 +5,23 @@ spring:
     ## TODO: Use ENV variables
     username: se_project
     password: se_project
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+#      TODO: 数据库超时会访问已经关闭的连接,导致堵塞
+      minimum-idle: 3  # 最小空闲连接数量
+      maximum-pool-size: 5  # 连接池最大连接数，默认是10
+      max-lifetime: 1800000  # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      connection-test-query: SELECT 1
+#    testOnBorrow: true
+#    validationQuery: SELECT 1
+#    driver-class-name: com.mysql.jdbc.Driver
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-#    generate-ddl: true
+    #    generate-ddl: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
     hibernate:
-        ddl-auto: update
+      ddl-auto: update
 #        create:不管表是否存在，每次启动都会重新建表（会导致数据丢失）。
 #        create-drop：启动的时候创建表，程序退出（SessionFactory 关闭）的时候删除表。
 #        none：不进行任何操作。
@@ -28,3 +37,4 @@ logging:
             bind: TRACE
 server:
   port: 8081
+debug: true

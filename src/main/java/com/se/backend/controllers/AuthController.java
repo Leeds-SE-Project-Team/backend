@@ -4,10 +4,12 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Getter;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
@@ -18,14 +20,22 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
-    @RequestMapping("/login/pwd")
-    public ApiResponse<String> pwdLogin(String email, String password){
+    // Login request form from client
+    @Getter
+    public static class ReqLoginForm {
+        String email;
+        String password;
+    }
+
+    @PostMapping("/pwd")
+    public ApiResponse<String> pwdLogin(@RequestBody ReqLoginForm req) {
         String resData;
         try {
-            userService.pwdLogin(email, password);
+            System.out.println(req.toString());
+            userService.pwdLogin(req.email, req.password);
             resData = tokenService.generateToken();
         } catch (AuthException e) {
-            return ApiResponse.success(e.getMessage());
+            return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.success("登录成功", resData);
     }
