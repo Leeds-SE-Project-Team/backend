@@ -5,14 +5,15 @@ import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.TimeUtil;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 允许在非静态方法上使用 @BeforeAll 和 @AfterAll
 public class TokenTest extends BackendApplicationTests {
     @Autowired
     UserService userService;
@@ -20,23 +21,51 @@ public class TokenTest extends BackendApplicationTests {
     @Autowired
     TokenService tokenService;
 
+    private final String userEmail = "email2@se.test";
+
+    @BeforeAll
     @Test
-    @DisplayName("generate and validate token")
-    void test1() throws AuthException {
-        // Create and configure new user
+    @DisplayName("create new user")
+    void beforeAll() {
         User user = new User();
         user.setNickname("test");
         user.setPassword("test");
-        user.setEmail("email@se.test");
+        user.setEmail(userEmail);
         user.setRegisterTime(TimeUtil.getCurrentTimeString());
         user.setLatestLoginTime(TimeUtil.getCurrentTimeString());
-
-        // Save and test created user
         userService.createUser(user);
+    }
 
-        // Create and configure new token
-        String tokenRecord = tokenService.generateTokenRecord(user.getId(), "web").getToken();
-        assert tokenService.validateToken(tokenRecord);
-        userService.deleteUser(user.getId());
+    @Nested
+    @DisplayName("check token record function")
+    class test {
+        private String pcTokenRecord;
+
+        @Test
+        @DisplayName("check token written in different osPlatform")
+        void test1() throws AuthException {
+            // Create and configure new token
+            pcTokenRecord = tokenService.generateTokenRecord(userEmail, "pc").getToken();
+            assertTrue(tokenService.validateToken(pcTokenRecord));
+
+            String mobileTokenRecord = tokenService.generateTokenRecord(userEmail, "mobile").getToken();
+            assertTrue(tokenService.validateToken(mobileTokenRecord));
+        }
+
+        @Test
+        @DisplayName("check token override in same osPlatform")
+        void test2() throws AuthException {
+            String newTokenRecord = tokenService.generateTokenRecord(userEmail, "pc").getToken();
+            assertFalse(tokenService.validateToken(pcTokenRecord));
+            assertTrue(tokenService.validateToken(newTokenRecord));
+        }
+    }
+
+
+    @AfterAll
+    @Test
+    @DisplayName("delete user")
+    void afterAll() throws AuthException {
+        userService.deleteUser(userService.getUserByEmail(userEmail).getId());
     }
 }

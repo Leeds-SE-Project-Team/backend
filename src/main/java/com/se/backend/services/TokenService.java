@@ -28,12 +28,10 @@ public class TokenService {
         return String.valueOf(new Date().getTime());
     }
 
-    public Token generateTokenRecord(Long userId, String osPlatform) throws AuthException {
+    public Token generateTokenRecord(String email, String osPlatform) throws AuthException {
         Token tokenRecord = new Token();
         tokenRecord.setToken(generateToken());
-        tokenRecord.setUser(userRepository.findById(userId).orElseThrow(
-                () -> new AuthException(AuthException.ErrorType.USER_NOT_FOUND)
-        ));
+        tokenRecord.setUser(userRepository.findByEmail(email).orElseThrow(() -> new AuthException(AuthException.ErrorType.USER_NOT_FOUND)));
         tokenRecord.setOsPlatform(osPlatform);
         return tokenRepository.saveAndFlush(tokenRecord);
     }

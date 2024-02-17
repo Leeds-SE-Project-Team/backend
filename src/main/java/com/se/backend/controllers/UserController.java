@@ -5,7 +5,6 @@ package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
-import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.TimeUtil;
@@ -14,19 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final TokenService tokenService;
 
     @Autowired
-    public UserController(UserService userService, TokenService tokenService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.tokenService = tokenService;
     }
 
     /**
@@ -55,7 +51,7 @@ public class UserController {
      * @return access token
      */
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    ApiResponse<String> addUser(@RequestBody ReqSignupForm req) {
+    ApiResponse<Void> addUser(@RequestBody ReqSignupForm req) {
         try {
             userService.getUserByEmail(req.email);
             return ApiResponse.error("User already exist");
@@ -68,8 +64,8 @@ public class UserController {
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 userService.createUser(newUser);
-                String resData = tokenService.generateToken();
-                return ApiResponse.success("Signup succeed!", resData);
+//                String resData = tokenService.generateToken();
+                return ApiResponse.success("Signup succeed!");
             } else {
                 return ApiResponse.error(e.getMessage());
             }

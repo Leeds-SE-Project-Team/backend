@@ -25,6 +25,7 @@ public class AuthController {
     public static class ReqLoginForm {
         String email;
         String password;
+        String osPlatform;
     }
 
     @PostMapping("/pwd")
@@ -34,6 +35,8 @@ public class AuthController {
             System.out.println(req.toString());
             userService.pwdLogin(req.email, req.password);
             resData = tokenService.generateToken();
+//            tokenService.generateTokenRecord(req.email, "pc");
+            tokenService.generateTokenRecord(req.email, req.osPlatform);
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
