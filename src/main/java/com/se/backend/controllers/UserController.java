@@ -7,6 +7,7 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
+import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class UserController {
      * @param req 新用户信息
      * @return access token
      */
+    @IgnoreToken
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     ApiResponse<Void> addUser(@RequestBody ReqSignupForm req) {
         try {
@@ -79,6 +81,7 @@ public class UserController {
      * @return ApiResponse<对应ID的用户信息>
      */
     @RequestMapping(method = RequestMethod.GET)
+    @IgnoreToken
     public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
         try {
             if (id != null) {
@@ -93,16 +96,24 @@ public class UserController {
     }
 
 
+    // Update request form from client
+    @Getter
+    public static class ReqUpdateForm {
+        String email;
+        String nickname;
+        String password;
+    }
+
     /**
      * 更新用户信息
      *
      * @param id          用户ID
-     * @param updatedUser 更新后的用户信息
+     * @param updatedInfo 更新后的用户信息
      * @return 更新后的用户信息
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    User updateUser(@PathVariable Long id, @RequestBody User updatedUser) throws AuthException {
-        return userService.updateUser(updatedUser);
+    User updateUser(@PathVariable Long id, @RequestBody ReqUpdateForm updatedInfo) throws AuthException {
+        return userService.updateUser(id,updatedInfo);
     }
 
     /**

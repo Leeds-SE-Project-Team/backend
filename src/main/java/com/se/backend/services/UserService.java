@@ -3,6 +3,7 @@
  */
 package com.se.backend.services;
 
+import com.se.backend.controllers.UserController;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.repositories.UserRepository;
@@ -39,11 +40,12 @@ public class UserService {
         return userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(User user) throws AuthException {
-        User existingUser = getUserById(user.getId());
+    public User updateUser(Long id, UserController.ReqUpdateForm updatedInfo) throws AuthException {
+        User existingUser = getUserById(id);
         // Update the properties of the existing user
-        existingUser.setNickname(user.getNickname());
-        existingUser.setEmail(user.getEmail());
+        existingUser.setNickname(updatedInfo.getNickname());
+        existingUser.setEmail(updatedInfo.getEmail());
+        existingUser.setPassword(updatedInfo.getPassword());
         // Update other properties as needed
         return userRepository.save(existingUser);
     }
@@ -52,11 +54,12 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public void pwdLogin(String email, String password) throws AuthException {
+    public User pwdLogin(String email, String password) throws AuthException {
         User targetUser = userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         if (!targetUser.getPassword().equals(password)) {
             throw new AuthException(PASSWORD_NOT_MATCH);
         }
+        return targetUser;
     }
 
 }

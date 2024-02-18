@@ -44,18 +44,21 @@ public class TokenTest extends BackendApplicationTests {
         @Test
         @DisplayName("check token written in different osPlatform")
         void test1() throws AuthException {
+            User user = userService.getUserByEmail(userEmail);
+
             // Create and configure new token
-            pcTokenRecord = tokenService.generateTokenRecord(userEmail, "pc").getToken();
+            pcTokenRecord = tokenService.generateTokenRecord(user, "pc").getToken();
             assertTrue(tokenService.validateToken(pcTokenRecord));
 
-            String mobileTokenRecord = tokenService.generateTokenRecord(userEmail, "mobile").getToken();
+            String mobileTokenRecord = tokenService.generateTokenRecord(user, "mobile").getToken();
             assertTrue(tokenService.validateToken(mobileTokenRecord));
         }
 
         @Test
         @DisplayName("check token override in same osPlatform")
         void test2() throws AuthException {
-            String newTokenRecord = tokenService.generateTokenRecord(userEmail, "pc").getToken();
+            User user = userService.getUserByEmail(userEmail);
+            String newTokenRecord = tokenService.generateTokenRecord(user, "pc").getToken();
             assertFalse(tokenService.validateToken(pcTokenRecord));
             assertTrue(tokenService.validateToken(newTokenRecord));
         }

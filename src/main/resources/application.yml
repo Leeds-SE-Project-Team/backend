@@ -37,4 +37,4 @@ logging:
             bind: TRACE
 server:
   port: 8081
-debug: true
+debug: false

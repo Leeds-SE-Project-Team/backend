@@ -29,7 +29,7 @@ public class Token {
     @Column(length = 50, nullable = false)
     private String osPlatform;
 
-    @Column(length = 50, nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String token;
 
 }

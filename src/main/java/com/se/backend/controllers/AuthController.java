@@ -1,11 +1,17 @@
 package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
+import com.se.backend.utils.IgnoreToken;
+import com.se.backend.utils.JWTUtils;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -28,15 +34,14 @@ public class AuthController {
 //        String osPlatform;
     }
 
+    @IgnoreToken
     @PostMapping("/pwd")
     public ApiResponse<String> pwdLogin(@RequestBody ReqLoginForm req) {
         String resData;
         try {
             System.out.println(req.toString());
-            userService.pwdLogin(req.email, req.password);
-            resData = tokenService.generateToken();
-            tokenService.generateTokenRecord(req.email, "pc");
-//            tokenService.generateTokenRecord(req.email, req.osPlatform);
+            User userRecord = userService.pwdLogin(req.email, req.password);
+            resData = tokenService.generateTokenRecord(userRecord, "pc").getToken();
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
