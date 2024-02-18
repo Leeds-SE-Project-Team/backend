@@ -6,12 +6,8 @@ import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
-import com.se.backend.utils.JWTUtils;
 import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @RestController
@@ -45,7 +41,7 @@ public class AuthController {
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
-        return ApiResponse.success("登录成功", resData);
+        return ApiResponse.success("login succeed", resData);
     }
 }
 

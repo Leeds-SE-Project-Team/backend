@@ -48,6 +48,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5' // or 'io.jsonwebtoken:jjwt-gson:0.12.5' for gson
     implementation 'com.auth0:java-jwt:3.19.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
     /*
       Uncomment this next dependency if you are using:
        - JDK 10 or earlier, and you want to use RSASSA-PSS (PS256, PS384, PS512) signature algorithms.

@@ -9,9 +9,9 @@ public class AuthException extends Exception {
 
     @Getter
     public enum ErrorType {
-        PASSWORD_NOT_MATCH("密码错误"),
-        USER_NOT_FOUND("用户不存在"),
-        TOKEN_EXPIRED("Token过期：其他设备登录，时间过长");
+        PASSWORD_NOT_MATCH("Incorrect password"),
+        USER_NOT_FOUND("User not found"),
+        TOKEN_EXPIRED("Invalid token");
 
         private final String message;
 

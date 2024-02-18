@@ -6,13 +6,11 @@ import com.se.backend.models.User;
 import com.se.backend.repositories.UserRepository;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.TimeUtil;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
+
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class UserTest extends BackendApplicationTests {
@@ -74,7 +72,7 @@ public class UserTest extends BackendApplicationTests {
 
     @Test
     @DisplayName("delete user")
-    void test5() {
+    void test5() throws AuthException {
         userService.deleteUser(userRepository.findAll().getLast().getId());
     }
 }

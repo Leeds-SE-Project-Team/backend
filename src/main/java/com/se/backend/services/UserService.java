@@ -50,7 +50,8 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId) throws AuthException {
+        userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         userRepository.deleteById(userId);
     }
 

@@ -6,6 +6,7 @@ package com.se.backend.controllers;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.services.UserService;
+import com.se.backend.utils.AdminToken;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
@@ -32,8 +33,8 @@ public class UserController {
      * @return 所有用户列表
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ApiResponse<List<User>> getAllUsers() {
+        return ApiResponse.success("Get all users", userService.getAllUsers());
     }
 
 
@@ -75,13 +76,37 @@ public class UserController {
     }
 
     /**
+     * 根据ID或者邮箱验证对应用户是否存在
+     *
+     * @param id,email 用户ID, 邮箱
+     * @return ApiResponse<boolean>
+     */
+    @IgnoreToken
+    @GetMapping(value = "/exist")
+    public ApiResponse<Void> isUserExist(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
+        try {
+            if (id != null) {
+                userService.getUserById(id);
+                return ApiResponse.success("GET user succeed with id");
+            } else if (email != null) {
+                userService.getUserByEmail(email);
+                return ApiResponse.success("GET user succeed with email");
+            }
+        } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+        return ApiResponse.error("Both id and email cannot be null");
+    }
+
+
+    /**
      * 根据ID或者邮箱获取用户信息
      *
      * @param id,email 用户ID, 邮箱
      * @return ApiResponse<对应ID的用户信息>
      */
-    @RequestMapping(method = RequestMethod.GET)
-    @IgnoreToken
+    @AdminToken
+    @GetMapping
     public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
         try {
             if (id != null) {
@@ -94,6 +119,12 @@ public class UserController {
         }
         return ApiResponse.error("Both id and email cannot be null");
     }
+//    public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
+//        if (Objects.equals(user.getId(), id) || Objects.equals(user.getEmail(), email)) {
+//            return ApiResponse.success("GET user succeed", user);
+//        }
+//        return ApiResponse.error("Error when getting user");
+//    }
 
 
     // Update request form from client
@@ -107,22 +138,33 @@ public class UserController {
     /**
      * 更新用户信息
      *
-     * @param id          用户ID
+     * @param user        用户
      * @param updatedInfo 更新后的用户信息
      * @return 更新后的用户信息
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    User updateUser(@PathVariable Long id, @RequestBody ReqUpdateForm updatedInfo) throws AuthException {
-        return userService.updateUser(id,updatedInfo);
+    @PutMapping
+    ApiResponse<User> updateUser(@RequestAttribute("user") User user, @RequestBody ReqUpdateForm updatedInfo) {
+        try {
+            return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo));
+        } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
+
 
     /**
      * 删除用户信息
      *
-     * @param id 用户ID
+     * @param user 用户ID
+     * @return ApiResponse<Void>
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    void removeUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping
+    ApiResponse<Void> removeUser(@RequestAttribute("user") User user) {
+        try {
+            userService.deleteUser(user.getId());
+            return ApiResponse.success("User has been removed");
+        } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 }
