@@ -32,6 +32,7 @@ public class UserController {
      *
      * @return 所有用户列表
      */
+    @AdminToken
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ApiResponse<List<User>> getAllUsers() {
         return ApiResponse.success("Get all users", userService.getAllUsers());
