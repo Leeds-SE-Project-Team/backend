@@ -3,10 +3,10 @@
  */
 package com.se.backend.services;
 
-import com.se.backend.controllers.UserController;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.repositories.UserRepository;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -40,7 +41,15 @@ public class UserService {
         return userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(Long id, UserController.ReqUpdateForm updatedInfo) throws AuthException {
+    // Update request form from client
+    @Getter
+    public static class ReqUpdateForm {
+        String email;
+        String nickname;
+        String password;
+    }
+
+    public User updateUser(Long id, ReqUpdateForm updatedInfo) throws AuthException {
         User existingUser = getUserById(id);
         // Update the properties of the existing user
         existingUser.setNickname(updatedInfo.getNickname());

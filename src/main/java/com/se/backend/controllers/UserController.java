@@ -128,13 +128,7 @@ public class UserController {
 //    }
 
 
-    // Update request form from client
-    @Getter
-    public static class ReqUpdateForm {
-        String email;
-        String nickname;
-        String password;
-    }
+
 
     /**
      * 更新用户信息
@@ -144,7 +138,7 @@ public class UserController {
      * @return 更新后的用户信息
      */
     @PutMapping
-    ApiResponse<User> updateUser(@RequestAttribute("user") User user, @RequestBody ReqUpdateForm updatedInfo) {
+    ApiResponse<User> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo));
         } catch (AuthException e) {

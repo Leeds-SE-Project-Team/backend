@@ -1,22 +1,24 @@
 package com.se.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-
+// 必经点
 @Entity
-@Table(name = "waypoints")
+@Table(name = "pon")
 @Getter
 @Setter
-public class WayPoint {
+public class PON {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
-    private Trip trip; // 关联到Trip实体
+    private Tour tour; // 关联到Trip实体
 
     @Column(length = 50,  nullable = false)
     private String name;

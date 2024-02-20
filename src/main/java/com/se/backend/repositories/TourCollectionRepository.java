@@ -1,13 +1,12 @@
 package com.se.backend.repositories;
 
-import com.se.backend.models.Trip;
+import com.se.backend.models.Tour;
+import com.se.backend.models.TourCollection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
-//    Optional<Trip> findByTrip(Long id );
+public interface TourCollectionRepository extends JpaRepository<TourCollection, Long>, JpaSpecificationExecutor<Tour> {
+
 }

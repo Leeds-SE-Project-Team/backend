@@ -56,7 +56,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 try {
                     request.setAttribute("user", userService.getUserById(Long.valueOf(id)));
                 } catch (AuthException e) {
-                    response.setContentType("application/json;charset=UTF-8");
+//                    response.setContentType("application/json;charset=UTF-8");
                     String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
                     response.getWriter().println(json);
                     return false;
@@ -77,7 +77,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 //                    map.put("msg", "Invalid token");
                     //将map转为json
 //                    String json = new ObjectMapper().writeValueAsString(map);
-                    response.setContentType("application/json;charset=UTF-8");
+//                    response.setContentType("application/json;charset=UTF-8");
                     String json = objectMapper.writeValueAsString(ApiResponse.error("Invalid token"));
                     response.getWriter().println(json);
                     return false;
@@ -94,7 +94,7 @@ public class JWTInterceptor implements HandlerInterceptor {
             return true;
         } catch (AuthException e) {
             //将map转为json
-            response.setContentType("application/json;charset=UTF-8");
+//            response.setContentType("application/json;charset=UTF-8");
             String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
             response.getWriter().println(json);
             return false;
