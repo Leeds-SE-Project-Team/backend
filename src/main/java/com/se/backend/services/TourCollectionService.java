@@ -38,6 +38,10 @@ public class TourCollectionService {
         List<Tour> tours;
     }
 
+    public List<TourCollection> getAllTourCollections() {
+        return tourCollectionRepository.findAll();
+    }
+
     public TourCollection createTourCollection(User user, TourCollectionService.CreateTourCollectionForm form) {
 
         TourCollection newTourCollection = new TourCollection();
@@ -51,7 +55,6 @@ public class TourCollectionService {
 
         return tourCollectionRepository.saveAndFlush(newTourCollection);
     }
-
 
 
 }

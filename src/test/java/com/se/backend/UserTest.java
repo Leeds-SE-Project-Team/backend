@@ -27,6 +27,7 @@ public class UserTest extends BackendApplicationTests {
         User user = new User();
         user.setNickname("test");
         user.setPassword("test");
+        user.setAvatar(User.DEFAULT_AVATAR);
         user.setEmail("email@se.test");
         user.setRegisterTime(TimeUtil.getCurrentTimeString());
         user.setLatestLoginTime(TimeUtil.getCurrentTimeString());

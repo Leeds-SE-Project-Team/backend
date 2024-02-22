@@ -1,6 +1,7 @@
 package com.se.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.se.backend.config.GlobalConfig;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,10 @@ public class User {
 
     @Column(length = 50, unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private String avatar;
+    public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/b082833e5c59a309880eca3d525e7cae.gif");
 
     @Column(length = 20)
     private String password;

@@ -45,6 +45,7 @@ public class UserService {
     @Getter
     public static class ReqUpdateForm {
         String email;
+        String avatar;
         String nickname;
         String password;
     }
@@ -53,6 +54,7 @@ public class UserService {
         User existingUser = getUserById(id);
         // Update the properties of the existing user
         existingUser.setNickname(updatedInfo.getNickname());
+        existingUser.setAvatar(updatedInfo.getAvatar());
         existingUser.setEmail(updatedInfo.getEmail());
         existingUser.setPassword(updatedInfo.getPassword());
         // Update other properties as needed

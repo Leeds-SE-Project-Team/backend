@@ -1,18 +1,22 @@
 package com.se.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
 import com.se.backend.services.TourCollectionService;
 import com.se.backend.utils.ApiResponse;
+import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/tour_collection")
 public class TourCollectionController {
 
-    private TourCollectionService tourCollectionService;
+    private final TourCollectionService tourCollectionService;
 
     @Autowired
     public TourCollectionController(TourCollectionService tourCollectionService) {
@@ -26,9 +30,15 @@ public class TourCollectionController {
      * @return ApiResponse<Void>
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) throws JsonProcessingException {
+    ApiResponse<Void> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
         tourCollectionService.createTourCollection(user, form);
         return ApiResponse.success("Create tour collection succeed");
+    }
+
+    @IgnoreToken
+    @GetMapping(value = "/all")
+    ApiResponse<List<TourCollection>> getAllTourCollection() {
+        return ApiResponse.success("Get all tour collections", tourCollectionService.getAllTourCollections());
     }
 
 }

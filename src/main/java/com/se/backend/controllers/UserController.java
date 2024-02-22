@@ -63,6 +63,7 @@ public class UserController {
             if (e.getType().equals(AuthException.ErrorType.USER_NOT_FOUND)) {
                 User newUser = new User();
                 newUser.setNickname(req.nickname);
+                newUser.setAvatar(User.DEFAULT_AVATAR);
                 newUser.setEmail(req.email);
                 newUser.setPassword(req.password);
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
@@ -126,8 +127,6 @@ public class UserController {
 //        }
 //        return ApiResponse.error("Error when getting user");
 //    }
-
-
 
 
     /**

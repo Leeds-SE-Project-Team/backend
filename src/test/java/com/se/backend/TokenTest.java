@@ -30,6 +30,7 @@ public class TokenTest extends BackendApplicationTests {
         User user = new User();
         user.setNickname("test");
         user.setPassword("test");
+        user.setAvatar(User.DEFAULT_AVATAR);
         user.setEmail(userEmail);
         user.setRegisterTime(TimeUtil.getCurrentTimeString());
         user.setLatestLoginTime(TimeUtil.getCurrentTimeString());
