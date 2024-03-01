@@ -11,8 +11,9 @@ public class ResourceException extends Exception {
     public enum ErrorType {
         TOUR_NOT_FOUND("Tour not found"),
         TOUR_COLLECTION_NOT_FOUND("Tour collection not found"),
-        USER_NOT_FOUND("User not found");
-
+        USER_NOT_FOUND("User not found"),
+        COMMENT_NOT_FOUND("Comment not found");
+        
         private final String message;
 
         ErrorType(String message) {

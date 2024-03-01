@@ -1,12 +1,16 @@
 package com.se.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.se.backend.config.GlobalConfig;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //spring data JPA
 
@@ -14,6 +18,7 @@ import java.util.List;
 @Table(name = "user")
 @Getter
 @Setter
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +46,27 @@ public class User {
     @JsonBackReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> commentLikes;
+
+    @Override
+    public String toString() {
+        Map<String, Object> dict = new HashMap<>();
+        dict.put("id", getId());
+        dict.put("nickname", getNickname());
+        dict.put("email", getEmail());
+        dict.put("avatar", getAvatar());
+        dict.put("password", getPassword());
+        dict.put("registerTime", getRegisterTime());
+        dict.put("latestLoginTime", getLatestLoginTime());
+        return dict.toString();
+    }
 }
 
 
