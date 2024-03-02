@@ -22,14 +22,6 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
-    // Login request form from client
-    @Getter
-    public static class ReqLoginForm {
-        String email;
-        String password;
-//        String osPlatform;
-    }
-
     @IgnoreToken
     @PostMapping("/pwd")
     public ApiResponse<String> pwdLogin(@RequestBody ReqLoginForm req) {
@@ -42,6 +34,14 @@ public class AuthController {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.success("login succeed", resData);
+    }
+
+    // Login request form from client
+    @Getter
+    public static class ReqLoginForm {
+        String email;
+        String password;
+//        String osPlatform;
     }
 }
 

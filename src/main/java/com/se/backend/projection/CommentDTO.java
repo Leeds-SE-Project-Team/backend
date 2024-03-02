@@ -1,30 +1,35 @@
-package com.se.backend.dto;
+package com.se.backend.projection;
 
 import com.se.backend.models.Comment;
-import com.se.backend.models.User;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class CommentDTO {
     Long id;
     Long tourId;
-    User author;
+    UserDTO author;
     String content;
     String publishTime;
-    List<Comment> replies;
+    List<CommentDTO> replies;
     Long parentId;
 
-    public CommentDTO() {
-    }
 
     public CommentDTO(Comment comment) {
         id = comment.getId();
         tourId = comment.getTour().getId();
-        author = comment.getAuthor();
+        author = comment.getAuthor().toDTO();
         content = comment.getContent();
         publishTime = comment.getPublishTime();
-        replies = comment.getReplies();
+        replies = toListDTO(comment.getReplies());
         parentId = Objects.isNull(comment.getParent()) ? null : comment.getParent().getId();
+    }
+
+    public static List<CommentDTO> toListDTO(List<Comment> commentList) {
+        return commentList.stream().map(Comment::toDTO).toList();
     }
 }

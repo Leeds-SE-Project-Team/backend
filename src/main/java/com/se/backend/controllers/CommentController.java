@@ -1,12 +1,8 @@
 package com.se.backend.controllers;
 
-import com.se.backend.dto.CommentDTO;
-import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.Comment;
-import com.se.backend.models.Tour;
-import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
+import com.se.backend.projection.CommentDTO;
 import com.se.backend.services.CommentService;
 import com.se.backend.services.TourService;
 import com.se.backend.utils.ApiResponse;
@@ -15,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -25,7 +20,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @Autowired
-    public CommentController(TourService tourService, CommentService commentService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
 
     }
@@ -72,14 +67,8 @@ public class CommentController {
     @GetMapping(value = "/all")
     ApiResponse<List<CommentDTO>> getAllComment() {
         // FIXME: Json process
-//        List<Comment> list = objectMapper.readValue(commentService.getAllComments().toString(), new TypeReference<List<Comment>>() {
-//        });
-        System.err.println(commentService.getAllComments().getFirst());
-        System.err.println("!!!");
-        return ApiResponse.success("Get all comments", commentService.getAllComments());
+        return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()));
     }
-
-
 }
 
 

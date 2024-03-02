@@ -1,7 +1,5 @@
 package com.se.backend.interceptor;
 
-//import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.alibaba.fastjson2.JSON;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
 
 import java.io.IOException;
 import java.util.Objects;
@@ -49,8 +46,6 @@ public class JWTInterceptor implements HandlerInterceptor {
         // 获取请求头中的令牌
         String token = request.getHeader("Authorization");
         String id = request.getHeader("User-ID");
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        Map<String, Object> map = new HashMap<>();
 
         if (Objects.nonNull(token) && token.equals("root")) {
             // 使用管理员Token
@@ -58,8 +53,6 @@ public class JWTInterceptor implements HandlerInterceptor {
                 try {
                     request.setAttribute("user", userService.getUserById(Long.valueOf(id)));
                 } catch (AuthException e) {
-//                    response.setContentType("application/json;charset=UTF-8");
-//                    String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
                     Object json = JSON.toJSON(ApiResponse.error(e.getMessage()));
                     response.getWriter().println(json);
                     return false;
@@ -76,20 +69,14 @@ public class JWTInterceptor implements HandlerInterceptor {
                 }
                 if (annotation != null) {
                     // 如果要求使用管理员Token
-//                    map.put("state", "false");
-//                    map.put("msg", "Invalid token");
-                    //将map转为json
-//                    String json = new ObjectMapper().writeValueAsString(map);
-//                    response.setContentType("application/json;charset=UTF-8");
                     Object json = JSON.toJSON(ApiResponse.error("Invalid token"));
-//                    String json = objectMapper.writeValueAsString(ApiResponse.error("Invalid token"));
                     response.getWriter().println(json);
                     return false;
                 }
             }
         }
 
-        // 使用非管理员Token 且 不要求使用管理员Token
+        // 要求Token但不要求使用管理员Token
         try {
             User user = tokenService.getUserByToken(token);
             if (user.getId().toString().equals(id)) {
@@ -98,9 +85,7 @@ public class JWTInterceptor implements HandlerInterceptor {
             return true;
         } catch (AuthException e) {
             //将map转为json
-//            response.setContentType("application/json;charset=UTF-8");
             Object json = JSON.toJSON(ApiResponse.error(e.getMessage()));
-//            String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
             response.getWriter().println(json);
             return false;
         }
