@@ -42,7 +42,7 @@ public class Comment {
 //    TODO: CascadeType.REMOVE
     private List<Comment> replies;
 
-    @JsonBackReference
+//    @JsonBackReference
     //    @JsonProperty("parentId")
     @JoinColumn
     @ManyToOne(cascade = CascadeType.REMOVE)

@@ -43,15 +43,15 @@ public class User {
     @Column(length = 50, nullable = false)
     private String latestLoginTime;
 
-    @JsonBackReference
+//    @JsonBackReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
 
-    @JsonBackReference
+//    @JsonBackReference
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @JsonBackReference
+//    @JsonBackReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikes;
 

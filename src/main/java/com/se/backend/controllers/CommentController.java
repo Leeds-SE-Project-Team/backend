@@ -74,9 +74,9 @@ public class CommentController {
     @GetMapping(value = "/all")
     ApiResponse<List<Comment>> getAllComment() throws JsonProcessingException {
         // FIXME: Json process
-        List<Comment> list = objectMapper.readValue(commentService.getAllComments().toString(), new TypeReference<List<Comment>>() {
-        });
-        return ApiResponse.success("Get all comments", list);
+//        List<Comment> list = objectMapper.readValue(commentService.getAllComments().toString(), new TypeReference<List<Comment>>() {
+//        });
+        return ApiResponse.success("Get all comments", commentService.getAllComments());
     }
 
 
