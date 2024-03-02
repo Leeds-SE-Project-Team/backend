@@ -1,6 +1,5 @@
 package com.se.backend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
 import com.se.backend.services.TourCollectionService;

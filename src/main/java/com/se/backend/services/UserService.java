@@ -37,21 +37,13 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
     }
 
+
     public User createUser(User user) {
         return userRepository.saveAndFlush(user);
     }
 
-    // Update request form from client
-    @Getter
-    public static class ReqUpdateForm {
-        String email;
-        String avatar;
-        String nickname;
-        String password;
-    }
-
     public User updateUser(Long id, ReqUpdateForm updatedInfo) throws AuthException {
-        User existingUser = getUserById(id);
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         // Update the properties of the existing user
         existingUser.setNickname(updatedInfo.getNickname());
         existingUser.setAvatar(updatedInfo.getAvatar());
@@ -72,6 +64,15 @@ public class UserService {
             throw new AuthException(PASSWORD_NOT_MATCH);
         }
         return targetUser;
+    }
+
+    // Update request form from client
+    @Getter
+    public static class ReqUpdateForm {
+        String email;
+        String avatar;
+        String nickname;
+        String password;
     }
 
 }

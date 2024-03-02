@@ -5,6 +5,7 @@ package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
+import com.se.backend.projection.UserDTO;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.AdminToken;
 import com.se.backend.utils.ApiResponse;
@@ -34,17 +35,8 @@ public class UserController {
      */
     @AdminToken
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ApiResponse<List<User>> getAllUsers() {
-        return ApiResponse.success("Get all users", userService.getAllUsers());
-    }
-
-
-    // Signup request form from client
-    @Getter
-    public static class ReqSignupForm {
-        String email;
-        String nickname;
-        String password;
+    public ApiResponse<List<UserDTO>> getAllUsers() {
+        return ApiResponse.success("Get all users", UserDTO.toListDTO(userService.getAllUsers()));
     }
 
     /**
@@ -100,7 +92,6 @@ public class UserController {
         return ApiResponse.error("Both id and email cannot be null");
     }
 
-
     /**
      * 根据ID或者邮箱获取用户信息
      *
@@ -109,25 +100,18 @@ public class UserController {
      */
     @AdminToken
     @GetMapping
-    public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
+    public ApiResponse<UserDTO> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
         try {
             if (id != null) {
-                return ApiResponse.success("GET user succeed with id", userService.getUserById(id));
+                return ApiResponse.success("GET user succeed with id", userService.getUserById(id).toDTO());
             } else if (email != null) {
-                return ApiResponse.success("GET user succeed with email", userService.getUserByEmail(email));
+                return ApiResponse.success("GET user succeed with email", userService.getUserByEmail(email).toDTO());
             }
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.error("Both id and email cannot be null");
     }
-//    public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
-//        if (Objects.equals(user.getId(), id) || Objects.equals(user.getEmail(), email)) {
-//            return ApiResponse.success("GET user succeed", user);
-//        }
-//        return ApiResponse.error("Error when getting user");
-//    }
-
 
     /**
      * 更新用户信息
@@ -137,14 +121,19 @@ public class UserController {
      * @return 更新后的用户信息
      */
     @PutMapping
-    ApiResponse<User> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
+    ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
-            return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo));
+            return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo).toDTO());
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
-
+//    public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
+//        if (Objects.equals(user.getId(), id) || Objects.equals(user.getEmail(), email)) {
+//            return ApiResponse.success("GET user succeed", user);
+//        }
+//        return ApiResponse.error("Error when getting user");
+//    }
 
     /**
      * 删除用户信息
@@ -160,5 +149,13 @@ public class UserController {
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
+    }
+
+    // Signup request form from client
+    @Getter
+    public static class ReqSignupForm {
+        String email;
+        String nickname;
+        String password;
     }
 }

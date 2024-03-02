@@ -1,6 +1,5 @@
 package com.se.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +20,6 @@ public class Token {
 
     @Id
     @ManyToOne(cascade = CascadeType.ALL)
-    @JsonBackReference
     @JoinColumn(nullable = false)
     private User user;
 

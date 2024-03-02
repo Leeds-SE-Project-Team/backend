@@ -1,14 +1,8 @@
 package com.se.backend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.Comment;
-import com.se.backend.models.Tour;
-import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
+import com.se.backend.projection.CommentDTO;
 import com.se.backend.services.CommentService;
 import com.se.backend.services.TourService;
 import com.se.backend.utils.ApiResponse;
@@ -24,10 +18,9 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public CommentController(TourService tourService, CommentService commentService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
 
     }
@@ -72,14 +65,10 @@ public class CommentController {
 
     @IgnoreToken
     @GetMapping(value = "/all")
-    ApiResponse<List<Comment>> getAllComment() throws JsonProcessingException {
+    ApiResponse<List<CommentDTO>> getAllComment() {
         // FIXME: Json process
-//        List<Comment> list = objectMapper.readValue(commentService.getAllComments().toString(), new TypeReference<List<Comment>>() {
-//        });
-        return ApiResponse.success("Get all comments", commentService.getAllComments());
+        return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()));
     }
-
-
 }
 
 
