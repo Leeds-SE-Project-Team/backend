@@ -1,6 +1,5 @@
 package com.se.backend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Tour;
 import com.se.backend.models.User;
@@ -27,7 +26,7 @@ public class TourController {
      * @return ApiResponse<Void>
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) throws JsonProcessingException {
+    ApiResponse<Void> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
         tourService.createTour(user, form);
         return ApiResponse.success("Create tour succeed");
     }

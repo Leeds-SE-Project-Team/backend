@@ -1,6 +1,8 @@
 package com.se.backend.interceptor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.alibaba.fastjson2.JSON;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
@@ -47,7 +49,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         // 获取请求头中的令牌
         String token = request.getHeader("Authorization");
         String id = request.getHeader("User-ID");
-        ObjectMapper objectMapper = new ObjectMapper();
+//        ObjectMapper objectMapper = new ObjectMapper();
 //        Map<String, Object> map = new HashMap<>();
 
         if (Objects.nonNull(token) && token.equals("root")) {
@@ -57,7 +59,8 @@ public class JWTInterceptor implements HandlerInterceptor {
                     request.setAttribute("user", userService.getUserById(Long.valueOf(id)));
                 } catch (AuthException e) {
 //                    response.setContentType("application/json;charset=UTF-8");
-                    String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
+//                    String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
+                    Object json = JSON.toJSON(ApiResponse.error(e.getMessage()));
                     response.getWriter().println(json);
                     return false;
                 }
@@ -78,7 +81,8 @@ public class JWTInterceptor implements HandlerInterceptor {
                     //将map转为json
 //                    String json = new ObjectMapper().writeValueAsString(map);
 //                    response.setContentType("application/json;charset=UTF-8");
-                    String json = objectMapper.writeValueAsString(ApiResponse.error("Invalid token"));
+                    Object json = JSON.toJSON(ApiResponse.error("Invalid token"));
+//                    String json = objectMapper.writeValueAsString(ApiResponse.error("Invalid token"));
                     response.getWriter().println(json);
                     return false;
                 }
@@ -95,7 +99,8 @@ public class JWTInterceptor implements HandlerInterceptor {
         } catch (AuthException e) {
             //将map转为json
 //            response.setContentType("application/json;charset=UTF-8");
-            String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
+            Object json = JSON.toJSON(ApiResponse.error(e.getMessage()));
+//            String json = objectMapper.writeValueAsString(ApiResponse.error(e.getMessage()));
             response.getWriter().println(json);
             return false;
         }

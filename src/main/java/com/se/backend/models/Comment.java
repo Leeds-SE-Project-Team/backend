@@ -1,32 +1,31 @@
 package com.se.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.se.backend.dto.CommentDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @Setter
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference
+    @JSONField(name = "tourId")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
     private Tour tour; // 关联到Trip实体
+
+    @JSONField(name = "tourId")
+    public Long getTourId() {
+        return tour.getId();
+    }
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(nullable = false)
@@ -42,25 +41,27 @@ public class Comment {
 //    TODO: CascadeType.REMOVE
     private List<Comment> replies;
 
-//    @JsonBackReference
+    //    @JsonBackReference
     //    @JsonProperty("parentId")
     @JoinColumn
     @ManyToOne(cascade = CascadeType.REMOVE)
     private Comment parent;
 
-    @Override
-    public String toString() {
-        Map<String, Object> commentDict = new HashMap<>();
-        commentDict.put("id", getId());
-        commentDict.put("tourId", getTour().getId());
-        commentDict.put("author", getAuthor());
-        commentDict.put("content", getContent());
-        commentDict.put("publishTime", getPublishTime());
-        commentDict.put("replies", getReplies());
-        commentDict.put("123", "123");
-        Comment parent = getParent();
-        commentDict.put("parentId", Objects.nonNull(parent) ? parent.getId() : null);
-        System.out.println("666");
-        return commentDict.toString();
+    public CommentDTO toDTO() {
+        return new CommentDTO(this);
     }
+
+//    @Override
+//    public String toString() {
+//        Map<String, Object> commentDict = new HashMap<>();
+//        commentDict.put("id", getId());
+//        commentDict.put("tourId", getTour().getId());
+//        commentDict.put("author", getAuthor());
+//        commentDict.put("content", getContent());
+//        commentDict.put("publishTime", getPublishTime());
+//        commentDict.put("replies", getReplies());
+//        Comment parent = getParent();
+//        commentDict.put("parentId", Objects.nonNull(parent) ? parent.getId() : null);
+//        return commentDict.toString();
+//    }
 }

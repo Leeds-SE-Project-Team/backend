@@ -1,6 +1,5 @@
 package com.se.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,6 @@ public class TourCollection {
     @Column
     private String description;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "tourCollection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tour> tours;
 }

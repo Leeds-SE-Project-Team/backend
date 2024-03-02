@@ -1,8 +1,6 @@
 package com.se.backend.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.se.backend.dto.CommentDTO;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Comment;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
@@ -24,7 +23,6 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public CommentController(TourService tourService, CommentService commentService) {
@@ -72,10 +70,12 @@ public class CommentController {
 
     @IgnoreToken
     @GetMapping(value = "/all")
-    ApiResponse<List<Comment>> getAllComment() throws JsonProcessingException {
+    ApiResponse<List<CommentDTO>> getAllComment() {
         // FIXME: Json process
 //        List<Comment> list = objectMapper.readValue(commentService.getAllComments().toString(), new TypeReference<List<Comment>>() {
 //        });
+        System.err.println(commentService.getAllComments().getFirst());
+        System.err.println("!!!");
         return ApiResponse.success("Get all comments", commentService.getAllComments());
     }
 

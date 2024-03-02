@@ -1,8 +1,5 @@
 package com.se.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.se.backend.config.GlobalConfig;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,15 +40,15 @@ public class User {
     @Column(length = 50, nullable = false)
     private String latestLoginTime;
 
-//    @JsonBackReference
+    //    @JsonBackReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
 
-//    @JsonBackReference
+    //    @JsonBackReference
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-//    @JsonBackReference
+    //    @JsonBackReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikes;
 

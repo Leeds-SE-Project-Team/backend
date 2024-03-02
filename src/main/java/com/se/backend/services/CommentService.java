@@ -1,5 +1,6 @@
 package com.se.backend.services;
 
+import com.se.backend.dto.CommentDTO;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.*;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -72,7 +74,7 @@ public class CommentService {
 
     }
 
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<CommentDTO> getAllComments() {
+        return commentRepository.findAll().stream().map(Comment::toDTO).toList();
     }
 }
