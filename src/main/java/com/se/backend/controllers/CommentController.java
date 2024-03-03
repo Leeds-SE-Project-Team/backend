@@ -4,13 +4,13 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.CommentDTO;
 import com.se.backend.services.CommentService;
-import com.se.backend.services.TourService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin("*")
@@ -67,7 +67,14 @@ public class CommentController {
     @GetMapping(value = "/all")
     ApiResponse<List<CommentDTO>> getAllComment() {
         // FIXME: Json process
-        return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()));
+        return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()).stream().filter(c -> Objects.isNull(c.getParentId())).toList());
+    }
+
+    //by_tour_id?
+    @IgnoreToken
+    @GetMapping(value = "/by_tour_id")
+    ApiResponse<List<CommentDTO>> getCommentById(@RequestParam Long id) {
+        return ApiResponse.success("Get comments by tour id", CommentDTO.toListDTO(commentService.getCommentsByTourId(id)).stream().filter(c -> Objects.isNull(c.getParentId())).toList());
     }
 }
 

@@ -60,6 +60,11 @@ public class CommentService {
 //        return commentRepository.findAll().stream().map(Comment::toDTO).toList();
     }
 
+    public List<Comment> getCommentsByTourId(Long id) {
+        return commentRepository.findAllByTourId(id);
+    }
+
+
     @Getter
     public static class CreateCommentForm {
         String content;
