@@ -6,6 +6,7 @@ package com.se.backend.controllers;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.projection.UserDTO;
+import com.se.backend.services.TourCollectionService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.AdminToken;
 import com.se.backend.utils.ApiResponse;
@@ -22,10 +23,12 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final TourCollectionService tourCollectionService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TourCollectionService tourCollectionService) {
         this.userService = userService;
+        this.tourCollectionService = tourCollectionService;
     }
 
     /**
@@ -60,8 +63,8 @@ public class UserController {
                 newUser.setPassword(req.password);
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
-                userService.createUser(newUser);
-//                String resData = tokenService.generateToken();
+                // 用户注册时创建一个默认的 Tour Collection
+                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("My Collection", "default cover url", "default tour collection"));
                 return ApiResponse.success("Signup succeed!");
             } else {
                 return ApiResponse.error(e.getMessage());

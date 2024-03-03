@@ -1,5 +1,6 @@
 package com.se.backend.models;
 
+import com.se.backend.projection.PONDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,4 +27,8 @@ public class PON {
 
     @Column(length = 50, nullable = false)
     private Integer sequence; // 必经点在行程中的顺序
+
+    public PONDTO toDTO() {
+        return new PONDTO(this);
+    }
 }

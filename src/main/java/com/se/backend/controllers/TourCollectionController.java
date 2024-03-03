@@ -1,7 +1,7 @@
 package com.se.backend.controllers;
 
-import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
+import com.se.backend.projection.TourCollectionDTO;
 import com.se.backend.services.TourCollectionService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
@@ -36,8 +36,8 @@ public class TourCollectionController {
 
     @IgnoreToken
     @GetMapping(value = "/all")
-    ApiResponse<List<TourCollection>> getAllTourCollection() {
-        return ApiResponse.success("Get all tour collections", tourCollectionService.getAllTourCollections());
+    ApiResponse<List<TourCollectionDTO>> getAllTourCollection() {
+        return ApiResponse.success("Get all tour collections", TourCollectionDTO.toListDTO(tourCollectionService.getAllTourCollections()));
     }
 
 }

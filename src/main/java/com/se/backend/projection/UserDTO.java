@@ -29,6 +29,7 @@ public class UserDTO {
     }
 
     public static List<UserDTO> toListDTO(List<User> userList) {
+
         return userList.stream().map(User::toDTO).toList();
     }
 }

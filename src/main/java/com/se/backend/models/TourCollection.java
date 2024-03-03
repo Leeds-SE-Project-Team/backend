@@ -1,5 +1,6 @@
 package com.se.backend.models;
 
+import com.se.backend.projection.TourCollectionDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,4 +32,9 @@ public class TourCollection {
 
     @OneToMany(mappedBy = "tourCollection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tour> tours;
+
+
+    public TourCollectionDTO toDTO() {
+        return new TourCollectionDTO(this);
+    }
 }
