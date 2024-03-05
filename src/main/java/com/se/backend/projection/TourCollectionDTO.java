@@ -12,6 +12,7 @@ public class TourCollectionDTO {
     Long id;
     UserDTO user;
     String title;
+    String name;
     String coverUrl;
     String description;
     List<TourDTO> tours;
@@ -20,6 +21,7 @@ public class TourCollectionDTO {
         id = tourCollection.getId();
         user = tourCollection.getUser().toDTO();
         title = tourCollection.getTitle();
+        name = tourCollection.getName();
         coverUrl = tourCollection.getCoverUrl();
         description = tourCollection.getDescription();
         tours = TourDTO.toListDTO(tourCollection.getTours());

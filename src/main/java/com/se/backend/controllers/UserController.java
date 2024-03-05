@@ -64,7 +64,7 @@ public class UserController {
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 // 用户注册时创建一个默认的 Tour Collection
-                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("My Collection", "default cover url", "default tour collection"));
+                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Hiking Collection", "Hike a hidden gem in Southwest Germany – Palatinate High Route", "http://walcraft.wmzspace.space/static/tour/example/1.png", "For those who love cycling, adventure and, more generally, the outdoors, the idea of conquering epic mountains is certainly a strong driving force."));
                 return ApiResponse.success("Signup succeed!");
             } else {
                 return ApiResponse.error(e.getMessage());

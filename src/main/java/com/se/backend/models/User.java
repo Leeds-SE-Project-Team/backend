@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
-    public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/b082833e5c59a309880eca3d525e7cae.gif");
+    public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/avatar.jpg");
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

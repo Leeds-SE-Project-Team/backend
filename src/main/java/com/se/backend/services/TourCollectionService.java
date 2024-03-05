@@ -37,6 +37,7 @@ public class TourCollectionService {
     public TourCollection createTourCollection(User user, TourCollectionService.CreateTourCollectionForm form) {
         TourCollection newTourCollection = new TourCollection();
         newTourCollection.setUser(user);
+        newTourCollection.setName(form.name);
         newTourCollection.setTitle(form.title);
         newTourCollection.setCoverUrl(form.coverUrl);
         newTourCollection.setDescription(form.description);
@@ -46,6 +47,7 @@ public class TourCollectionService {
     @Getter
     @AllArgsConstructor
     public static class CreateTourCollectionForm {
+        String name;
         String title;
         String coverUrl;
         String description;

@@ -25,6 +25,9 @@ public class TourCollection {
     private String title;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String coverUrl;
 
     @Column
