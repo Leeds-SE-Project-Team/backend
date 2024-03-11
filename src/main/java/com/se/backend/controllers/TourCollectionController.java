@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/tour_collection")
 public class TourCollectionController {
 
+
     private final TourCollectionService tourCollectionService;
 
     @Autowired
@@ -39,5 +40,11 @@ public class TourCollectionController {
     ApiResponse<List<TourCollectionDTO>> getAllTourCollection() {
         return ApiResponse.success("Get all tour collections", TourCollectionDTO.toListDTO(tourCollectionService.getAllTourCollections()));
     }
+
+    @GetMapping(value = "/user")
+    ApiResponse<List<TourCollectionDTO>> getTourCollectionByUserId(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Tour Collections found by user successfully!", TourCollectionDTO.toListDTO(tourCollectionService.getTourCollectionByUser(user)));
+    }
+
 
 }

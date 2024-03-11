@@ -5,7 +5,6 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
 import com.se.backend.repositories.TourCollectionRepository;
-import com.se.backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,11 @@ import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_COLLECT
 @Service
 public class TourCollectionService {
     private final TourCollectionRepository tourCollectionRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public TourCollectionService(TourCollectionRepository tourCollectionRepository, UserRepository userRepository) {
+    public TourCollectionService(TourCollectionRepository tourCollectionRepository) {
         this.tourCollectionRepository = tourCollectionRepository;
-        this.userRepository = userRepository;
+
     }
 
     public TourCollection getTourCollectionById(Long tourCollectionId) throws ResourceException {
@@ -32,6 +30,9 @@ public class TourCollectionService {
 
     public List<TourCollection> getAllTourCollections() {
         return tourCollectionRepository.findAll();
+    }
+    public List<TourCollection> getTourCollectionByUser(User user) {
+        return tourCollectionRepository.findAllByUser(user);
     }
 
     public TourCollection createTourCollection(User user, TourCollectionService.CreateTourCollectionForm form) {
