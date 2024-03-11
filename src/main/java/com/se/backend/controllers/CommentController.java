@@ -66,7 +66,6 @@ public class CommentController {
     @IgnoreToken
     @GetMapping(value = "/all")
     ApiResponse<List<CommentDTO>> getAllComment() {
-        // FIXME: Json process
         return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()).stream().filter(c -> Objects.isNull(c.getParentId())).toList());
     }
 

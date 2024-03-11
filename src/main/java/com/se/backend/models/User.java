@@ -17,6 +17,9 @@ import java.util.List;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/avatar.jpg");
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
+    List<Group> groups;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,19 +31,14 @@ public class User {
     private String avatar;
     @Column(length = 20)
     private String password;
-
     @Column(length = 50, nullable = false)
     private String registerTime;
-
     @Column(length = 50, nullable = false)
     private String latestLoginTime;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
-
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikes;
 

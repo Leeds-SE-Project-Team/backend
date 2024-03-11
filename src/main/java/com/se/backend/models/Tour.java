@@ -41,7 +41,11 @@ public class Tour {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
-    private TourCollection tourCollection; // 关联到Trip实体
+    private TourCollection tourCollection;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(nullable = false)
+    private GroupCollection groupCollection;
 
     @ManyToOne
     @JoinColumn(nullable = false)
