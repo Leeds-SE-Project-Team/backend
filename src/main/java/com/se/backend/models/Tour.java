@@ -51,8 +51,7 @@ public class Tour {
     @JoinColumn(nullable = false)
     private User user; // 确保与User实体正确关联
 
-    @OneToMany
-    @JoinColumn
+    @OneToMany(mappedBy = "tour")
     private List<TourSpot> spots;
 
     public TourDTO toDTO() {
