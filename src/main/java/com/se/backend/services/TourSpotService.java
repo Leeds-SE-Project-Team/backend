@@ -34,16 +34,18 @@ public class TourSpotService {
     public TourSpot createTourSpot(CreateTourSpotForm form) throws ResourceException {
         TourSpot newSpot = new TourSpot();
         newSpot.setTour(tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
-        newSpot.setCoverUrl(form.coverUrl);
+        newSpot.setImageUrl(form.imageUrl);
         newSpot.setTitle(form.title);
-        return newSpot;
+        newSpot.setLocation(form.location);
+        return tourSpotRepository.saveAndFlush(newSpot);
     }
 
     public TourSpot updateTourSpot(UpdateTourSpotForm form) throws ResourceException {
         TourSpot existingSpot = getTourSpotById(form.tourSpotId);
         existingSpot.setTour(tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
         existingSpot.setTitle(form.title);
-        existingSpot.setCoverUrl(form.coverUrl);
+        existingSpot.setImageUrl(form.imageUrl);
+        existingSpot.setLocation(form.location);
         return tourSpotRepository.saveAndFlush(existingSpot);
     }
 
@@ -54,7 +56,8 @@ public class TourSpotService {
     @Getter
     public static class CreateTourSpotForm {
         String title;
-        String coverUrl;
+        String imageUrl;
+        String location;
         Long tourId;
     }
 

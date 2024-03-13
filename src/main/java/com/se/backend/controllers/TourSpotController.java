@@ -31,13 +31,12 @@ public class TourSpotController {
      * @return ApiResponse<Void>
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createTourSpot(@RequestBody TourSpotService.CreateTourSpotForm form) {
+    ApiResponse<TourSpotDTO> createTourSpot(@RequestBody TourSpotService.CreateTourSpotForm form) {
         try {
-            tourSpotService.createTourSpot(form);
+            return ApiResponse.success("Create tour spot succeed", tourSpotService.createTourSpot(form).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
-        return ApiResponse.success("Create tour succeed");
     }
 
 

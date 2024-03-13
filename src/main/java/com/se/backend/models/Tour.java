@@ -44,7 +44,7 @@ public class Tour {
     private TourCollection tourCollection;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private GroupCollection groupCollection;
 
     @ManyToOne

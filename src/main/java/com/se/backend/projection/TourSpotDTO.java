@@ -11,13 +11,15 @@ import java.util.List;
 public class TourSpotDTO {
     Long id;
     String title;
-    String coverUrl;
+    String imageUrl;
+    String location;
     Long tourId;
 
     public TourSpotDTO(TourSpot tourSpot) {
         id = tourSpot.getId();
         title = tourSpot.getTitle();
-        coverUrl = tourSpot.getCoverUrl();
+        imageUrl = tourSpot.getImageUrl();
+        location = tourSpot.getLocation();
         tourId = tourSpot.getTour().getId();
     }
 

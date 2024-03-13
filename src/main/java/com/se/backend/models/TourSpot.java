@@ -19,7 +19,10 @@ public class TourSpot {
     private String title;
 
     @Column(nullable = false)
-    private String coverUrl;
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private String location;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
