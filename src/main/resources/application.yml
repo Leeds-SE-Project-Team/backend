@@ -25,6 +25,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 10MB
 #        create:不管表是否存在，每次启动都会重新建表（会导致数据丢失）。
 #        create-drop：启动的时候创建表，程序退出（SessionFactory 关闭）的时候删除表。
 #        none：不进行任何操作。

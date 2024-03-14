@@ -15,8 +15,15 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static com.se.backend.services.FileUtil.getFileExtension;
+import static com.se.backend.services.FileUtil.saveFileToLocal;
 
 @RestController
 @CrossOrigin("*")
@@ -153,6 +160,30 @@ public class UserController {
             return ApiResponse.error(e.getMessage());
         }
     }
+
+    @PostMapping("/upload")
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL) {
+        if (file.isEmpty()) {
+            return ApiResponse.error("File is empty");
+        }
+
+
+        try {
+            // 生成一个随机的文件名
+            String fileName = UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
+
+            // 保存文件到本地
+            saveFileToLocal(file.getInputStream(), uploadURL.concat("/").concat(fileName));
+
+            // 如果需要保存到数据库或者其他操作，可以在这里进行处理
+
+            return ApiResponse.success("File uploaded successfully: " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ApiResponse.error("Failed to upload file");
+        }
+    }
+
 
     // Signup request form from client
     @Getter

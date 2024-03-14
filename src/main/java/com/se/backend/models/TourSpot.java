@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Entity
 @Table(name = "tour_spot")
@@ -16,17 +18,15 @@ public class TourSpot {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String imageUrl;
-
-    @Column(nullable = false)
     private String location;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
     private Tour tour;// 关联到Trip实体
+
+    @OneToMany(mappedBy = "tourSpot")
+    private List<TourImage> tourImages;
+
 
     public TourSpotDTO toDTO() {
         return new TourSpotDTO(this);

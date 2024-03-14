@@ -16,6 +16,8 @@ public class TourDTO {
     String createTime;
     List<PONDTO> pons;
     Long tourCollectionId;
+    List<TourHighlightDTO> tourHighlightList;
+    List<TourSpotDTO> tourSpotList;
     UserDTO user;
 
     public TourDTO(Tour tour) {
@@ -26,6 +28,8 @@ public class TourDTO {
         type = tour.getType();
         pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
+        tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
+        tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
     }
 

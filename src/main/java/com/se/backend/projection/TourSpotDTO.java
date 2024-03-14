@@ -10,15 +10,13 @@ import java.util.List;
 @Setter
 public class TourSpotDTO {
     Long id;
-    String title;
-    String imageUrl;
+    List<TourImageDTO> tourImages;
     String location;
     Long tourId;
 
     public TourSpotDTO(TourSpot tourSpot) {
         id = tourSpot.getId();
-        title = tourSpot.getTitle();
-        imageUrl = tourSpot.getImageUrl();
+        tourImages = TourImageDTO.toListDTO(tourSpot.getTourImages());
         location = tourSpot.getLocation();
         tourId = tourSpot.getTour().getId();
     }
