@@ -1,6 +1,7 @@
 package com.se.backend.services;
 
 import com.se.backend.exceptions.ResourceException;
+import com.se.backend.models.Tour;
 import com.se.backend.models.TourImage;
 import com.se.backend.models.TourSpot;
 import com.se.backend.repositories.TourImageRepository;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
@@ -43,14 +45,17 @@ public class TourSpotService {
 //        newSpot.setTitle(form.title);
         //TODO:判断后添加的location范围
         newSpot.setLocation(form.location);
+        Tour tour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+        newSpot.setTour(tour);
         TourSpot flushedTourSpot = tourSpotRepository.saveAndFlush(newSpot);
         TourImage newImage = new TourImage();
         newImage.setImageUrl(form.imageUrl);
-        newImage.setTour(tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
+        newImage.setTour(tour);
         newImage.setTourSpot(flushedTourSpot);
-        tourImageRepository.saveAndFlush(newImage);
-
-        return flushedTourSpot;
+        List<TourImage> tourImages = new ArrayList<>();
+        tourImages.add(tourImageRepository.saveAndFlush(newImage));
+        flushedTourSpot.setTourImages(tourImages);
+        return tourSpotRepository.saveAndFlush(flushedTourSpot);
     }
 
     public TourSpot updateTourSpot(UpdateTourSpotForm form) throws ResourceException {

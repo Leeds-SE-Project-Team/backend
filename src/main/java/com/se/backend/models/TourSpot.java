@@ -24,7 +24,7 @@ public class TourSpot {
     @JoinColumn(nullable = false)
     private Tour tour;// 关联到Trip实体
 
-    @OneToMany(mappedBy = "tourSpot")
+    @OneToMany(mappedBy = "tourSpot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourImage> tourImages;
 
 
