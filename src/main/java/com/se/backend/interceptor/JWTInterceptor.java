@@ -30,6 +30,7 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) throws IOException {
+        // 不需要验证Token
         if (handler instanceof HandlerMethod handlerMethod) {
             // 配置该注解，说明不进行拦截
             IgnoreToken annotation = handlerMethod.getBeanType().getAnnotation(IgnoreToken.class); //从类上获取注解
@@ -41,12 +42,12 @@ public class JWTInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
-        // 要求携带Token
 
-        // 获取请求头中的令牌
+        // 需要验证Token，获取请求头中的令牌和操作对象
         String token = request.getHeader("Authorization");
         String id = request.getHeader("User-ID");
 
+        // 如果使用了管理员 token, 则无条件允许
         if (Objects.nonNull(token) && token.equals("root")) {
             // 使用管理员Token
             if (Objects.nonNull(id)) {
@@ -76,7 +77,7 @@ public class JWTInterceptor implements HandlerInterceptor {
             }
         }
 
-        // 要求Token但不要求使用管理员Token
+        // 非管理员，则需要验证传入的token，其对应的用户是否具有该参数下的接口调用权限
         try {
             User user = tokenService.getUserByToken(token);
             if (user.getId().toString().equals(id)) {
