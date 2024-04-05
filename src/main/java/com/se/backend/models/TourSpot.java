@@ -20,11 +20,11 @@ public class TourSpot {
     @Column(nullable = false)
     private String location;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private Tour tour;// 关联到Trip实体
 
-    @OneToMany(mappedBy = "tourSpot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tourSpot", cascade = {CascadeType.REMOVE})
     private List<TourImage> tourImages;
 
 

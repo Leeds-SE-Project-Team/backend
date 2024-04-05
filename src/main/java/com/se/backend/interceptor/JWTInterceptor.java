@@ -23,6 +23,7 @@ import java.util.Objects;
 @Slf4j
 public class JWTInterceptor implements HandlerInterceptor {
 
+    String[] apiList = {"/auth", "/comments", "/tour_collection", "/tours", "/tour_spot", "/users"};
     @Autowired
     private TokenService tokenService;
     @Autowired
@@ -30,6 +31,19 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Object handler) throws IOException {
+        String urlToCheck = request.getRequestURI();
+
+        boolean startsWithApi = false;
+        for (String api : apiList) {
+            if (urlToCheck.startsWith(api)) {
+                startsWithApi = true;
+                break;
+            }
+        }
+
+        if (!startsWithApi) return true;
+
+
         // 不需要验证Token
         if (handler instanceof HandlerMethod handlerMethod) {
             // 配置该注解，说明不进行拦截

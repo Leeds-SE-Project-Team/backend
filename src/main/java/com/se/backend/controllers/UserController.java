@@ -177,7 +177,7 @@ public class UserController {
 
             // 如果需要保存到数据库或者其他操作，可以在这里进行处理
 
-            return ApiResponse.success("File uploaded successfully: " + fileName);
+            return ApiResponse.success("File uploaded successfully", uploadURL.concat("/").concat(fileName));
         } catch (IOException e) {
             e.printStackTrace();
             return ApiResponse.error("Failed to upload file");

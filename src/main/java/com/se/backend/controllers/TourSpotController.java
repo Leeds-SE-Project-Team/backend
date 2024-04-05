@@ -57,6 +57,7 @@ public class TourSpotController {
 
     @DeleteMapping
     ApiResponse<Void> deleteTourSpot(@RequestParam(required = false) Long id) {
+        // TODO: 本人身份验证
         try {
             tourSpotService.deleteTourSpot(id);
             return ApiResponse.success("Tour Spot has been deleted");

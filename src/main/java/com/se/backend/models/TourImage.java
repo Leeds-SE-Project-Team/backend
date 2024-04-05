@@ -18,15 +18,14 @@ public class TourImage {
     @Column(nullable = false)
     private String imageUrl;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn
+    @ManyToOne
     private TourSpot tourSpot;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn
     private TourHighlight tourHighlight;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn
     private Tour tour;
 

@@ -2,8 +2,8 @@ package com.se.backend.services;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * @author FeianLing
@@ -62,13 +62,30 @@ public class FileUtil {
     }
 
     // 保存文件到本地
-    public static void saveFileToLocal(InputStream inputStream, String fileName) throws IOException {
-        try (OutputStream outputStream = new FileOutputStream(fileName)) {
+    public static void saveFileToLocal(InputStream inputStream, String uploadRelativePath) throws IOException {
+        uploadRelativePath = "./static" + uploadRelativePath;
+        try {
+            File saveFile = new File(uploadRelativePath);
+            if (!saveFile.getParentFile().exists()) {
+                saveFile.getParentFile().mkdirs();
+            }
+            if (!saveFile.exists()) {
+                saveFile.createNewFile();
+            }
+//            FileOutputStream os = new FileOutputStream(saveFile);
+//            os.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (OutputStream outputStream = new FileOutputStream(uploadRelativePath)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
