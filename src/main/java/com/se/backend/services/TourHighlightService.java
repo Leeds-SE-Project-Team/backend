@@ -11,7 +11,9 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_Highlight_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
@@ -39,16 +41,31 @@ public class TourHighlightService {
         return tourHighlightRepository.findById(tourHighlightId).orElseThrow(() -> new ResourceException(TOUR_Highlight_NOT_FOUND));
     }
 
-    public TourHighlight createTourHighlight(TourHighlightService.CreateTourHighlightForm form) throws ResourceException {
+    public void createTourHighlight(TourHighlightService.CreateTourHighlightForm form) throws ResourceException {
         TourHighlight newHighlight = new TourHighlight();
-//        newHighlight.setTours(tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
-//        newHighlight.se
-//        newSpot.setImageUrl(form.imageUrl);
-        Tour exsitingTour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-        newHighlight.getTours().add(exsitingTour);
         newHighlight.setTitle(form.title);
         newHighlight.setLocation(form.location);
-        return tourHighlightRepository.saveAndFlush(newHighlight);
+
+        Tour exsitingTour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+        List<Tour> highlightTours = newHighlight.getTours();
+        if (Objects.nonNull(highlightTours)) {
+            if (Objects.nonNull(exsitingTour.getHighlights())) {
+                exsitingTour.getHighlights().add(newHighlight);
+            } else {
+                exsitingTour.setHighlights(new ArrayList<>(List.of(newHighlight)));
+            }
+            highlightTours.add(tourRepository.saveAndFlush(exsitingTour));
+        } else {
+            newHighlight.setTours(new ArrayList<>(List.of(exsitingTour)));
+        }
+
+        TourImage newImage = new TourImage();
+        newImage.setImageUrl(form.imageUrl);
+        newImage.setTour(exsitingTour); // TODO: tour not exist
+
+        TourHighlight flushedHighlight = tourHighlightRepository.saveAndFlush(newHighlight);
+        newImage.setTourHighlight(flushedHighlight);
+        tourImageRepository.saveAndFlush(newImage);
     }
 
     public TourHighlight updateTourHighlight(UpdateTourHighlightForm form) throws ResourceException {
@@ -83,6 +100,7 @@ public class TourHighlightService {
         //        String imageUrl;
         String location;
         Long tourId;
+        String imageUrl;
 //        List<String> imageURLs;
     }
 

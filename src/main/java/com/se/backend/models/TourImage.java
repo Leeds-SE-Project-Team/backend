@@ -21,12 +21,12 @@ public class TourImage {
     @ManyToOne
     private TourSpot tourSpot;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn
+    @ManyToOne
+//    @JoinColumn
     private TourHighlight tourHighlight;
 
     @ManyToOne
-    @JoinColumn
+//    @JoinColumn
     private Tour tour;
 
     public TourImageDTO toDTO() {

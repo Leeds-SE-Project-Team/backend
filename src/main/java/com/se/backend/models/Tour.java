@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class Tour {
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "tour_highlight", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
+    @JoinTable(name = "tour_highlight_r", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
     List<TourHighlight> highlights;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

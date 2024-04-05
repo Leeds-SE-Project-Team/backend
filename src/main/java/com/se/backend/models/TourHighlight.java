@@ -29,7 +29,7 @@ public class TourHighlight {
     @ManyToMany(mappedBy = "highlights", cascade = CascadeType.ALL)
     private List<Tour> tours;// 关联到Trip实体
 
-    @OneToMany(mappedBy = "tourHighlight")
+    @OneToMany(mappedBy = "tourHighlight", cascade = CascadeType.ALL)
     private List<TourImage> tourImages;
 
     public TourHighlightDTO toDTO() {

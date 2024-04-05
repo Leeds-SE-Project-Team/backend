@@ -21,7 +21,7 @@ public class TourSpot {
     private String location;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+//    @JoinColumn(nullable = false)
     private Tour tour;// 关联到Trip实体
 
     @OneToMany(mappedBy = "tourSpot", cascade = {CascadeType.REMOVE})

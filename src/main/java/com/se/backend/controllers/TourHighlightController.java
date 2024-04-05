@@ -32,9 +32,10 @@ public class TourHighlightController {
      * @return ApiResponse<Void>
      */
     @PostMapping(value = "/create")
-    ApiResponse<TourHighlightDTO> createTourHighlight(@RequestBody TourHighlightService.CreateTourHighlightForm form) {
+    ApiResponse<Void> createTourHighlight(@RequestBody TourHighlightService.CreateTourHighlightForm form) {
         try {
-            return ApiResponse.success("Create tour highlight succeed", tourHighlightService.createTourHighlight(form).toDTO());
+            tourHighlightService.createTourHighlight(form);
+            return ApiResponse.success("Create tour highlight succeed");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
