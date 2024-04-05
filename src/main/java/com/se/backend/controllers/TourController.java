@@ -30,13 +30,12 @@ public class TourController {
      * @return ApiResponse<Void>
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
+    ApiResponse<TourDTO> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
         try {
-            tourService.createTour(user, form);
+            return ApiResponse.success("Create tour succeed", tourService.createTour(user, form).toDTO());
         } catch (ResourceException | AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
-        return ApiResponse.success("Create tour succeed");
     }
 
     /**
@@ -60,6 +59,16 @@ public class TourController {
     @GetMapping(value = "/all")
     ApiResponse<List<TourDTO>> getAllTour() {
         return ApiResponse.success("Get all tours", TourDTO.toListDTO(tourService.getAllTours()));
+    }
+
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<TourDTO> getTourById(@RequestParam Long id) {
+        try {
+            return ApiResponse.success("Get tour", tourService.getTourById(id).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 }
 

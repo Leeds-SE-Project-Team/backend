@@ -4,7 +4,9 @@ import com.se.backend.models.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,7 +31,9 @@ public class UserDTO {
     }
 
     public static List<UserDTO> toListDTO(List<User> userList) {
-
+        if (Objects.isNull(userList)) {
+            return new ArrayList<>(0);
+        }
         return userList.stream().map(User::toDTO).toList();
     }
 }

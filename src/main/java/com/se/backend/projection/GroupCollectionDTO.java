@@ -4,7 +4,9 @@ import com.se.backend.models.GroupCollection;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -28,6 +30,9 @@ public class GroupCollectionDTO {
     }
 
     public static List<GroupCollectionDTO> toListDTO(List<GroupCollection> groupCollectionList) {
+        if (Objects.isNull(groupCollectionList)) {
+            return new ArrayList<>(0);
+        }
         return groupCollectionList.stream().map(GroupCollection::toDTO).toList();
     }
 }

@@ -4,7 +4,9 @@ import com.se.backend.models.Tour;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,7 +35,10 @@ public class TourDTO {
         user = tour.getUser().toDTO();
     }
 
-    public static List<TourDTO> toListDTO(List<Tour> tourDTOList) {
-        return tourDTOList.stream().map(Tour::toDTO).toList();
+    public static List<TourDTO> toListDTO(List<Tour> tourList) {
+        if (Objects.isNull(tourList)) {
+            return new ArrayList<>(0);
+        }
+        return tourList.stream().map(Tour::toDTO).toList();
     }
 }

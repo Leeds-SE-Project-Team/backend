@@ -4,7 +4,9 @@ import com.se.backend.models.TourCollection;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -28,6 +30,9 @@ public class TourCollectionDTO {
     }
 
     public static List<TourCollectionDTO> toListDTO(List<TourCollection> tourCollectionList) {
+        if (Objects.isNull(tourCollectionList)) {
+            return new ArrayList<>(0);
+        }
         return tourCollectionList.stream().map(TourCollection::toDTO).toList();
     }
 }

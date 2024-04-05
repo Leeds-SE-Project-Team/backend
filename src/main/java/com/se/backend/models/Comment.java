@@ -31,11 +31,8 @@ public class Comment {
     private String publishTime;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-//    TODO: CascadeType.REMOVE
     private List<Comment> replies;
 
-    //    @JsonBackReference
-    //    @JsonProperty("parentId")
     @JoinColumn
     @ManyToOne(cascade = CascadeType.REMOVE)
     private Comment parent;

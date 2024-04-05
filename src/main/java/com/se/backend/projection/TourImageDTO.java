@@ -34,6 +34,9 @@ public class TourImageDTO {
     }
 
     public static List<TourImageDTO> toListDTO(List<TourImage> tourImageList) {
-        return Objects.nonNull(tourImageList) ? tourImageList.stream().map(TourImage::toDTO).toList() : new ArrayList<>();
+        if (Objects.isNull(tourImageList)) {
+            return new ArrayList<>(0);
+        }
+        return tourImageList.stream().map(TourImage::toDTO).toList();
     }
 }
