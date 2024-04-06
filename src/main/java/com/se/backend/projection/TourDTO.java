@@ -14,6 +14,7 @@ public class TourDTO {
     Long id;
     String startLocation;
     String endLocation;
+    String mapUrl;
     Tour.TourType type;
     String createTime;
     List<PONDTO> pons;
@@ -27,6 +28,7 @@ public class TourDTO {
         startLocation = tour.getStartLocation();
         endLocation = tour.getEndLocation();
         createTime = tour.getCreateTime();
+        mapUrl = tour.getMapUrl();
         type = tour.getType();
         pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();

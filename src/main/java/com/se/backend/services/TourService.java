@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+import static com.se.backend.config.GlobalConfig.getStaticUrl;
 import static com.se.backend.exceptions.AuthException.ErrorType.TOKEN_EXPIRED;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_COLLECTION_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
@@ -62,7 +63,11 @@ public class TourService {
         } else {
             // TODO: Form validation exception
         }
-        return tourRepository.saveAndFlush(newTour);
+        newTour.setMapUrl("temp");
+        Tour flushedTour = tourRepository.saveAndFlush(newTour);
+        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+        flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+        return tourRepository.saveAndFlush(flushedTour);
     }
 
     public Tour updateTour(Long id, UpdateTourForm updatedTourInfo) throws ResourceException {
@@ -74,7 +79,7 @@ public class TourService {
         existingTour.setTourCollection(tourCollectionRepository.findById(updatedTourInfo.getTourCollectionId()).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND)));
         return tourRepository.save(existingTour);
     }
-
+   
     @Getter
     public static class CreateTourForm {
         String startLocation;
