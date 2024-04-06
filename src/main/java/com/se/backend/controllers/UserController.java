@@ -6,6 +6,7 @@ package com.se.backend.controllers;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.models.User;
 import com.se.backend.projection.UserDTO;
+import com.se.backend.services.TokenService;
 import com.se.backend.services.TourCollectionService;
 import com.se.backend.services.UserService;
 import com.se.backend.utils.AdminToken;
@@ -31,11 +32,13 @@ import static com.se.backend.services.FileUtil.saveFileToLocal;
 public class UserController {
     private final UserService userService;
     private final TourCollectionService tourCollectionService;
+    private final TokenService tokenService;
 
     @Autowired
-    public UserController(UserService userService, TourCollectionService tourCollectionService) {
+    public UserController(UserService userService, TourCollectionService tourCollectionService, TokenService tokenService) {
         this.userService = userService;
         this.tourCollectionService = tourCollectionService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -184,6 +187,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/token/{value}")
+    public ApiResponse<UserDTO> validateToken(@PathVariable("value") String token) {
+        try {
+            User user = tokenService.getUserByToken(token);
+            return ApiResponse.success("Token is valid", user.toDTO());
+        } catch (AuthException e) {
+            return ApiResponse.error("Invalid token");
+        }
+    }
 
     // Signup request form from client
     @Getter
