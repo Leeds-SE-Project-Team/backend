@@ -14,6 +14,7 @@ import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -165,16 +166,20 @@ public class UserController {
     }
 
     @PostMapping("/upload")
-    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL) {
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file,
+                                            @RequestParam("uploadURL") String uploadURL,
+                                            @RequestParam(value="filename",required = false) String filename) {
         if (file.isEmpty()) {
             return ApiResponse.error("File is empty");
         }
 
 
         try {
-            // 生成一个随机的文件名
-            String fileName = UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
-
+            // 生成一个随机的文件名或沿用参数
+            String fileName = Objects.nonNull(filename)? 
+                filename :
+                UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
+            
             // 保存文件到本地
             saveFileToLocal(file.getInputStream(), uploadURL.concat("/").concat(fileName));
 
