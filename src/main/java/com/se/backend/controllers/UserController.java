@@ -75,7 +75,7 @@ public class UserController {
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 // 用户注册时创建一个默认的 Tour Collection
-                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Hiking Collection", "Hike a hidden gem in Southwest Germany – Palatinate High Route", "http://walcraft.wmzspace.space/static/tour/example/1.png", "For those who love cycling, adventure and, more generally, the outdoors, the idea of conquering epic mountains is certainly a strong driving force."));
+                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "http://walcraft.wmzspace.space/static/tour/example/1.png", "Default Collection"));
                 return ApiResponse.success("Signup succeed!");
             } else {
                 return ApiResponse.error(e.getMessage());
@@ -176,10 +176,10 @@ public class UserController {
 
         try {
             // 生成一个随机的文件名或沿用参数
-            String fileName = Objects.nonNull(filename)? 
+            String fileName = Objects.nonNull(filename)?
                 filename :
                 UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
-            
+
             // 保存文件到本地
             saveFileToLocal(file.getInputStream(), uploadURL.concat("/").concat(fileName));
 
