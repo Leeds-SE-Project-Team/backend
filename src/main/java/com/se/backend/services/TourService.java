@@ -52,6 +52,7 @@ public class TourService {
         newTour.setPons(form.pons);
         newTour.setStartLocation(form.startLocation);
         newTour.setEndLocation(form.endLocation);
+        newTour.setTitle(form.title);
 
         if (Objects.nonNull(form.tourCollectionId)) {
             TourCollection existingTourCollection = tourCollectionRepository.findById(form.tourCollectionId).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND));
@@ -76,10 +77,11 @@ public class TourService {
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());
         existingTour.setType(updatedTourInfo.getType());
         existingTour.setPons(updatedTourInfo.getPons());
+        existingTour.setTitle(updatedTourInfo.getTitle());
         existingTour.setTourCollection(tourCollectionRepository.findById(updatedTourInfo.getTourCollectionId()).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND)));
         return tourRepository.save(existingTour);
     }
-   
+
     @Getter
     public static class CreateTourForm {
         String startLocation;
@@ -87,6 +89,7 @@ public class TourService {
         Tour.TourType type;
         List<PON> pons;
         Long tourCollectionId;
+        String title;
     }
 
     @Getter
