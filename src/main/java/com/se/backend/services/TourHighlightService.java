@@ -47,17 +47,19 @@ public class TourHighlightService {
         newHighlight.setLocation(form.location);
 
         Tour exsitingTour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-        List<Tour> highlightTours = newHighlight.getTours();
-        if (Objects.nonNull(highlightTours)) {
-            if (Objects.nonNull(exsitingTour.getHighlights())) {
-                exsitingTour.getHighlights().add(newHighlight);
-            } else {
-                exsitingTour.setHighlights(new ArrayList<>(List.of(newHighlight)));
-            }
-            highlightTours.add(tourRepository.saveAndFlush(exsitingTour));
-        } else {
-            newHighlight.setTours(new ArrayList<>(List.of(exsitingTour)));
-        }
+        exsitingTour.getHighlights().add(newHighlight);
+//        tourHighlightRepository.saveAndFlush(newHighlight)
+//        List<Tour> highlightTours = newHighlight.getTours();
+//        if (Objects.nonNull(highlightTours)) {
+//            if (Objects.nonNull(exsitingTour.getHighlights())) {
+//                exsitingTour.getHighlights().add(newHighlight);
+//            } else {
+//                exsitingTour.setHighlights(new ArrayList<>(List.of(newHighlight)));
+//            }
+//            highlightTours.add(tourRepository.saveAndFlush(exsitingTour));
+//        } else {
+//            newHighlight.setTours(new ArrayList<>(List.of(exsitingTour)));
+//        }
 
         TourImage newImage = new TourImage();
         newImage.setImageUrl(form.imageUrl);
