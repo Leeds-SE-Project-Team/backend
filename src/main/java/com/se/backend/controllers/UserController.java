@@ -14,7 +14,6 @@ import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.se.backend.services.FileUtil.getFileExtension;
-import static com.se.backend.services.FileUtil.saveFileToLocal;
+import static com.se.backend.utils.FileUtil.getFileExtension;
+import static com.se.backend.utils.FileUtil.saveFileToLocal;
 
 @RestController
 @CrossOrigin("*")
@@ -166,9 +165,7 @@ public class UserController {
     }
 
     @PostMapping("/upload")
-    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file,
-                                            @RequestParam("uploadURL") String uploadURL,
-                                            @RequestParam(value="filename",required = false) String filename) {
+    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL, @RequestParam(value = "filename", required = false) String filename) {
         if (file.isEmpty()) {
             return ApiResponse.error("File is empty");
         }
@@ -176,9 +173,7 @@ public class UserController {
 
         try {
             // 生成一个随机的文件名或沿用参数
-            String fileName = Objects.nonNull(filename)?
-                filename :
-                UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
+            String fileName = Objects.nonNull(filename) ? filename : UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
 
             // 保存文件到本地
             saveFileToLocal(file.getInputStream(), uploadURL.concat("/").concat(fileName));

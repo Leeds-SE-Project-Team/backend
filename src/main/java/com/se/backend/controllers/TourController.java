@@ -10,6 +10,7 @@ import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class TourController {
     ApiResponse<TourDTO> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
         try {
             return ApiResponse.success("Create tour succeed", tourService.createTour(user, form).toDTO());
-        } catch (ResourceException | AuthException e) {
+        } catch (ResourceException | AuthException | IOException e) {
             return ApiResponse.error(e.getMessage());
         }
     }

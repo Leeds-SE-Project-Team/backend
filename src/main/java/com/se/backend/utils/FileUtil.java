@@ -1,4 +1,4 @@
-package com.se.backend.services;
+package com.se.backend.utils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -59,6 +59,30 @@ public class FileUtil {
             return "";
         }
         return fileName.substring(lastIndex);
+    }
+
+    public static InputStream stringToInputStream(String content) {
+        // 将字符串转换为字节数组
+        byte[] bytes = content.getBytes();
+        // 使用字节数组创建 ByteArrayInputStream
+        return new ByteArrayInputStream(bytes);
+        // 现在你可以使用 inputStream 对象进行其他操作，比如读取它的内容
+        // 例如：
+//        try {
+//            int data;
+//            while ((data = inputStream.read()) != -1) {
+//                System.out.print((char) data);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            // 不要忘记关闭 InputStream
+//            try {
+//                inputStream.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     // 保存文件到本地

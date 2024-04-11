@@ -7,13 +7,12 @@ import com.se.backend.models.TourImage;
 import com.se.backend.repositories.TourHighlightRepository;
 import com.se.backend.repositories.TourImageRepository;
 import com.se.backend.repositories.TourRepository;
+import com.se.backend.utils.FileUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_Highlight_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
