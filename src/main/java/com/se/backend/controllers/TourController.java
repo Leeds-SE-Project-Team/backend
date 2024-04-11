@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @eo.api-type http
+ * @eo.groupName Tour
+ * @eo.path /tours
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/tours")
@@ -23,11 +29,15 @@ public class TourController {
         this.tourService = tourService;
     }
 
+
     /**
-     * 创建行程
-     *
-     * @param form 行程创建表单
-     * @return ApiResponse<Void>
+     * @eo.name createTour
+     * @eo.url /create
+     * @eo.method post
+     * @eo.request-type json
+     * @param user
+     * @param form
+     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<TourDTO> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
@@ -38,12 +48,15 @@ public class TourController {
         }
     }
 
+
     /**
-     * 更新用户信息
-     *
-     * @param user            用户
-     * @param updatedTourInfo 更新后的用户信息
-     * @return 更新后的用户信息
+     * @eo.name updateTour
+     * @eo.url /
+     * @eo.method put
+     * @eo.request-type json
+     * @param user
+     * @param updatedTourInfo
+     * @return ApiResponse
      */
     @PutMapping
     ApiResponse<TourDTO> updateTour(@RequestAttribute("user") User user, @RequestBody TourService.UpdateTourForm updatedTourInfo) {
@@ -55,12 +68,27 @@ public class TourController {
 
     }
 
+    /**
+     * @eo.name getAllTour
+     * @eo.url /all
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping(value = "/all")
     ApiResponse<List<TourDTO>> getAllTour() {
         return ApiResponse.success("Get all tours", TourDTO.toListDTO(tourService.getAllTours()));
     }
 
+    /**
+     * @eo.name getTourById
+     * @eo.url /
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping
     ApiResponse<TourDTO> getTourById(@RequestParam Long id) {
