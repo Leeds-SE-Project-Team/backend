@@ -26,12 +26,27 @@ import java.util.UUID;
 import static com.se.backend.utils.FileUtil.getFileExtension;
 import static com.se.backend.utils.FileUtil.saveFileToLocal;
 
+/**
+ * @eo.api-type http
+ * @eo.groupName User
+ * @eo.path /users
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/users")
 public class UserController {
+    /**
+     * userService
+     */
     private final UserService userService;
+    /**
+     * tourCollectionService
+     */
     private final TourCollectionService tourCollectionService;
+    /**
+     * tokenService
+     */
     private final TokenService tokenService;
 
     @Autowired
@@ -41,10 +56,13 @@ public class UserController {
         this.tokenService = tokenService;
     }
 
+
     /**
-     * 获取所有用户列表
-     *
-     * @return 所有用户列表
+     * @eo.name getAllUsers
+     * @eo.url /all
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
      */
     @AdminToken
     @RequestMapping(value = "/all", method = RequestMethod.GET)
@@ -52,11 +70,14 @@ public class UserController {
         return ApiResponse.success("Get all users", UserDTO.toListDTO(userService.getAllUsers()));
     }
 
+
     /**
-     * 添加用户
-     *
-     * @param req 新用户信息
-     * @return access token
+     * @eo.name addUser
+     * @eo.url /signup
+     * @eo.method post
+     * @eo.request-type json
+     * @param req
+     * @return ApiResponse {@value {1}}
      */
     @IgnoreToken
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
@@ -83,10 +104,13 @@ public class UserController {
     }
 
     /**
-     * 根据ID或者邮箱验证对应用户是否存在
-     *
-     * @param id,email 用户ID, 邮箱
-     * @return ApiResponse<boolean>
+     * @eo.name isUserExist
+     * @eo.url /exist
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param id
+     * @param email
+     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/exist")
@@ -106,10 +130,13 @@ public class UserController {
     }
 
     /**
-     * 根据ID或者邮箱获取用户信息
-     *
-     * @param id,email 用户ID, 邮箱
-     * @return ApiResponse<对应ID的用户信息>
+     * @eo.name getSingleUser
+     * @eo.url /
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param id
+     * @param email
+     * @return ApiResponse
      */
     @AdminToken
     @GetMapping
@@ -127,11 +154,13 @@ public class UserController {
     }
 
     /**
-     * 更新用户信息
-     *
-     * @param user        用户
-     * @param updatedInfo 更新后的用户信息
-     * @return 更新后的用户信息
+     * @eo.name updateUser
+     * @eo.url /
+     * @eo.method put
+     * @eo.request-type json
+     * @param user
+     * @param updatedInfo
+     * @return ApiResponse
      */
     @PutMapping
     ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
@@ -141,18 +170,14 @@ public class UserController {
             return ApiResponse.error(e.getMessage());
         }
     }
-//    public ApiResponse<User> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
-//        if (Objects.equals(user.getId(), id) || Objects.equals(user.getEmail(), email)) {
-//            return ApiResponse.success("GET user succeed", user);
-//        }
-//        return ApiResponse.error("Error when getting user");
-//    }
 
     /**
-     * 删除用户信息
-     *
-     * @param user 用户ID
-     * @return ApiResponse<Void>
+     * @eo.name removeUser
+     * @eo.url /
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param user
+     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> removeUser(@RequestAttribute("user") User user) {
@@ -164,6 +189,16 @@ public class UserController {
         }
     }
 
+    /**
+     * @eo.name uploadFile
+     * @eo.url /upload
+     * @eo.method post
+     * @eo.request-type formdata
+     * @param file
+     * @param uploadURL
+     * @param filename
+     * @return ApiResponse
+     */
     @PostMapping("/upload")
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL, @RequestParam(value = "filename", required = false) String filename) {
         if (file.isEmpty()) {
@@ -187,6 +222,14 @@ public class UserController {
         }
     }
 
+    /**
+     * @eo.name validateToken
+     * @eo.url /token/{value}
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param token
+     * @return ApiResponse
+     */
     @GetMapping("/token/{value}")
     public ApiResponse<UserDTO> validateToken(@PathVariable("value") String token) {
         try {
@@ -200,8 +243,17 @@ public class UserController {
     // Signup request form from client
     @Getter
     public static class ReqSignupForm {
+        /**
+         * email
+         */
         String email;
+        /**
+         * nickname
+         */
         String nickname;
+        /**
+         * password
+         */
         String password;
     }
 }

@@ -90,6 +90,7 @@ public class TourService {
         String startLocation;
         String endLocation;
         Tour.TourType type;
+        // FIXME : PONDOT?
         List<PON> pons;
         Long tourCollectionId;
         String title;
