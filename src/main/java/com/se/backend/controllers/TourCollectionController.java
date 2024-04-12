@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @eo.api-type http
+ * @eo.groupName TourCollection
+ * @eo.path /tour_collection
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/tour_collection")
@@ -23,11 +29,15 @@ public class TourCollectionController {
         this.tourCollectionService = tourCollectionService;
     }
 
+
     /**
-     * 创建行程集合
-     *
-     * @param form 行程创建集合表单
-     * @return ApiResponse<Void>
+     * @eo.name createTourCollection
+     * @eo.url /create
+     * @eo.method post
+     * @eo.request-type json
+     * @param user
+     * @param form
+     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<Void> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
@@ -35,12 +45,27 @@ public class TourCollectionController {
         return ApiResponse.success("Create tour collection succeed");
     }
 
+    /**
+     * @eo.name getAllTourCollection
+     * @eo.url /all
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping(value = "/all")
     ApiResponse<List<TourCollectionDTO>> getAllTourCollection() {
         return ApiResponse.success("Get all tour collections", TourCollectionDTO.toListDTO(tourCollectionService.getAllTourCollections()));
     }
 
+    /**
+     * @eo.name getTourCollectionByUserId
+     * @eo.url /user
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param user
+     * @return ApiResponse
+     */
     @GetMapping(value = "/user")
     ApiResponse<List<TourCollectionDTO>> getTourCollectionByUserId(@RequestAttribute("user") User user) {
         return ApiResponse.success("Tour Collections found by user successfully!", TourCollectionDTO.toListDTO(tourCollectionService.getTourCollectionByUser(user)));
