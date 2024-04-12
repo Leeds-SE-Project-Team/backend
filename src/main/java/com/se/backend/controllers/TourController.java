@@ -62,7 +62,7 @@ public class TourController {
     @PutMapping
     ApiResponse<TourDTO> updateTour(@RequestAttribute("user") User user, @RequestBody TourService.UpdateTourForm updatedTourInfo) {
         try {
-            return ApiResponse.success("Tour information updated", tourService.updateTour(user.getId(), updatedTourInfo).toDTO());
+            return ApiResponse.success("Tour information updated", tourService.updateTour( updatedTourInfo).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }

@@ -74,8 +74,8 @@ public class TourService {
         return tourRepository.saveAndFlush(flushedTour);
     }
 
-    public Tour updateTour(Long id, UpdateTourForm updatedTourInfo) throws ResourceException {
-        Tour existingTour = getTourById(id);
+    public Tour updateTour( UpdateTourForm updatedTourInfo) throws ResourceException {
+        Tour existingTour = getTourById(updatedTourInfo.tourId);
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());
         existingTour.setType(updatedTourInfo.getType());
@@ -87,10 +87,12 @@ public class TourService {
 
     @Getter
     public static class CreateTourForm {
+
+        Long tourId;
         String startLocation;
         String endLocation;
         Tour.TourType type;
-        // FIXME : PONDOT?
+        // FIXME : create PON structure
         List<PON> pons;
         Long tourCollectionId;
         String title;
