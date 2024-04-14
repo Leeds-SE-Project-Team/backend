@@ -23,7 +23,9 @@ import static com.se.backend.config.GlobalConfig.getStaticUrl;
 import static com.se.backend.exceptions.AuthException.ErrorType.TOKEN_EXPIRED;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_COLLECTION_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.se.backend.utils.FileUtil.saveFileToLocal;
+import static com.se.backend.utils.FileUtil.stringToInputStream;
 @Service
 public class TourService {
     private final TourRepository tourRepository;
@@ -70,7 +72,19 @@ public class TourService {
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
 //        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
         flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String jsonContent = objectMapper.writeValueAsString(form.result);
+            saveFileToLocal(stringToInputStream(jsonContent), "/tour/" + flushedTour.getId() + "/map.json");
+//            Files.write(Paths.get("/path/to/your/directory/tour_" + flushedTour.getId() + ".json"), jsonContent.getBytes());
+        } catch (IOException e) {
+            System.err.println("Error writing JSON to file: " + e.getMessage());
+            // Handle the error according to your application's requirements
+        }
+
         GpxUtil.JSONtoGPXFile(form.result, "/tour/" + flushedTour.getId() + "/map.gpx");
+
         return tourRepository.saveAndFlush(flushedTour);
     }
 
