@@ -32,13 +32,13 @@ public class TourController {
 
 
     /**
+     * @param user
+     * @param form
+     * @return ApiResponse
      * @eo.name createTour
      * @eo.url /create
      * @eo.method post
      * @eo.request-type json
-     * @param user
-     * @param form
-     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<TourDTO> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
@@ -51,18 +51,18 @@ public class TourController {
 
 
     /**
+     * @param user
+     * @param updatedTourInfo
+     * @return ApiResponse
      * @eo.name updateTour
      * @eo.url /
      * @eo.method put
      * @eo.request-type json
-     * @param user
-     * @param updatedTourInfo
-     * @return ApiResponse
      */
     @PutMapping
     ApiResponse<TourDTO> updateTour(@RequestAttribute("user") User user, @RequestBody TourService.UpdateTourForm updatedTourInfo) {
         try {
-            return ApiResponse.success("Tour information updated", tourService.updateTour( updatedTourInfo).toDTO());
+            return ApiResponse.success("Tour information updated", tourService.updateTour(updatedTourInfo).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -70,11 +70,11 @@ public class TourController {
     }
 
     /**
+     * @return ApiResponse
      * @eo.name getAllTour
      * @eo.url /all
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/all")
@@ -83,12 +83,12 @@ public class TourController {
     }
 
     /**
+     * @param id
+     * @return ApiResponse
      * @eo.name getTourById
      * @eo.url /
      * @eo.method get
      * @eo.request-type formdata
-     * @param id
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping
@@ -98,6 +98,11 @@ public class TourController {
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
+    }
+
+    @GetMapping("/user")
+    ApiResponse<List<TourDTO>> getToursByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Get tour", TourDTO.toListDTO(tourService.getToursByUser(user)));
     }
 }
 

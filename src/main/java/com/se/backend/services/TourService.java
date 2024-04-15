@@ -103,6 +103,10 @@ public class TourService {
         return tourRepository.save(existingTour);
     }
 
+    public List<Tour> getToursByUser(User user) {
+        return tourRepository.findAllByUser(user);
+    }
+
     @Getter
     public static class CreateTourForm {
 
