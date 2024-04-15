@@ -80,8 +80,27 @@ public class TourHighlightService {
     }
 
     public void deleteTourHighlight(Long tourHighlightId) throws ResourceException {
-        tourHighlightRepository.delete(getTourHighlightById(tourHighlightId));
+        TourHighlight highlightToDelete = getTourHighlightById(tourHighlightId);
+
+        // Unlink the highlight from any tours
+        List<Tour> associatedTours = highlightToDelete.getTours();
+        if (associatedTours != null) {
+            for (Tour tour : associatedTours) {
+                tour.getHighlights().remove(highlightToDelete);
+                tourRepository.save(tour); // Update each tour after removing the highlight
+            }
+        }
+
+        // Delete associated images if needed
+        List<TourImage> associatedImages = tourImageRepository.findByTourHighlight(highlightToDelete);
+        if (associatedImages != null) {
+            tourImageRepository.deleteAll(associatedImages); // Or handle them according to your policy
+        }
+
+        // Now it is safe to delete the highlight
+        tourHighlightRepository.delete(highlightToDelete);
     }
+
 
     public void uploadAndFlushImage(TourHighlight tourHighlight, Tour tour, String imageUrl) {
         String filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);

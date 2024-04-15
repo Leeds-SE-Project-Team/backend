@@ -26,7 +26,7 @@ public class TourHighlight {
     @Column(nullable = false)
     private String location;
 
-    @ManyToMany(mappedBy = "highlights", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "highlights")
     private List<Tour> tours;// 关联到Trip实体
 
     @OneToMany(mappedBy = "tourHighlight", cascade = CascadeType.ALL)
