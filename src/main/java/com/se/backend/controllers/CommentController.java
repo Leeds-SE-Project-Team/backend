@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @eo.api-type http
+ * @eo.groupName Comment
+ * @eo.path /comments
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/comments")
@@ -25,11 +31,15 @@ public class CommentController {
 
     }
 
+
     /**
-     * 创建行程
-     *
-     * @param form 行程创建表单
-     * @return ApiResponse<Void>
+     * @eo.name createComment
+     * @eo.url /create
+     * @eo.method post
+     * @eo.request-type json
+     * @param user
+     * @param form
+     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<Void> createComment(@RequestAttribute("user") User user, @RequestBody CommentService.CreateCommentForm form) {
@@ -41,11 +51,14 @@ public class CommentController {
         return ApiResponse.success("Post comment succeed");
     }
 
+
     /**
-     * 删除评论信息
-     *
-     * @param id 评论ID
-     * @return ApiResponse<Void>
+     * @eo.name removeComment
+     * @eo.url /
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> removeComment(@RequestParam(required = false) Long id) {
@@ -57,19 +70,29 @@ public class CommentController {
         }
     }
 
-//    @IgnoreToken
-//    @GetMapping(value = "/all")
-//    ApiResponse<String> getAllComment() {
-//        return ApiResponse.success("Get all comments", commentService.getAllComments().toString());
-//    }
 
+    /**
+     * @eo.name getAllComment
+     * @eo.url /all
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping(value = "/all")
     ApiResponse<List<CommentDTO>> getAllComment() {
         return ApiResponse.success("Get all comments", CommentDTO.toListDTO(commentService.getAllComments()).stream().filter(c -> Objects.isNull(c.getParentId())).toList());
     }
 
-    //by_tour_id?
+
+    /**
+     * @eo.name getCommentById
+     * @eo.url /by_tour_id
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping(value = "/by_tour_id")
     ApiResponse<List<CommentDTO>> getCommentById(@RequestParam Long id) {

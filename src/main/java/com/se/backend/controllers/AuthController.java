@@ -10,6 +10,12 @@ import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * @eo.api-type http
+ * @eo.groupName Auth
+ * @eo.path /auth
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/auth")
@@ -22,6 +28,14 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
+    /**
+     * @eo.name pwdLogin
+     * @eo.url /pwd
+     * @eo.method post
+     * @eo.request-type json
+     * @param req
+     * @return ApiResponse
+     */
     @IgnoreToken
     @PostMapping("/pwd")
     public ApiResponse<String> pwdLogin(@RequestBody ReqLoginForm req) {
@@ -36,7 +50,7 @@ public class AuthController {
         return ApiResponse.success("login succeed", resData);
     }
 
-    // Login request form from client
+
     @Getter
     public static class ReqLoginForm {
         String email;

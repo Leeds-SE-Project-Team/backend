@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @eo.api-type http
+ * @eo.groupName TourHighlight
+ * @eo.path /tour_highlight
+ */
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/tour_highlight")
@@ -25,11 +31,14 @@ public class TourHighlightController {
 
     }
 
+
     /**
-     * 创建行程
-     *
-     * @param form 行程创建表单
-     * @return ApiResponse<Void>
+     * @eo.name createTourHighlight
+     * @eo.url /create
+     * @eo.method post
+     * @eo.request-type json
+     * @param form
+     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<Void> createTourHighlight(@RequestBody TourHighlightService.CreateTourHighlightForm form) {
@@ -42,6 +51,14 @@ public class TourHighlightController {
     }
 
 
+    /**
+     * @eo.name updateTourHighlight
+     * @eo.url /
+     * @eo.method put
+     * @eo.request-type json
+     * @param updatedTourHighlightInfo
+     * @return ApiResponse
+     */
     @PutMapping
     ApiResponse<TourHighlightDTO> updateTourHighlight(@RequestBody TourHighlightService.UpdateTourHighlightForm updatedTourHighlightInfo) {
         try {
@@ -51,12 +68,27 @@ public class TourHighlightController {
         }
     }
 
+    /**
+     * @eo.name getAllTourHighlights
+     * @eo.url /all
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
+     */
     @IgnoreToken
     @GetMapping(value = "/all")
     ApiResponse<List<TourHighlightDTO>> getAllTourHighlights() {
         return ApiResponse.success("Get all tour highlights", TourHighlightDTO.toListDTO(tourHighlightService.getAllTourHighlights()));
     }
 
+    /**
+     * @eo.name deleteTourHighlight
+     * @eo.url /
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
+     */
     @DeleteMapping
     ApiResponse<Void> deleteTourHighlight(@RequestParam(required = false) Long id) {
         // TODO: 本人身份验证
