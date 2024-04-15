@@ -1,5 +1,6 @@
 package com.se.backend.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.PON;
@@ -23,9 +24,9 @@ import static com.se.backend.config.GlobalConfig.getStaticUrl;
 import static com.se.backend.exceptions.AuthException.ErrorType.TOKEN_EXPIRED;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_COLLECTION_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.se.backend.utils.FileUtil.saveFileToLocal;
 import static com.se.backend.utils.FileUtil.stringToInputStream;
+
 @Service
 public class TourService {
     private final TourRepository tourRepository;
@@ -69,6 +70,7 @@ public class TourService {
             // TODO: Form validation exception
         }
         newTour.setMapUrl("temp");
+        newTour.setDataUrl("temp");
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
 //        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
         flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
@@ -76,7 +78,9 @@ public class TourService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonContent = objectMapper.writeValueAsString(form.result);
-            saveFileToLocal(stringToInputStream(jsonContent), "/tour/" + flushedTour.getId() + "/map.json");
+            String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
+            saveFileToLocal(stringToInputStream(jsonContent), relativePath);
+            newTour.setDataUrl(getStaticUrl(relativePath));
 //            Files.write(Paths.get("/path/to/your/directory/tour_" + flushedTour.getId() + ".json"), jsonContent.getBytes());
         } catch (IOException e) {
             System.err.println("Error writing JSON to file: " + e.getMessage());
@@ -88,7 +92,7 @@ public class TourService {
         return tourRepository.saveAndFlush(flushedTour);
     }
 
-    public Tour updateTour( UpdateTourForm updatedTourInfo) throws ResourceException {
+    public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
         Tour existingTour = getTourById(updatedTourInfo.tourId);
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());

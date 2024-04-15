@@ -58,11 +58,11 @@ public class UserController {
 
 
     /**
+     * @return ApiResponse
      * @eo.name getAllUsers
      * @eo.url /all
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @AdminToken
     @RequestMapping(value = "/all", method = RequestMethod.GET)
@@ -72,12 +72,12 @@ public class UserController {
 
 
     /**
+     * @param req
+     * @return ApiResponse {@value {1}}
      * @eo.name addUser
      * @eo.url /signup
      * @eo.method post
      * @eo.request-type json
-     * @param req
-     * @return ApiResponse {@value {1}}
      */
     @IgnoreToken
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
@@ -104,13 +104,13 @@ public class UserController {
     }
 
     /**
+     * @param id
+     * @param email
+     * @return ApiResponse
      * @eo.name isUserExist
      * @eo.url /exist
      * @eo.method get
      * @eo.request-type formdata
-     * @param id
-     * @param email
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/exist")
@@ -130,13 +130,13 @@ public class UserController {
     }
 
     /**
+     * @param id
+     * @param email
+     * @return ApiResponse
      * @eo.name getSingleUser
      * @eo.url /
      * @eo.method get
      * @eo.request-type formdata
-     * @param id
-     * @param email
-     * @return ApiResponse
      */
     @AdminToken
     @GetMapping
@@ -154,13 +154,13 @@ public class UserController {
     }
 
     /**
+     * @param user
+     * @param updatedInfo
+     * @return ApiResponse
      * @eo.name updateUser
      * @eo.url /
      * @eo.method put
      * @eo.request-type json
-     * @param user
-     * @param updatedInfo
-     * @return ApiResponse
      */
     @PutMapping
     ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
@@ -172,12 +172,12 @@ public class UserController {
     }
 
     /**
+     * @param user
+     * @return ApiResponse
      * @eo.name removeUser
      * @eo.url /
      * @eo.method delete
      * @eo.request-type formdata
-     * @param user
-     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> removeUser(@RequestAttribute("user") User user) {
@@ -190,14 +190,14 @@ public class UserController {
     }
 
     /**
-     * @eo.name uploadFile
-     * @eo.url /upload
-     * @eo.method post
-     * @eo.request-type formdata
      * @param file
      * @param uploadURL
      * @param filename
      * @return ApiResponse
+     * @eo.name uploadFile
+     * @eo.url /upload
+     * @eo.method post
+     * @eo.request-type formdata
      */
     @PostMapping("/upload")
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL, @RequestParam(value = "filename", required = false) String filename) {
@@ -223,12 +223,12 @@ public class UserController {
     }
 
     /**
+     * @param token
+     * @return ApiResponse
      * @eo.name validateToken
      * @eo.url /token/{value}
      * @eo.method get
      * @eo.request-type formdata
-     * @param token
-     * @return ApiResponse
      */
     @GetMapping("/token/{value}")
     public ApiResponse<UserDTO> validateToken(@PathVariable("value") String token) {
