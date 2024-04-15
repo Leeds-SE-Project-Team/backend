@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Tour {
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "tour_highlight_r", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
     List<TourHighlight> highlights;
     @Id
