@@ -33,12 +33,12 @@ public class TourHighlightController {
 
 
     /**
+     * @param form
+     * @return ApiResponse
      * @eo.name createTourHighlight
      * @eo.url /create
      * @eo.method post
      * @eo.request-type json
-     * @param form
-     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<Void> createTourHighlight(@RequestBody TourHighlightService.CreateTourHighlightForm form) {
@@ -52,12 +52,12 @@ public class TourHighlightController {
 
 
     /**
+     * @param updatedTourHighlightInfo
+     * @return ApiResponse
      * @eo.name updateTourHighlight
      * @eo.url /
      * @eo.method put
      * @eo.request-type json
-     * @param updatedTourHighlightInfo
-     * @return ApiResponse
      */
     @PutMapping
     ApiResponse<TourHighlightDTO> updateTourHighlight(@RequestBody TourHighlightService.UpdateTourHighlightForm updatedTourHighlightInfo) {
@@ -69,11 +69,11 @@ public class TourHighlightController {
     }
 
     /**
+     * @return ApiResponse
      * @eo.name getAllTourHighlights
      * @eo.url /all
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/all")
@@ -81,13 +81,24 @@ public class TourHighlightController {
         return ApiResponse.success("Get all tour highlights", TourHighlightDTO.toListDTO(tourHighlightService.getAllTourHighlights()));
     }
 
+
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<TourHighlightDTO> getTourHighlightById(@RequestParam(required = false) Long id) {
+        try {
+            return ApiResponse.success("Get tour highlight", tourHighlightService.getTourHighlightById(id).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
     /**
+     * @param id
+     * @return ApiResponse
      * @eo.name deleteTourHighlight
      * @eo.url /
      * @eo.method delete
      * @eo.request-type formdata
-     * @param id
-     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> deleteTourHighlight(@RequestParam(required = false) Long id) {

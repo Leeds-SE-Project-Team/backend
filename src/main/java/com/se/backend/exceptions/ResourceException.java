@@ -14,7 +14,7 @@ public class ResourceException extends Exception {
 
 
         TOUR_SPOT_NOT_FOUND("Tour spot not found"),
-        TOUR_Highlight_NOT_FOUND("Tour spot not found"),
+        TOUR_Highlight_NOT_FOUND("Tour highlight not found"),
 
         USER_NOT_FOUND("User not found"),
         COMMENT_NOT_FOUND("Comment not found");
