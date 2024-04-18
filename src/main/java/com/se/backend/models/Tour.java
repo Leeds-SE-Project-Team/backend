@@ -56,6 +56,7 @@ public class Tour {
         return new TourDTO(this);
     }
 
+    @Getter
     public enum TourType {
         WALK("walk"), RUNNING("running"), DRIVE("drive");
 
