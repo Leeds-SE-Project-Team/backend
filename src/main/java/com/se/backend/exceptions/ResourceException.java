@@ -17,7 +17,10 @@ public class ResourceException extends Exception {
         TOUR_Highlight_NOT_FOUND("Tour highlight not found"),
 
         USER_NOT_FOUND("User not found"),
-        COMMENT_NOT_FOUND("Comment not found");
+        COMMENT_NOT_FOUND("Comment not found"),
+
+        GROUP_NOT_FOUND("Group not found"),
+        GROUP_COLLECTION_NOT_FOUND("Group collection not found");
 
 
         private final String message;
