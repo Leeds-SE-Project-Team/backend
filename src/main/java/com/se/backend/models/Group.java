@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Group {
-    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "groups")
     List<User> members;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
