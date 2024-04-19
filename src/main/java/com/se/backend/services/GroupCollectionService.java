@@ -3,7 +3,6 @@ package com.se.backend.services;
 
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.GroupCollection;
-import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
 import com.se.backend.models.Group;
 import com.se.backend.repositories.GroupCollectionRepository;

@@ -5,12 +5,10 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.GroupDTO;
 
-import com.se.backend.projection.TourDTO;
-import com.se.backend.projection.TourHighlightDTO;
-import com.se.backend.services.GroupService;
-import com.se.backend.services.TourHighlightService;
 
-import com.se.backend.services.TourService;
+import com.se.backend.services.GroupService;
+
+
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +91,18 @@ public class GroupController {
         return ApiResponse.success("Get all groups", GroupDTO.toListDTO(groupService.getAllGroups()));
     }
 
+    /**
+     * @eo.name getGroupByUser
+     * @eo.url /user
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param user
+     * @return ApiResponse
+     */
+    @GetMapping(value = "/user")
+    ApiResponse<List<GroupDTO>> getGroupByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Group Collections found by user successfully!", GroupDTO.toListDTO(groupService.getGroupByUser(user)));
+    }
 
     /**
      * @eo.name deleteGroup

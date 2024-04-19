@@ -6,7 +6,7 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.*;
 import com.se.backend.repositories.GroupCollectionRepository;
 import com.se.backend.repositories.GroupRepository;
-import com.se.backend.repositories.TourCollectionRepository;
+
 import com.se.backend.repositories.UserRepository;
 
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class GroupService {
     private final UserRepository userRepository;
 
     @Autowired
-    public GroupService(GroupRepository groupRepository, TourCollectionRepository tourCollectionRepository, GroupCollectionRepository groupCollectionRepository, UserRepository userRepository) {
+    public GroupService(GroupRepository groupRepository, GroupCollectionRepository groupCollectionRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
         this.groupCollectionRepository = groupCollectionRepository;
         this.userRepository = userRepository;
@@ -62,7 +62,7 @@ public class GroupService {
         return groupRepository.saveAndFlush(existingGroup);
     }
 
-    public List<Group> getGroupsByUser(User user) {
+    public List<Group> getGroupByUser(User user) {
         return groupRepository.findAllByUser(user);
     }
 
