@@ -4,24 +4,32 @@
 package com.se.backend.services;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
+import com.se.backend.models.Group;
 import com.se.backend.models.User;
+import com.se.backend.repositories.GroupRepository;
 import com.se.backend.repositories.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
 import static com.se.backend.exceptions.AuthException.ErrorType.USER_NOT_FOUND;
+import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, GroupRepository groupRepository) {
         this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
     }
 
 
@@ -53,6 +61,16 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public User addUserToGroup(Long GroupId, Long UserId) throws AuthException, ResourceException {
+        User existingUser = userRepository.findById(UserId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+        // Update the properties of the existing user
+        Group existingGroup = groupRepository.findById(GroupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
+        existingGroup.setMembers((List<User>) existingUser);
+        existingUser.setGroups((List<Group>) existingGroup);
+        groupRepository.save(existingGroup);
+        return userRepository.save(existingUser);
+    }
+
     public void deleteUser(Long userId) throws AuthException {
         userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         userRepository.deleteById(userId);
@@ -74,5 +92,5 @@ public class UserService {
         String nickname;
         String password;
     }
-
+    //update 表单 更新Vip字段完成Vip用户的创建
 }
