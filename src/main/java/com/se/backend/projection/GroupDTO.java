@@ -12,6 +12,7 @@ import java.util.Objects;
 @Setter
 public class GroupDTO {
     Long id;
+    Long leaderId;
     List<UserDTO> members;
     String name;
     String coverUrl;
@@ -20,6 +21,7 @@ public class GroupDTO {
 
     public GroupDTO(Group group) {
         id = group.getId();
+        leaderId = group.getLeaderId();
         members = UserDTO.toListDTO(group.getMembers());
         name = group.getName();
         coverUrl = group.getCoverUrl();
