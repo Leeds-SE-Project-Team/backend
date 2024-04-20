@@ -13,7 +13,6 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.module.ResolutionException;
 import java.util.List;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
@@ -57,6 +56,7 @@ public class UserService {
         existingUser.setAvatar(updatedInfo.getAvatar());
         existingUser.setEmail(updatedInfo.getEmail());
         existingUser.setPassword(updatedInfo.getPassword());
+        existingUser.setType(updatedInfo.getType());
         // Update other properties as needed
         return userRepository.save(existingUser);
     }
@@ -91,6 +91,7 @@ public class UserService {
         String avatar;
         String nickname;
         String password;
+        User.UserType type;
     }
     //update 表单 更新Vip字段完成Vip用户的创建
 }

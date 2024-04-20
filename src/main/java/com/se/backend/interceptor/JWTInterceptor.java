@@ -23,7 +23,7 @@ import java.util.Objects;
 @Slf4j
 public class JWTInterceptor implements HandlerInterceptor {
 
-    String[] apiList = {"/auth", "/comments", "/tour_collection", "/tours", "/tour_spot", "/users"};
+    String[] apiList = {"/auth", "/comments", "/tour_collection", "/tours", "/tour_spot", "/users", "/groups", "/group_collection"};
     @Autowired
     private TokenService tokenService;
     @Autowired

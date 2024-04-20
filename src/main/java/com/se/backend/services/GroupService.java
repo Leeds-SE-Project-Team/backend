@@ -45,13 +45,16 @@ public class GroupService {
     public void createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
         Group newGroup = new Group();
 
-        newGroup.getMembers().add(user);
+        newGroup.setLeader(user);
+        newGroup.setMembers(List.of(user));
         newGroup.setName(form.name);
         newGroup.setDescription(form.description);
         newGroup.setCoverUrl(form.coverUrl);
 
         User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         existingUser.getGroups().add(newGroup);
+
+        groupRepository.saveAndFlush(newGroup);
 
     }
 

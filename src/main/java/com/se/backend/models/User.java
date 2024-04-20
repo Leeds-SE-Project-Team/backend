@@ -34,7 +34,11 @@ public class User {
     @Column(length = 50, nullable = false)
     private String registerTime;
     @Column(length = 50, nullable = false)
+    private User.UserType type; // 添加出行类型字段
+    @Column(length = 50, nullable = false)
     private String latestLoginTime;
+    @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Group> leadingGroups;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -42,8 +46,20 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikes;
 
+
     public UserDTO toDTO() {
         return new UserDTO(this);
+    }
+
+    @Getter
+    public enum UserType {
+        COMMON("common"), VIP("vip"), ADMIN("admin");
+
+        private final String type;
+
+        UserType(String type) {
+            this.type = type;
+        }
     }
 }
 

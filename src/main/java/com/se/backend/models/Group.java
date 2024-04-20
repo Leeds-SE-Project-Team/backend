@@ -18,8 +18,9 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private  Long leaderId;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User leader;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)

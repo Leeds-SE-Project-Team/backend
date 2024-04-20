@@ -21,7 +21,7 @@ public class GroupDTO {
 
     public GroupDTO(Group group) {
         id = group.getId();
-        leaderId = group.getLeaderId();
+        leaderId = group.getLeader().getId();
         members = UserDTO.toListDTO(group.getMembers());
         name = group.getName();
         coverUrl = group.getCoverUrl();

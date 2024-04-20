@@ -15,6 +15,7 @@ public class UserDTO {
     String nickname;
     String email;
     String avatar;
+    int type;
     //    String password;
     String registerTime;
     String latestLoginTime;
@@ -26,6 +27,7 @@ public class UserDTO {
         email = user.getEmail();
         avatar = user.getAvatar();
 //        password = user.getPassword();
+        type = user.getType().ordinal();
         registerTime = user.getRegisterTime();
         latestLoginTime = user.getLatestLoginTime();
     }
