@@ -65,8 +65,8 @@ public class UserService {
         User existingUser = userRepository.findById(UserId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         // Update the properties of the existing user
         Group existingGroup = groupRepository.findById(GroupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
-        existingGroup.setMembers((List<User>) existingUser);
-        existingUser.setGroups((List<Group>) existingGroup);
+        existingGroup.getMembers().add(existingUser);
+        existingUser.getGroups().add(existingGroup);
         groupRepository.save(existingGroup);
         return userRepository.save(existingUser);
     }

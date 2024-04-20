@@ -43,7 +43,8 @@ public class GroupService {
 
     public void createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
         Group newGroup = new Group();
-//        newGroup.setMembers((List<User>) user);
+
+        newGroup.getMembers().add(user);
         newGroup.setName(form.name);
         newGroup.setDescription(form.description);
         newGroup.setCoverUrl(form.coverUrl);
@@ -52,7 +53,7 @@ public class GroupService {
         existingUser.getGroups().add(newGroup);
 
     }
-
+    // need User?
     public Group updateGroup(UpdateGroupForm form) throws ResourceException {
         Group existingGroup=getGroupById(form.groupId);
         existingGroup.setName(form.name);

@@ -64,12 +64,11 @@ public class GroupController {
      * @eo.url /
      * @eo.method put
      * @eo.request-type json
-     * @param user
      * @param updatedGroupInfo
      * @return ApiResponse
      */
     @PutMapping
-    ApiResponse<GroupDTO> updateGroup(@RequestAttribute("user") User user, @RequestBody GroupService.UpdateGroupForm updatedGroupInfo) {
+    ApiResponse<GroupDTO> updateGroup( @RequestBody GroupService.UpdateGroupForm updatedGroupInfo) {
         try {
             return ApiResponse.success("Tour information updated", groupService.updateGroup(updatedGroupInfo).toDTO());
         } catch (ResourceException e) {
