@@ -2,9 +2,8 @@ package com.se.backend.services;
 
 
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.GroupCollection;
-import com.se.backend.models.User;
 import com.se.backend.models.Group;
+import com.se.backend.models.GroupCollection;
 import com.se.backend.repositories.GroupCollectionRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +19,7 @@ public class GroupCollectionService {
     private final GroupCollectionRepository groupCollectionRepository;
 
     @Autowired
-    public GroupCollectionService( GroupCollectionRepository groupCollectionRepository) {
+    public GroupCollectionService(GroupCollectionRepository groupCollectionRepository) {
         this.groupCollectionRepository = groupCollectionRepository;
 
 
@@ -33,9 +32,11 @@ public class GroupCollectionService {
     public List<GroupCollection> getAllGroupCollections() {
         return groupCollectionRepository.findAll();
     }
-    public List<GroupCollection> getGroupCollectionByUser(User user) {
-        return groupCollectionRepository.findAllByUser(user);
-    }
+
+    //    public List<GroupCollection> getGroupCollectionByUser(User user) {
+//        user.getG
+//        return groupCollectionRepository.findAllByUser(user);
+//    }
     public List<GroupCollection> getGroupCollectionByGroup(Group group) {
         return groupCollectionRepository.findAllByGroup(group);
     }

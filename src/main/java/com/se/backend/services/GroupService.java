@@ -3,12 +3,12 @@ package com.se.backend.services;
 
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.*;
+import com.se.backend.models.Group;
+import com.se.backend.models.GroupCollection;
+import com.se.backend.models.User;
 import com.se.backend.repositories.GroupCollectionRepository;
 import com.se.backend.repositories.GroupRepository;
-
 import com.se.backend.repositories.UserRepository;
-
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 
-import static com.se.backend.exceptions.ResourceException.ErrorType.*;
+import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
+import static com.se.backend.exceptions.ResourceException.ErrorType.USER_NOT_FOUND;
 
 
 @Service
@@ -53,9 +54,10 @@ public class GroupService {
         existingUser.getGroups().add(newGroup);
 
     }
+
     // need User?
     public Group updateGroup(UpdateGroupForm form) throws ResourceException {
-        Group existingGroup=getGroupById(form.groupId);
+        Group existingGroup = getGroupById(form.groupId);
         existingGroup.setName(form.name);
         existingGroup.setDescription(form.description);
         existingGroup.setCoverUrl(form.coverUrl);
@@ -64,7 +66,8 @@ public class GroupService {
     }
 
     public List<Group> getGroupByUser(User user) {
-        return groupRepository.findAllByUser(user);
+        return user.getGroups();
+//        return groupRepository.findAllByUser(user);
     }
 
     public void deleteGroup(Long groupId) throws ResourceException {
@@ -103,7 +106,7 @@ public class GroupService {
     @Getter
     public static class UpdateGroupForm extends CreateGroupForm {
         Long groupId;
-         }
+    }
     //CreateGroupCollection
     //AddUserToGroup
     //修改tourCollection get请求   get group collection
