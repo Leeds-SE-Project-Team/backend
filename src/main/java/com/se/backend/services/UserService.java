@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
 import static com.se.backend.exceptions.AuthException.ErrorType.USER_NOT_FOUND;
@@ -51,13 +52,22 @@ public class UserService {
 
     public User updateUser(Long id, ReqUpdateForm updatedInfo) throws AuthException {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
-        // Update the properties of the existing user
+
+        // 验证旧密码，仅当用户想要更改密码时
+        if (Objects.nonNull(updatedInfo.getOldPassword()) && !updatedInfo.getOldPassword().isEmpty()) {
+            if (!existingUser.getPassword().equals(updatedInfo.getOldPassword())) {
+                throw new AuthException(PASSWORD_NOT_MATCH);
+            }
+            // 更新密码
+            existingUser.setPassword(updatedInfo.getNewPassword());
+        }
+
+        // 更新其他属性
         existingUser.setNickname(updatedInfo.getNickname());
         existingUser.setAvatar(updatedInfo.getAvatar());
         existingUser.setEmail(updatedInfo.getEmail());
-        existingUser.setPassword(updatedInfo.getPassword());
         existingUser.setType(updatedInfo.getType());
-        // Update other properties as needed
+
         return userRepository.save(existingUser);
     }
 
@@ -84,13 +94,15 @@ public class UserService {
         return targetUser;
     }
 
+
     // Update request form from client
     @Getter
     public static class ReqUpdateForm {
         String email;
         String avatar;
         String nickname;
-        String password;
+        String oldPassword;
+        String newPassword;
         User.UserType type;
     }
     //update 表单 更新Vip字段完成Vip用户的创建
