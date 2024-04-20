@@ -54,7 +54,7 @@ public class TourService {
         newTour.setType(form.type);
         newTour.setCreateTime(TimeUtil.getCurrentTimeString());
         newTour.setUser(user);
-        newTour.setPons(form.pons);
+//        newTour.setPons(form.pons);
         newTour.setStartLocation(form.startLocation);
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
@@ -74,6 +74,14 @@ public class TourService {
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
 //        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
         flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+        flushedTour.setPons(form.pons);//假设当Tour执行完Save后PON可以进行绑定
+
+        //循环将Pon绑定并创建数据
+//        PON newPon = new PON();
+//        newPon.setTour(flushedTour);
+//        newPon.setName(form.pons.name);
+//        newPon.setName(form.pons.location);
+//        newPon.setName(form.pons.sequence);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
