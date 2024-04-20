@@ -1,5 +1,6 @@
 package com.se.backend.controllers;
 
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.TourCollectionDTO;
 import com.se.backend.services.TourCollectionService;
@@ -31,13 +32,13 @@ public class TourCollectionController {
 
 
     /**
+     * @param user
+     * @param form
+     * @return ApiResponse
      * @eo.name createTourCollection
      * @eo.url /create
      * @eo.method post
      * @eo.request-type json
-     * @param user
-     * @param form
-     * @return ApiResponse
      */
     @PostMapping(value = "/create")
     ApiResponse<Void> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
@@ -46,11 +47,11 @@ public class TourCollectionController {
     }
 
     /**
+     * @return ApiResponse
      * @eo.name getAllTourCollection
      * @eo.url /all
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/all")
@@ -59,16 +60,26 @@ public class TourCollectionController {
     }
 
     /**
+     * @param user
+     * @return ApiResponse
      * @eo.name getTourCollectionByUserId
      * @eo.url /user
      * @eo.method get
      * @eo.request-type formdata
-     * @param user
-     * @return ApiResponse
      */
     @GetMapping(value = "/user")
     ApiResponse<List<TourCollectionDTO>> getTourCollectionByUserId(@RequestAttribute("user") User user) {
         return ApiResponse.success("Tour Collections found by user successfully!", TourCollectionDTO.toListDTO(tourCollectionService.getTourCollectionByUser(user)));
+    }
+
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<TourCollectionDTO> getTourCollectionById(@RequestParam Long id) {
+        try {
+            return ApiResponse.success("Get tour", tourCollectionService.getTourCollectionById(id).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 
 
