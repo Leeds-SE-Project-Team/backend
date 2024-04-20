@@ -171,6 +171,15 @@ public class UserController {
         }
     }
 
+    @PutMapping
+    ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
+        try {
+            return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
+        } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
     /**
      * @param user
      * @return ApiResponse

@@ -71,6 +71,13 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public User updateUserType(Long id, ReqUpdateForm updatedInfo) throws AuthException {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+
+        existingUser.setType(updatedInfo.getType());
+        return userRepository.save(existingUser);
+    }
+
     public User addUserToGroup(Long GroupId, Long UserId) throws AuthException, ResourceException {
         User existingUser = userRepository.findById(UserId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         // Update the properties of the existing user
