@@ -3,6 +3,7 @@ package com.se.backend.controllers;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Group;
 import com.se.backend.projection.GroupCollectionDTO;
+import com.se.backend.projection.TourDTO;
 import com.se.backend.services.GroupCollectionService;
 import com.se.backend.services.GroupService;
 import com.se.backend.utils.ApiResponse;
@@ -89,6 +90,16 @@ public class GroupCollectionController {
     ApiResponse<List<GroupCollectionDTO>> getGroupCollectionByGroup(@RequestParam(required = false) Long id) {
         try {
             return ApiResponse.success("Group Collections found by group successfully!", GroupCollectionDTO.toListDTO(groupCollectionService.getGroupCollectionByGroup(groupService.getGroupById(id))));
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<GroupCollectionDTO> getGroupCollectionById(@RequestParam Long id) {
+        try {
+            return ApiResponse.success("Get tour", groupCollectionService.getGroupCollectionById(id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
