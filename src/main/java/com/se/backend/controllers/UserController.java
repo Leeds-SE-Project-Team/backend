@@ -92,6 +92,7 @@ public class UserController {
                 newUser.setAvatar(User.DEFAULT_AVATAR);
                 newUser.setEmail(req.email);
                 newUser.setPassword(req.password);
+
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 newUser.setType(User.UserType.COMMON);
@@ -159,7 +160,7 @@ public class UserController {
      * @param updatedInfo
      * @return ApiResponse
      * @eo.name updateUser
-     * @eo.url /
+     * @eo.url
      * @eo.method put
      * @eo.request-type json
      */
