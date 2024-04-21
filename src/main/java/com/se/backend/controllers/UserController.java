@@ -92,7 +92,7 @@ public class UserController {
                 newUser.setAvatar(User.DEFAULT_AVATAR);
                 newUser.setEmail(req.email);
                 newUser.setPassword(req.password);
-                newUser.setType(User.UserType.COMMON);
+
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 newUser.setType(User.UserType.COMMON);
@@ -275,6 +275,5 @@ public class UserController {
          * password
          */
         String password;
-        User.UserType type;
     }
 }
