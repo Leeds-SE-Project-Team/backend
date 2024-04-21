@@ -60,6 +60,7 @@ public class TourService {
         newTour.setStartLocation(form.startLocation);
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
+        newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
 
         if (Objects.nonNull(form.tourCollectionId)) {
             TourCollection existingTourCollection = tourCollectionRepository.findById(form.tourCollectionId).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND));
@@ -109,6 +110,7 @@ public class TourService {
         existingTour.setType(updatedTourInfo.getType());
         existingTour.setPons(updatedTourInfo.getPons());
         existingTour.setTitle(updatedTourInfo.getTitle());
+        existingTour.setStatus(updatedTourInfo.status);
         existingTour.setTourCollection(tourCollectionRepository.findById(updatedTourInfo.getTourCollectionId()).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND)));
         return tourRepository.save(existingTour);
     }
@@ -132,7 +134,6 @@ public class TourService {
 
     @Getter
     public static class CreateTourForm {
-
         Long tourId;
         String startLocation;
         String endLocation;
@@ -146,6 +147,7 @@ public class TourService {
 
     @Getter
     public static class UpdateTourForm extends CreateTourForm {
+        Tour.TourStatus status;
     }
 
     @Getter

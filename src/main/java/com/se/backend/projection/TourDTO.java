@@ -24,6 +24,7 @@ public class TourDTO {
     List<TourHighlightDTO> tourHighlightList;
     List<TourSpotDTO> tourSpotList;
     UserDTO user;
+    int status;
 
     public TourDTO(Tour tour) {
         id = tour.getId();
@@ -39,6 +40,7 @@ public class TourDTO {
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
+        status = tour.getStatus().ordinal();
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
