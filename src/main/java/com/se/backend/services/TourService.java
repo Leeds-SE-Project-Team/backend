@@ -7,6 +7,7 @@ import com.se.backend.models.PON;
 import com.se.backend.models.Tour;
 import com.se.backend.models.TourCollection;
 import com.se.backend.models.User;
+import com.se.backend.repositories.PONRepository;
 import com.se.backend.repositories.TourCollectionRepository;
 import com.se.backend.repositories.TourRepository;
 import com.se.backend.repositories.UserRepository;
@@ -33,13 +34,14 @@ import static com.se.backend.utils.FileUtil.stringToInputStream;
 public class TourService {
     private final TourRepository tourRepository;
     private final TourCollectionRepository tourCollectionRepository;
-    private final UserRepository userRepository;
+    private final PONRepository ponRepository;
 
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
-        this.userRepository = userRepository;
+        this.ponRepository = ponRepository;
+//        this.userRepository = userRepository;
     }
 
     public List<Tour> getAllTours() {
@@ -77,15 +79,20 @@ public class TourService {
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
 //        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
         flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
-        flushedTour.setPons(form.pons);//假设当Tour执行完Save后PON可以进行绑定
 
-        //循环将Pon绑定并创建数据
-//        PON newPon = new PON();
-//        newPon.setTour(flushedTour);
-//        newPon.setName(form.pons.name);
-//        newPon.setName(form.pons.location);
-//        newPon.setName(form.pons.sequence);
+//        flushedTour.setPons(form.pons);//假设当Tour执行完Save后PON可以进行绑定
+// Bind PONs to the tour
+        List<PON> attachedPONs = new ArrayList<>();
+        for (PON pon : form.pons) {
+            PON newPon = new PON();
+            newPon.setTour(flushedTour);
+            newPon.setName(pon.getName());
+            newPon.setLocation(pon.getLocation());
+            newPon.setSequence(pon.getSequence());
+            attachedPONs.add(ponRepository.save(newPon)); // Save each PON
+        }
 
+        flushedTour.setPons(attachedPONs);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonContent = objectMapper.writeValueAsString(form.result);
