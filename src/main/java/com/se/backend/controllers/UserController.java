@@ -95,6 +95,7 @@ public class UserController {
                 newUser.setType(User.UserType.COMMON);
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
+                newUser.setType(User.UserType.COMMON);
                 // 用户注册时创建一个默认的 Tour Collection
                 tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "http://walcraft.wmzspace.space/static/tour/example/1.png", "Default Collection"));
                 return ApiResponse.success("Signup succeed!");
@@ -173,13 +174,13 @@ public class UserController {
     }
 
     /**
+     * @param user
+     * @param updatedInfo
+     * @return ApiResponse
      * @eo.name updateUserType
      * @eo.url /type
      * @eo.method put
      * @eo.request-type json
-     * @param user
-     * @param updatedInfo
-     * @return ApiResponse
      */
     @PutMapping(value = "/type")
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
