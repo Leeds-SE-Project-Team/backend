@@ -17,8 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.se.backend.config.GlobalConfig.getStaticUrl;
 import static com.se.backend.exceptions.AuthException.ErrorType.TOKEN_EXPIRED;
@@ -134,4 +139,28 @@ public class TourService {
     public static class UpdateTourForm extends CreateTourForm {
     }
 
+    @Getter
+    public static class ContentDataRecord {
+        String date;
+        Long number;
+        public ContentDataRecord(String date, Long number) {
+            this.date = date;
+            this.number = number;
+        }
+    }
+    public List<ContentDataRecord> getWeeklyTour() {
+        List<Tour> allTours = tourRepository.findAll();
+        LocalDate sevenDaysAgo = LocalDate.now().minusDays(7);
+        // Convert createTime from String to LocalDate and filter the last 7 days
+        Map<LocalDate, Long> dateCounts = allTours.stream()
+                .map(tour -> LocalDate.parse(tour.getCreateTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .filter(date -> date.isAfter(sevenDaysAgo))
+                .collect(Collectors.groupingBy(date -> date, Collectors.counting()));
+        // Convert map to list of ContentDataRecord
+        List<ContentDataRecord> records = new ArrayList<>();
+        dateCounts.forEach((date, count) -> records.add(new ContentDataRecord(date.toString(), count)));
+        // Sort records by date
+//        records.sort((record1, record2) -> record1.getDate().compareTo(record2.getDate()));
+        return records;
+    }
 }
