@@ -104,6 +104,12 @@ public class TourController {
     ApiResponse<List<TourDTO>> getToursByUser(@RequestAttribute("user") User user) {
         return ApiResponse.success("Get tour", TourDTO.toListDTO(tourService.getToursByUser(user)));
     }
+    @IgnoreToken
+    @GetMapping(value = "/weekly")
+    ApiResponse<List<TourService.ContentDataRecord>> getWeeklyTour() {
+        return ApiResponse.success("Get tours weekly data", tourService.getWeeklyTour());
+    }
+
 }
 
 
