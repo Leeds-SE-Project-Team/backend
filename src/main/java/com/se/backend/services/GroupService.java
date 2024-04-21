@@ -70,7 +70,6 @@ public class GroupService {
 
     public List<Group> getGroupByUser(User user) {
         return user.getGroups();
-//        return groupRepository.findAllByUser(user);
     }
 
     public void deleteGroup(Long groupId) throws ResourceException {
