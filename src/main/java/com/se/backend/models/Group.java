@@ -27,7 +27,7 @@ public class Group {
     private String coverUrl;
     @Column
     private String description;
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<GroupCollection> groupCollections;
 
     public GroupDTO toDTO() {
