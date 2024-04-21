@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Group {
-    @ManyToMany(mappedBy = "groups")
+    @ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER)
     List<User> members;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,7 +12,7 @@ import java.util.Objects;
 @Setter
 public class GroupCollectionDTO {
     Long id;
-    GroupDTO group;
+    Long groupId;
     String title;
     String name;
     String coverUrl;
@@ -21,7 +21,7 @@ public class GroupCollectionDTO {
 
     public GroupCollectionDTO(GroupCollection groupCollection) {
         id = groupCollection.getId();
-        group = groupCollection.getGroup().toDTO();
+        groupId = groupCollection.getGroup().getId();
         title = groupCollection.getTitle();
         name = groupCollection.getName();
         coverUrl = groupCollection.getCoverUrl();
