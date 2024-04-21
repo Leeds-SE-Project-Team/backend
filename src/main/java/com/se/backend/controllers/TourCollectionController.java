@@ -72,6 +72,14 @@ public class TourCollectionController {
         return ApiResponse.success("Tour Collections found by user successfully!", TourCollectionDTO.toListDTO(tourCollectionService.getTourCollectionByUser(user)));
     }
 
+    /**
+     * @param id
+     * @return ApiResponse
+     * @eo.name getTourCollectionById
+     * @eo.url /
+     * @eo.method get
+     * @eo.request-type formdata
+     */
     @IgnoreToken
     @GetMapping
     ApiResponse<TourCollectionDTO> getTourCollectionById(@RequestParam Long id) {

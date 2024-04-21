@@ -82,6 +82,14 @@ public class TourHighlightController {
     }
 
 
+    /**
+     * @param id
+     * @return ApiResponse
+     * @eo.name getTourHighlightById
+     * @eo.url
+     * @eo.method get
+     * @eo.request-type formdata
+     */
     @IgnoreToken
     @GetMapping
     ApiResponse<TourHighlightDTO> getTourHighlightById(@RequestParam(required = false) Long id) {
