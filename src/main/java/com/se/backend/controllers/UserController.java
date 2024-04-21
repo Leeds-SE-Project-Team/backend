@@ -64,7 +64,6 @@ public class UserController {
      * @eo.method get
      * @eo.request-type formdata
      */
-    @AdminToken
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ApiResponse<List<UserDTO>> getAllUsers() {
         return ApiResponse.success("Get all users", UserDTO.toListDTO(userService.getAllUsers()));
