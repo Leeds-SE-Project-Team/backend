@@ -171,7 +171,16 @@ public class UserController {
         }
     }
 
-    @PutMapping
+    /**
+     * @eo.name updateUserType
+     * @eo.url /type
+     * @eo.method put
+     * @eo.request-type json
+     * @param user
+     * @param updatedInfo
+     * @return ApiResponse
+     */
+    @PutMapping(value = "/type")
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
