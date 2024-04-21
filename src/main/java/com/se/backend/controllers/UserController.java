@@ -92,6 +92,7 @@ public class UserController {
                 newUser.setAvatar(User.DEFAULT_AVATAR);
                 newUser.setEmail(req.email);
                 newUser.setPassword(req.password);
+                newUser.setType(User.UserType.COMMON);
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 // 用户注册时创建一个默认的 Tour Collection
@@ -158,7 +159,7 @@ public class UserController {
      * @param updatedInfo
      * @return ApiResponse
      * @eo.name updateUser
-     * @eo.url /
+     * @eo.url
      * @eo.method put
      * @eo.request-type json
      */
@@ -273,5 +274,6 @@ public class UserController {
          * password
          */
         String password;
+        User.UserType type;
     }
 }
