@@ -1,5 +1,6 @@
 package com.se.backend.controllers;
 
+import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Group;
 import com.se.backend.projection.GroupCollectionDTO;
@@ -11,6 +12,7 @@ import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -37,7 +39,6 @@ public class GroupCollectionController {
 
 
     /**
-     * @param group
      * @param form
      * @return ApiResponse
      * @eo.name createGroupCollection
@@ -46,9 +47,13 @@ public class GroupCollectionController {
      * @eo.request-type json
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createGroupCollection(@RequestBody Group group, GroupCollectionService.CreateGroupCollectionForm form) {
-        groupCollectionService.createGroupCollection(group, form);
-        return ApiResponse.success("Create tour collection succeed");
+    ApiResponse<GroupCollectionDTO> createGroupCollection(@RequestBody GroupCollectionService.CreateGroupCollectionForm form) {
+        try {
+            return ApiResponse.success("Create tour succeed", groupCollectionService.createGroupCollection(form).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+
     }
 
 
