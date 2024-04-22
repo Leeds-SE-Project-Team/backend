@@ -18,6 +18,7 @@ public class TourDTO {
     String mapUrl;
     String dataUrl;
     int type;
+    int state;
     String createTime;
     List<PONDTO> pons;
     Long tourCollectionId;
@@ -35,6 +36,7 @@ public class TourDTO {
         mapUrl = tour.getMapUrl();
         dataUrl = tour.getDataUrl();
         type = tour.getType().ordinal();
+        state = tour.getState().ordinal();
         pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());

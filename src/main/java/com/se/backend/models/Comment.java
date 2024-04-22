@@ -16,13 +16,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(nullable = false)
-    private Tour tour; // 关联到Trip实体
+    private Tour tour; // 移除级联删除，防止删除Comment时影响Tour
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(nullable = false)
-    private User author;
+    private User author;// 移除级联删除，防止删除Comment时影响User
 
     @Column(nullable = false)
     private String content;
@@ -30,12 +30,12 @@ public class Comment {
     @Column(length = 50, nullable = false)
     private String publishTime;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> replies;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> replies; // 仅在移除父评论时删除子评论
 
+    @ManyToOne
     @JoinColumn
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    private Comment parent;
+    private Comment parent; // 没有级联操作，删除子评论不影响父评论
 
     public CommentDTO toDTO() {
         return new CommentDTO(this);
