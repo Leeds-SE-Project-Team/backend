@@ -60,6 +60,7 @@ public class TourService {
         newTour.setStartLocation(form.startLocation);
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
+        newTour.setState(Tour.TourState.UNFINISHED);
         newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
 
         if (Objects.nonNull(form.tourCollectionId)) {
@@ -110,6 +111,7 @@ public class TourService {
         existingTour.setType(updatedTourInfo.getType());
         existingTour.setPons(updatedTourInfo.getPons());
         existingTour.setTitle(updatedTourInfo.getTitle());
+        existingTour.setState(updatedTourInfo.getState());
         existingTour.setStatus(updatedTourInfo.status);
         existingTour.setTourCollection(tourCollectionRepository.findById(updatedTourInfo.getTourCollectionId()).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND)));
         return tourRepository.save(existingTour);
@@ -138,6 +140,7 @@ public class TourService {
         String startLocation;
         String endLocation;
         Tour.TourType type;
+
         // FIXME : create PON structure
         List<PON> pons;
         Long tourCollectionId;
@@ -148,6 +151,7 @@ public class TourService {
     @Getter
     public static class UpdateTourForm extends CreateTourForm {
         Tour.TourStatus status;
+        Tour.TourState state;
     }
 
     @Getter

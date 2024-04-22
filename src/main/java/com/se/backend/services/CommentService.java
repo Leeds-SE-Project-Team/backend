@@ -10,7 +10,9 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,10 +52,23 @@ public class CommentService {
 
     }
 
+    @Transactional
     public void deleteComment(Long commentId) throws ResourceException {
-        commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
-        commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
+
+        // 检查是否为父评论并且有子评论
+        if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
+            // 递归删除所有子评论
+            for (Comment reply : new ArrayList<>(comment.getReplies())) {
+                deleteComment(reply.getId()); // 递归删除每个子评论
+            }
+        }
+
+        // 删除评论本身
+        commentRepository.delete(comment);
     }
+
 
     public List<Comment> getAllComments() {
         return commentRepository.findAll();

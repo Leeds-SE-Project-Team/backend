@@ -30,6 +30,8 @@ public class Tour {
     private String createTime;
     @Column(length = 50, nullable = false)
     private TourType type; // 添加出行类型字段
+    @Column(length = 50, nullable = false)
+    private TourState state; //添加出行状态字段
     @Column(length = 100, nullable = false)
     private String mapUrl;
     @Column(length = 100, nullable = false)
@@ -51,6 +53,8 @@ public class Tour {
     private List<TourSpot> spots;
     @OneToMany(mappedBy = "tour")
     private List<TourImage> tourImages;
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments; // 添加这一行来确保级联删除
 
     public TourDTO toDTO() {
         return new TourDTO(this);
@@ -64,6 +68,17 @@ public class Tour {
 
         TourType(String type) {
             this.type = type;
+        }
+    }
+
+    @Getter
+    public enum TourState {
+        UNFINISHED("unfinished"), FINISHED("finished");
+
+        private final String state;
+
+        TourState(String state) {
+            this.state = state;
         }
     }
 
