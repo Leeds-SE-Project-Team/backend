@@ -10,4 +10,6 @@ import java.util.List;
 public interface TourLikeRepository extends JpaRepository<TourLike, Long>, JpaSpecificationExecutor<TourLike> {
     List<TourLike> findAllByTourId(Long tourId);
     List<TourLike> findAllByUserId(Long userId);
+
+    List<TourLike> findByUserIdAndTourId(Long userId, Long tourId);
 }

@@ -167,6 +167,44 @@ public class TourController {
     }
 
     /**
+     * @eo.name cancelLikeTour
+     * @eo.url /cancel_like
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/cancel_like")
+    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.cancelLikeTour(user.getId(), tourId);
+            return ApiResponse.success("Tour like was cancelled successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @eo.name cancelStarTour
+     * @eo.url /cancel_star
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/cancel_star")
+    ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.cancelStarTour(user.getId(), tourId);
+            return ApiResponse.success("Tour star was cancelled successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
      * @param user
      * @return ApiResponse
      * @eo.name getAllLikedToursByUserId

@@ -168,6 +168,22 @@ public class TourService {
         tourStarRepository.saveAndFlush(NewTourStar);
     }
 
+    public void cancelLikeTour(Long userId, Long tourId) throws ResourceException {
+        List<TourLike> likes = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
+        if (likes.isEmpty()) {
+            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
+        }
+        tourLikeRepository.deleteAll(likes); // Assuming there could be multiple likes which is usually not the case
+    }
+
+    public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
+        List<TourStar> stars = tourStarRepository.findByUserIdAndTourId(userId, tourId);
+        if (stars.isEmpty()) {
+            throw new ResourceException(TOUR_STAR_NOT_FOUND);
+        }
+        tourStarRepository.deleteAll(stars); // Assuming there could be multiple stars which is usually not the case
+    }
+
     public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {
         if (!tourRepository.existsById(userId)) {
             throw new ResourceException(USER_NOT_FOUND);

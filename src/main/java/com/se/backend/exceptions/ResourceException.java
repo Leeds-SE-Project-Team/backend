@@ -20,8 +20,10 @@ public class ResourceException extends Exception {
         COMMENT_NOT_FOUND("Comment not found"),
 
         GROUP_NOT_FOUND("Group not found"),
-        GROUP_COLLECTION_NOT_FOUND("Group collection not found");
+        GROUP_COLLECTION_NOT_FOUND("Group collection not found"),
 
+        TOUR_LIKE_NOT_FOUND("Tour like not found"),
+        TOUR_STAR_NOT_FOUND("Tour star not found");
 
         private final String message;
 

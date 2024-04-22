@@ -11,4 +11,6 @@ import java.util.List;
 public interface TourStarRepository extends JpaRepository<TourStar, Long>, JpaSpecificationExecutor<TourStar> {
     List<TourStar> findAllByTourId(Long tourId);
     List<TourStar> findAllByUserId(Long userId);
+    List<TourStar> findByUserIdAndTourId(Long userId, Long tourId);
+
 }
