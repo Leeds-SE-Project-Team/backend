@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.*;
+import com.se.backend.projection.TourDTO;
+import com.se.backend.projection.UserDTO;
 import com.se.backend.repositories.*;
 import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
@@ -165,6 +167,39 @@ public class TourService {
 
         tourStarRepository.saveAndFlush(NewTourStar);
     }
+
+    public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {
+        if (!tourRepository.existsById(userId)) {
+            throw new ResourceException(USER_NOT_FOUND);
+        }
+        List<TourLike> likes = tourLikeRepository.findAllByUserId(userId);
+        return TourDTO.toListDTO(likes.stream().map(TourLike::getTour).collect(Collectors.toList()));
+    }
+
+    public List<TourDTO> getAllStarredToursByUserId(Long userId) throws ResourceException {
+        if (!tourRepository.existsById(userId)) {
+            throw new ResourceException(USER_NOT_FOUND);
+        }
+        List<TourStar> stars = tourStarRepository.findAllByUserId(userId);
+        return TourDTO.toListDTO(stars.stream().map(TourStar::getTour).collect(Collectors.toList()));
+    }
+
+    public List<UserDTO> getAllUsersByLikedTourId(Long tourId) throws ResourceException {
+        if (!tourRepository.existsById(tourId)) {
+            throw new ResourceException(TOUR_NOT_FOUND);
+        }
+        List<TourLike> likes = tourLikeRepository.findAllByTourId(tourId);
+        return UserDTO.toListDTO(likes.stream().map(TourLike::getUser).distinct().collect(Collectors.toList()));
+    }
+
+    public List<UserDTO> getAllUsersByStarredTourId(Long tourId) throws ResourceException {
+        if (!tourRepository.existsById(tourId)) {
+            throw new ResourceException(TOUR_NOT_FOUND);
+        }
+        List<TourStar> stars = tourStarRepository.findAllByTourId(tourId);
+        return UserDTO.toListDTO(stars.stream().map(TourStar::getUser).distinct().collect(Collectors.toList()));
+    }
+
     @Getter
     public static class CreateTourForm {
         Long tourId;
