@@ -3,14 +3,8 @@ package com.se.backend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.PON;
-import com.se.backend.models.Tour;
-import com.se.backend.models.TourCollection;
-import com.se.backend.models.User;
-import com.se.backend.repositories.PONRepository;
-import com.se.backend.repositories.TourCollectionRepository;
-import com.se.backend.repositories.TourRepository;
-import com.se.backend.repositories.UserRepository;
+import com.se.backend.models.*;
+import com.se.backend.repositories.*;
 import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
@@ -25,8 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.se.backend.config.GlobalConfig.getStaticUrl;
 import static com.se.backend.exceptions.AuthException.ErrorType.TOKEN_EXPIRED;
-import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_COLLECTION_NOT_FOUND;
-import static com.se.backend.exceptions.ResourceException.ErrorType.TOUR_NOT_FOUND;
+import static com.se.backend.exceptions.ResourceException.ErrorType.*;
 import static com.se.backend.utils.FileUtil.saveFileToLocal;
 import static com.se.backend.utils.FileUtil.stringToInputStream;
 
@@ -36,12 +29,20 @@ public class TourService {
     private final TourCollectionRepository tourCollectionRepository;
     private final PONRepository ponRepository;
 
+    private final TourLikeRepository tourLikeRepository;
+    private final TourStarRepository tourStarRepository;
+
+    private final UserRepository userRepository;
+
+
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, TourLikeRepository tourLikeRepository, TourStarRepository tourStarRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
         this.ponRepository = ponRepository;
-//        this.userRepository = userRepository;
+        this.userRepository = userRepository;
+        this.tourLikeRepository = tourLikeRepository;
+        this.tourStarRepository = tourStarRepository;
     }
 
     public List<Tour> getAllTours() {
@@ -141,6 +142,29 @@ public class TourService {
         return records;
     }
 
+    public void likeTour(Long userId, Long tourId) throws ResourceException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+
+        TourLike NewTourLike = new TourLike();
+        NewTourLike.setUser(user);
+        NewTourLike.setTour(tour);
+        NewTourLike.setCreatetTime(TimeUtil.getCurrentTimeString());
+
+        tourLikeRepository.saveAndFlush(NewTourLike);
+    }
+
+    public void starTour(Long userId, Long tourId) throws ResourceException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+
+        TourStar NewTourStar = new TourStar();
+        NewTourStar.setUser(user);
+        NewTourStar.setTour(tour);
+        NewTourStar.setCreatetTime(TimeUtil.getCurrentTimeString());
+
+        tourStarRepository.saveAndFlush(NewTourStar);
+    }
     @Getter
     public static class CreateTourForm {
         Long tourId;

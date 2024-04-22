@@ -49,7 +49,10 @@ public class User {
     private List<Tour> tours;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourCollection> tourCollections;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourLike> tourLikes;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourStar> tourStars;
 
     public UserDTO toDTO() {
         return new UserDTO(this);

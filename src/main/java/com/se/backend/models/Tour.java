@@ -55,7 +55,10 @@ public class Tour {
     private List<TourImage> tourImages;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 添加这一行来确保级联删除
-
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourLike> likes;
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourStar> stars;
     public TourDTO toDTO() {
         return new TourDTO(this);
     }
