@@ -28,8 +28,8 @@ public class TourDTO {
     List<TourSpotDTO> tourSpotList;
     UserDTO user;
     int status;
-    List<UserDTO> likedBy;
-    List<UserDTO> starredBy;
+    List<Long> likedBy; // User IDs who liked this tour
+    List<Long> starredBy; // User IDs who starred this tour
 
     public TourDTO(Tour tour) {
         id = tour.getId();
@@ -47,8 +47,8 @@ public class TourDTO {
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
-        likedBy = tour.getLikes().stream().map(TourLike::getUser).map(UserDTO::new).collect(Collectors.toList());
-        starredBy = tour.getStars().stream().map(TourStar::getUser).map(UserDTO::new).collect(Collectors.toList());
+        likedBy = tour.getLikes().stream().map(like -> like.getUser().getId()).collect(Collectors.toList());
+        starredBy = tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList());
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
