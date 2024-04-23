@@ -36,6 +36,8 @@ public class Tour {
     private String mapUrl;
     @Column(length = 100, nullable = false)
     private String dataUrl;
+    @Column(length = 100, nullable = false)
+    private String completeUrl;
     // 可选：如果有必经点的需求，可以考虑在这里使用@OneToMany注解关联Waypoints
 //    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(mappedBy = "tour")

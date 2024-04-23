@@ -20,6 +20,7 @@ public class TourDTO {
     String title;
     String mapUrl;
     String dataUrl;
+    String completeUrl;
     int type;
     int state;
     String createTime;
@@ -40,6 +41,7 @@ public class TourDTO {
         title = tour.getTitle();
         mapUrl = tour.getMapUrl();
         dataUrl = tour.getDataUrl();
+        completeUrl = tour.getCompleteUrl();
         type = tour.getType().ordinal();
         state = tour.getState().ordinal();
         pons = tour.getPons().stream().map(PON::getId).collect(Collectors.toList());
