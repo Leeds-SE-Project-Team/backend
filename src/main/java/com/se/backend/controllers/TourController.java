@@ -4,6 +4,7 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.TourDTO;
+import com.se.backend.projection.UserDTO;
 import com.se.backend.services.TourService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
@@ -100,14 +101,175 @@ public class TourController {
         }
     }
 
+    /**
+     * @param user
+     * @return ApiResponse
+     * @eo.name getToursByUser
+     * @eo.url /user
+     * @eo.method get
+     * @eo.request-type formdata
+     */
     @GetMapping("/user")
     ApiResponse<List<TourDTO>> getToursByUser(@RequestAttribute("user") User user) {
         return ApiResponse.success("Get tour", TourDTO.toListDTO(tourService.getToursByUser(user)));
     }
+
+    /**
+     * @return ApiResponse
+     * @eo.name getWeeklyTour
+     * @eo.url /weekly
+     * @eo.method get
+     * @eo.request-type formdata
+     */
     @IgnoreToken
     @GetMapping(value = "/weekly")
     ApiResponse<List<TourService.ContentDataRecord>> getWeeklyTour() {
         return ApiResponse.success("Get tours weekly data", tourService.getWeeklyTour());
+    }
+
+
+    /**
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     * @eo.name likeTour
+     * @eo.url /like
+     * @eo.method post
+     * @eo.request-type formdata
+     */
+    @PostMapping("/like")
+    ApiResponse<Void> likeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.likeTour(user.getId(), tourId);
+            return ApiResponse.success("Tour liked successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     * @eo.name starTour
+     * @eo.url /star
+     * @eo.method post
+     * @eo.request-type formdata
+     */
+    @PostMapping("/star")
+    ApiResponse<Void> starTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.starTour(user.getId(), tourId);
+            return ApiResponse.success("Tour starred successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @eo.name cancelLikeTour
+     * @eo.url /cancel_like
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/cancel_like")
+    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.cancelLikeTour(user.getId(), tourId);
+            return ApiResponse.success("Tour like was cancelled successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @eo.name cancelStarTour
+     * @eo.url /cancel_star
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param user
+     * @param tourId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/cancel_star")
+    ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+        try {
+            tourService.cancelStarTour(user.getId(), tourId);
+            return ApiResponse.success("Tour star was cancelled successfully");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param user
+     * @return ApiResponse
+     * @eo.name getAllLikedToursByUserId
+     * @eo.url /liked/by-user
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/liked/by-user")
+    ApiResponse<List<TourDTO>> getAllLikedToursByUserId(@RequestAttribute("user") User user) {
+        try {
+            return ApiResponse.success("Retrieved all liked tours", tourService.getAllLikedToursByUserId(user.getId()));
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param user
+     * @return ApiResponse
+     * @eo.name getAllStarredToursByUserId
+     * @eo.url /starred/by-user
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/starred/by-user")
+    ApiResponse<List<TourDTO>> getAllStarredToursByUserId(@RequestAttribute("user") User user) {
+        try {
+            return ApiResponse.success("Retrieved all starred tours", tourService.getAllStarredToursByUserId(user.getId()));
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param tourId
+     * @return ApiResponse
+     * @eo.name getAllUsersByLikedTourId
+     * @eo.url /likes/by-tour
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/likes/by-tour")
+    ApiResponse<List<UserDTO>> getAllUsersByLikedTourId(@RequestParam Long tourId) {
+        try {
+            return ApiResponse.success("Users who liked the tour", tourService.getAllUsersByLikedTourId(tourId));
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param tourId
+     * @return ApiResponse
+     * @eo.name getAllUsersByStarredTourId
+     * @eo.url /stars/by-tour
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/stars/by-tour")
+    ApiResponse<List<UserDTO>> getAllUsersByStarredTourId(@RequestParam Long tourId) {
+        try {
+            return ApiResponse.success("Users who starred the tour", tourService.getAllUsersByStarredTourId(tourId));
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 
 }
