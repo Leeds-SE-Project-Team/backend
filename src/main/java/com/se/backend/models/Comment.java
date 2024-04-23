@@ -30,7 +30,7 @@ public class Comment {
     @Column(length = 50, nullable = false)
     private String publishTime;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies; // 仅在移除父评论时删除子评论
 
     @ManyToOne

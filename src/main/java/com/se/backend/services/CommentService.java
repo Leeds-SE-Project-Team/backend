@@ -54,19 +54,19 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId) throws ResourceException {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
-
-        // 检查是否为父评论并且有子评论
-        if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
-            // 递归删除所有子评论
-            for (Comment reply : new ArrayList<>(comment.getReplies())) {
-                deleteComment(reply.getId()); // 递归删除每个子评论
-            }
-        }
+//        Comment comment = commentRepository.findById(commentId)
+//                .orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
+//
+//        // 检查是否为父评论并且有子评论
+//        if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
+//            // 递归删除所有子评论
+//            for (Comment reply : new ArrayList<>(comment.getReplies())) {
+//                deleteComment(reply.getId()); // 递归删除每个子评论
+//            }
+//        }
 
         // 删除评论本身
-        commentRepository.delete(comment);
+        commentRepository.deleteById(commentId);
     }
 
 
