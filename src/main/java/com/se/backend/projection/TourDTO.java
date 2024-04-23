@@ -24,9 +24,9 @@ public class TourDTO {
     int type;
     int state;
     String createTime;
-    List<Long> pons; // Assuming only IDs are needed
+    List<PONDTO> pons; // Assuming only IDs are needed
     Long tourCollectionId;
-    List<Long> tourHighlightList; // Assuming only IDs are needed
+    List<TourHighlightDTO> tourHighlightList;
     List<Long> tourSpotList; // Assuming only IDs are needed
     UserDTO user;
     int status;
@@ -44,9 +44,9 @@ public class TourDTO {
         completeUrl = tour.getCompleteUrl();
         type = tour.getType().ordinal();
         state = tour.getState().ordinal();
-        pons = tour.getPons().stream().map(PON::getId).collect(Collectors.toList());
+        pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
-        tourHighlightList = tour.getHighlights().stream().map(TourHighlight::getId).collect(Collectors.toList());
+        tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
         tourSpotList = tour.getSpots().stream().map(TourSpot::getId).collect(Collectors.toList());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
