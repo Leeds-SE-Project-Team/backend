@@ -15,7 +15,7 @@ public class PON {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private Tour tour; // 关联到Trip实体
 

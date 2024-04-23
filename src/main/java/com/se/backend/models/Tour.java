@@ -40,9 +40,9 @@ public class Tour {
     private String completeUrl;
     // 可选：如果有必经点的需求，可以考虑在这里使用@OneToMany注解关联Waypoints
 //    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PON> pons;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private TourCollection tourCollection;
     @ManyToOne(cascade = CascadeType.ALL)
