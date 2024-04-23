@@ -78,7 +78,7 @@ public class Tour {
 
     @Getter
     public enum TourState {
-        UNFINISHED("unfinished"), FINISHED("finished");
+        UNFINISHED("unfinished"),ONGOING("ongoing") ,FINISHED("finished");
 
         private final String state;
 

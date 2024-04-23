@@ -108,10 +108,14 @@ public class TourService {
         }
 
         GpxUtil.JSONtoGPXFile(form.result, "/tour/" + flushedTour.getId() + "/map.gpx");
-
+//        String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
+//        GpxUtil.NavigationData data = GpxUtil.JsonGpxConverter.parseJsonToNavigationData((getStaticUrl(relativePath)));
         return tourRepository.saveAndFlush(flushedTour);
     }
 
+//    public Tour uploadGPX (uploadGpxForm from) throws ResourceException{
+//
+//    }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
         Tour existingTour = getTourById(updatedTourInfo.tourId);
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
@@ -125,6 +129,7 @@ public class TourService {
         return tourRepository.save(existingTour);
     }
 
+
     public Tour completeTour(SaveTourForm saveTourForm) throws ResourceException {
         Tour existingTour = getTourById(saveTourForm.getTourId());
 
@@ -134,7 +139,11 @@ public class TourService {
             String relativePath = "/tour/" + existingTour.getId() + "/complete.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
             existingTour.setCompleteUrl(getStaticUrl(relativePath));
-            existingTour.setState(Tour.TourState.FINISHED);
+            if (saveTourForm.isComplete){
+                existingTour.setState(Tour.TourState.FINISHED);
+            } else {
+                existingTour.setState(Tour.TourState.ONGOING);
+            }
 
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
@@ -267,8 +276,14 @@ public class TourService {
         Tour.TourState state;
     }
     @Getter
+    public static class uploadGpxForm {
+        Long tourId;
+        String gpxUrl;
+    }
+    @Getter
     public static class SaveTourForm {
         Long tourId;
+        boolean isComplete;
         CompletedTourData recordData;
         private List<RecordDataInstant> trackList;
     }
