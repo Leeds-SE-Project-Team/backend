@@ -20,6 +20,19 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
     List<Group> groups;
+    // Extra Information
+    @Column
+    String gender;
+    @Column
+    Integer age;
+    @Column
+    Double height;
+    @Column
+    Double weight;
+    @Column
+    String location; // "XX省 XX市"
+    @Column(length = 50)
+    String signature; // 个性签名
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -66,6 +66,12 @@ public class UserService {
         existingUser.setNickname(updatedInfo.getNickname());
         existingUser.setAvatar(updatedInfo.getAvatar());
         existingUser.setEmail(updatedInfo.getEmail());
+        existingUser.setGender(updatedInfo.getGender());
+        existingUser.setAge(updatedInfo.getAge());
+        existingUser.setHeight(updatedInfo.getHeight());
+        existingUser.setWeight(updatedInfo.getWeight());
+        existingUser.setLocation(updatedInfo.getLocation());
+        existingUser.setSignature(updatedInfo.getSignature());
 
         return userRepository.save(existingUser);
     }
@@ -110,6 +116,13 @@ public class UserService {
         String oldPassword;
         String newPassword;
         User.UserType type;
+
+        String gender;
+        Integer age;
+        Double height;
+        Double weight;
+        String location; // "XX省 XX市"
+        String signature; // 个性签名
     }
     //update 表单 更新Vip字段完成Vip用户的创建
 }
