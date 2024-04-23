@@ -49,6 +49,7 @@ public class TourController {
             return ApiResponse.error(e.getMessage());
         }
     }
+
     /**
      * @param form
      * @return ApiResponse
@@ -183,13 +184,13 @@ public class TourController {
     }
 
     /**
+     * @param user
+     * @param tourId
+     * @return ApiResponse
      * @eo.name cancelLikeTour
      * @eo.url /cancel_like
      * @eo.method delete
      * @eo.request-type formdata
-     * @param user
-     * @param tourId
-     * @return ApiResponse
      */
     @DeleteMapping("/cancel_like")
     ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
@@ -202,13 +203,13 @@ public class TourController {
     }
 
     /**
+     * @param user
+     * @param tourId
+     * @return ApiResponse
      * @eo.name cancelStarTour
      * @eo.url /cancel_star
      * @eo.method delete
      * @eo.request-type formdata
-     * @param user
-     * @param tourId
-     * @return ApiResponse
      */
     @DeleteMapping("/cancel_star")
     ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
@@ -288,6 +289,15 @@ public class TourController {
         }
     }
 
+    @DeleteMapping
+    ApiResponse<Void> deleteTourById(@RequestParam(required = false) Long id) {
+        try {
+            tourService.deleteTour(id);
+            return ApiResponse.success("Tour has been deleted");
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
 }
 
 

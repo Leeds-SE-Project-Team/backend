@@ -12,6 +12,7 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +114,11 @@ public class TourService {
         return tourRepository.saveAndFlush(flushedTour);
     }
 
-//    public Tour uploadGPX (uploadGpxForm from) throws ResourceException{
+    public void deleteTour(Long tourId) throws ResourceException {
+        tourRepository.delete(tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
+    }
+
+    //    public Tour uploadGPX (uploadGpxForm from) throws ResourceException{
 //
 //    }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
@@ -139,7 +144,7 @@ public class TourService {
             String relativePath = "/tour/" + existingTour.getId() + "/complete.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
             existingTour.setCompleteUrl(getStaticUrl(relativePath));
-            if (saveTourForm.isComplete){
+            if (saveTourForm.isComplete) {
                 existingTour.setState(Tour.TourState.FINISHED);
             } else {
                 existingTour.setState(Tour.TourState.ONGOING);
@@ -276,11 +281,13 @@ public class TourService {
         Tour.TourStatus status;
         Tour.TourState state;
     }
+
     @Getter
     public static class uploadGpxForm {
         Long tourId;
         String gpxUrl;
     }
+
     @Getter
     public static class SaveTourForm {
         Long tourId;
@@ -288,6 +295,7 @@ public class TourService {
         CompletedTourData recordData;
         private List<RecordDataInstant> trackList;
     }
+
     @Getter
     public static class CompletedTourData {
         private Double avgSpeed;
@@ -296,6 +304,7 @@ public class TourService {
         private Double timeTaken;
         private Double calorie;
     }
+
     @Getter
     public static class RecordDataInstant {
         private List<Double> location;

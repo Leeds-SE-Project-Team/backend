@@ -57,10 +57,11 @@ public class Tour {
     private List<TourImage> tourImages;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 添加这一行来确保级联删除
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TourLike> likes;
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TourStar> stars;
+
     public TourDTO toDTO() {
         return new TourDTO(this);
     }
@@ -78,7 +79,7 @@ public class Tour {
 
     @Getter
     public enum TourState {
-        UNFINISHED("unfinished"),ONGOING("ongoing") ,FINISHED("finished");
+        UNFINISHED("unfinished"), ONGOING("ongoing"), FINISHED("finished");
 
         private final String state;
 

@@ -1,11 +1,9 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Tour;
-import com.se.backend.models.PON;
-import com.se.backend.models.TourHighlight;
-import com.se.backend.models.TourSpot;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +25,7 @@ public class TourDTO {
     List<PONDTO> pons; // Assuming only IDs are needed
     Long tourCollectionId;
     List<TourHighlightDTO> tourHighlightList;
-    List<Long> tourSpotList; // Assuming only IDs are needed
+    List<TourSpotDTO> tourSpotList; // Assuming only IDs are needed
     UserDTO user;
     int status;
     List<Long> likedBy; // User IDs who liked this tour
@@ -47,11 +45,13 @@ public class TourDTO {
         pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
-        tourSpotList = tour.getSpots().stream().map(TourSpot::getId).collect(Collectors.toList());
+        tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
-        likedBy = tour.getLikes().stream().map(like -> like.getUser().getId()).collect(Collectors.toList());
-        starredBy = tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList());
+        var likedByRecords = tour.getLikes();
+        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(like -> like.getUser().getId()).collect(Collectors.toList()) : null;
+        var starredByRecords = tour.getStars();
+        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList()) : null;
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
