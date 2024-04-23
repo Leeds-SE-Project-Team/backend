@@ -13,6 +13,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -61,7 +62,6 @@ public class TourService {
         newTour.setType(form.type);
         newTour.setCreateTime(TimeUtil.getCurrentTimeString());
         newTour.setUser(user);
-//        newTour.setPons(form.pons);
         newTour.setStartLocation(form.startLocation);
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
@@ -80,12 +80,10 @@ public class TourService {
         }
         newTour.setMapUrl("temp");
         newTour.setDataUrl("temp");
+        newTour.setCompleteUrl("temp");
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
-//        System.out.println(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
         flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
 
-//        flushedTour.setPons(form.pons);//假设当Tour执行完Save后PON可以进行绑定
-// Bind PONs to the tour
         List<PON> attachedPONs = new ArrayList<>();
         for (PON pon : form.pons) {
             PON newPon = new PON();
@@ -126,6 +124,39 @@ public class TourService {
         existingTour.setTourCollection(tourCollectionRepository.findById(updatedTourInfo.getTourCollectionId()).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND)));
         return tourRepository.save(existingTour);
     }
+
+    public Tour completeTour(SaveTourForm saveTourForm) throws ResourceException {
+        Tour existingTour = getTourById(saveTourForm.getTourId());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String jsonContent = objectMapper.writeValueAsString(saveTourForm);
+            String relativePath = "/tour/" + existingTour.getId() + "/complete.json";
+            saveFileToLocal(stringToInputStream(jsonContent), relativePath);
+            existingTour.setCompleteUrl(getStaticUrl(relativePath));
+            existingTour.setState(Tour.TourState.FINISHED);
+
+        } catch (IOException e) {
+            System.err.println("Error writing Complete JSON to file: " + e.getMessage());
+        }
+        return existingTour;
+    }
+
+    //add to exist json
+//    private void appendCompletedTourDataToFile(Long tourId, List<CompletedTourData> completedTourDataList) throws IOException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        File file = new File("/path/to/your/directory/tour_" + tourId + ".json");
+//        GpxUtil.NavigationData tourJson = objectMapper.readValue(file, GpxUtil.NavigationData.class); // 读取原始 JSON 文件内容
+//        // 将完成的 Tour 数据追加到 JSON 结构中的 saveTour 字段中
+//        if (tourJson.getSaveTour() == null) {
+//            tourJson.setSaveTour(completedTourDataList);
+//        } else {
+//            tourJson.getSaveTour().addAll(completedTourDataList);
+//        }
+//
+//        // 将更新后的 JSON 结构写入文件中
+//        objectMapper.writeValue(file, tourJson);
+//    }
 
     public List<Tour> getToursByUser(User user) {
         return tourRepository.findAllByUser(user);
@@ -234,6 +265,27 @@ public class TourService {
     public static class UpdateTourForm extends CreateTourForm {
         Tour.TourStatus status;
         Tour.TourState state;
+    }
+    @Getter
+    public static class SaveTourForm {
+        Long tourId;
+        CompletedTourData recordData;
+        private List<RecordDataInstant> trackList;
+    }
+    @Getter
+    public static class CompletedTourData {
+        private Double avgSpeed;
+        private Double totalDistance;
+        private Double timeInMotion;
+        private Double timeTaken;
+        private Double calorie;
+    }
+    @Getter
+    public static class RecordDataInstant {
+        private List<Double> location;
+        private Double speed;
+        private Double altitude;
+        private String time;
     }
 
     @Getter

@@ -49,6 +49,22 @@ public class TourController {
             return ApiResponse.error(e.getMessage());
         }
     }
+    /**
+     * @param form
+     * @return ApiResponse
+     * @eo.name completeTour
+     * @eo.url /complete
+     * @eo.method post
+     * @eo.request-type json
+     */
+    @PostMapping(value = "/complete")
+    ApiResponse<TourDTO> completeTour(@RequestAttribute("user") User user, @RequestBody TourService.SaveTourForm form) {
+        try {
+            return ApiResponse.success("Create tour succeed", tourService.completeTour(form).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
 
 
     /**
