@@ -144,6 +144,7 @@ public class TourService {
             } else {
                 existingTour.setState(Tour.TourState.ONGOING);
             }
+            tourRepository.saveAndFlush(existingTour);
 
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
@@ -283,7 +284,7 @@ public class TourService {
     @Getter
     public static class SaveTourForm {
         Long tourId;
-        boolean isComplete;
+        Boolean isComplete;
         CompletedTourData recordData;
         private List<RecordDataInstant> trackList;
     }
