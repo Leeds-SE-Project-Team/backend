@@ -19,7 +19,7 @@ class TokenId implements Serializable {
 public class Token {
 
     @Id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
 
