@@ -69,7 +69,6 @@ public class TourController {
 
 
     /**
-     * @param user
      * @param updatedTourInfo
      * @return ApiResponse
      * @eo.name updateTour
@@ -78,7 +77,7 @@ public class TourController {
      * @eo.request-type json
      */
     @PutMapping
-    ApiResponse<TourDTO> updateTour(@RequestAttribute("user") User user, @RequestBody TourService.UpdateTourForm updatedTourInfo) {
+    ApiResponse<TourDTO> updateTour(@RequestBody TourService.UpdateTourForm updatedTourInfo) {
         try {
             return ApiResponse.success("Tour information updated", tourService.updateTour(updatedTourInfo).toDTO());
         } catch (ResourceException e) {

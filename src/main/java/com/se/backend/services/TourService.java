@@ -12,9 +12,7 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -67,7 +65,7 @@ public class TourService {
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
         newTour.setState(Tour.TourState.UNFINISHED);
-        newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
+        newTour.setStatus(Tour.TourStatus.ONLINE);
 
         if (Objects.nonNull(form.tourCollectionId)) {
             TourCollection existingTourCollection = tourCollectionRepository.findById(form.tourCollectionId).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND));
@@ -122,7 +120,7 @@ public class TourService {
 //
 //    }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
-        Tour existingTour = getTourById(updatedTourInfo.tourId);
+        Tour existingTour = getTourById(updatedTourInfo.id);
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());
         existingTour.setType(updatedTourInfo.getType());
@@ -264,7 +262,6 @@ public class TourService {
 
     @Getter
     public static class CreateTourForm {
-        Long tourId;
         String startLocation;
         String endLocation;
         Tour.TourType type;
@@ -278,6 +275,7 @@ public class TourService {
 
     @Getter
     public static class UpdateTourForm extends CreateTourForm {
+        Long id;
         Tour.TourStatus status;
         Tour.TourState state;
     }
