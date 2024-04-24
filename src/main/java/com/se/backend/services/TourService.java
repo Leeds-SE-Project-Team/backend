@@ -124,7 +124,17 @@ public class TourService {
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());
         existingTour.setType(updatedTourInfo.getType());
-        existingTour.setPons(updatedTourInfo.getPons());
+//        List<PON> attachedPONs = existingTour.getPons();
+//        attachedPONs.clear();
+//        for (PON pon : updatedTourInfo.getPons()) {
+//            PON newPon = new PON();
+//            newPon.setTour(existingTour);
+//            newPon.setName(pon.getName());
+//            newPon.setLocation(pon.getLocation());
+//            newPon.setSequence(pon.getSequence());
+//            attachedPONs.add(ponRepository.save(newPon)); // Save each PON
+//        }
+//        existingTour.setPons(attachedPONs);
         existingTour.setTitle(updatedTourInfo.getTitle());
         existingTour.setState(updatedTourInfo.getState());
         existingTour.setStatus(updatedTourInfo.status);
