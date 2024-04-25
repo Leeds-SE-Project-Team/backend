@@ -211,7 +211,6 @@ public class TourService {
         NewTourLike.setUser(user);
         NewTourLike.setTour(tour);
         NewTourLike.setCreatetTime(TimeUtil.getCurrentTimeString());
-
         tourLikeRepository.saveAndFlush(NewTourLike);
 
         return tour.toDTO();
