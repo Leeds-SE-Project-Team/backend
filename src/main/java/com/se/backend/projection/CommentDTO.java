@@ -1,12 +1,14 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Comment;
+import com.se.backend.models.CommentLike;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,6 +20,7 @@ public class CommentDTO {
     String publishTime;
     List<CommentDTO> replies;
     Long parentId; // avoid circular loop serialization error
+    List<UserDTO> likedBy;
 
     // constructor
     public CommentDTO(Comment comment) {
@@ -28,6 +31,8 @@ public class CommentDTO {
         publishTime = comment.getPublishTime();
         replies = toListDTO(comment.getReplies());
         parentId = Objects.isNull(comment.getParent()) ? null : comment.getParent().getId();
+        var LikedByRecords = comment.getLikes();
+        likedBy = Objects.nonNull(LikedByRecords) ? LikedByRecords.stream().map(CommentLike::getUser).map(UserDTO::new).collect(Collectors.toList()) : null;
     }
 
     // convert List<Comment> to List<CommentDTO>

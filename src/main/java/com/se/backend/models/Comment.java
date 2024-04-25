@@ -33,6 +33,8 @@ public class Comment {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies; // 仅在移除父评论时删除子评论
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<CommentLike> likes;
     @ManyToOne
     @JoinColumn
     private Comment parent; // 没有级联操作，删除子评论不影响父评论

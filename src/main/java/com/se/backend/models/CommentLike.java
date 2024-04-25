@@ -15,13 +15,13 @@ public class CommentLike {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @Column(length = 50, nullable = false)
-    private String time;
+    private String createTime;
 }
