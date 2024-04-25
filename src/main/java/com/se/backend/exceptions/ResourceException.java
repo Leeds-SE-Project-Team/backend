@@ -33,7 +33,8 @@ public class ResourceException extends Exception {
         TOUR_LIKE_NOT_FOUND("Tour like not found"), TOUR_STAR_NOT_FOUND("Tour star not found"),
         TOUR_LIKE_EXISTS("tour has been liked"),TOUR_STAR_EXISTS("tour has been starred"),
 
-        COMMENT_NOT_FOUND("Comment not found"), COMMENT_LIKE_NOT_FOUND("Comment like not found");
+        COMMENT_NOT_FOUND("Comment not found"), COMMENT_LIKE_NOT_FOUND("Comment like not found"),
+        COMMENT_LIKE_EXISTS("comment has been liked");
         private final String message;
 
         ErrorType(String message) {
