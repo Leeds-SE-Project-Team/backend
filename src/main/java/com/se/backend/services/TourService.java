@@ -202,11 +202,15 @@ public class TourService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
+        // 检查点赞是否已存在
+        if (!tourLikeRepository.findByUserIdAndTourId(userId, tourId).isEmpty()) {
+            throw new ResourceException(TOUR_LIKE_EXISTS);
+        }
         TourLike NewTourLike = new TourLike();
         NewTourLike.setUser(user);
         NewTourLike.setTour(tour);
         NewTourLike.setCreatetTime(TimeUtil.getCurrentTimeString());
-
+        //TODO：return DTO
         tourLikeRepository.saveAndFlush(NewTourLike);
     }
 
