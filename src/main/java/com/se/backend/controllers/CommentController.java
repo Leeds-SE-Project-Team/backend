@@ -123,13 +123,13 @@ public class CommentController {
      * @param user
      * @param id
      * @return ApiResponse
-     * @eo.name cancelLikeTour
+     * @eo.name cancelLikeComment
      * @eo.url /like
      * @eo.method delete
      * @eo.request-type formdata
      */
     @DeleteMapping("/like")
-    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
+    ApiResponse<Void> cancelLikeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
             commentService.cancelLikeComment(user.getId(), id);
             return ApiResponse.success("Comment like was cancelled successfully");

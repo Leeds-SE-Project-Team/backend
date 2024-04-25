@@ -100,11 +100,11 @@ public class CommentService {
 
         commentLikeRepository.saveAndFlush(NewCommentLike);
     }
-
-    public void cancelLikeComment(Long userId, Long tourId) throws ResourceException {
-        List<CommentLike> likes = commentLikeRepository.findByUserIdAndCommentId(userId, tourId);
+    //FIXME:can not delete comment
+    public void cancelLikeComment(Long userId, Long commentId) throws ResourceException {
+        List<CommentLike> likes = commentLikeRepository.findByUserIdAndCommentId(userId, commentId);
         if (likes.isEmpty()) {
-            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
+            throw new ResourceException(COMMENT_NOT_FOUND);
         }
         commentLikeRepository.deleteAll(likes); // Assuming there could be multiple likes which is usually not the case
     }

@@ -57,6 +57,7 @@ public class TourController {
      * @eo.url /complete
      * @eo.method post
      * @eo.request-type json
+     * @param user
      */
     @PostMapping(value = "/complete")
     ApiResponse<TourDTO> completeTour(@RequestAttribute("user") User user, @RequestBody TourService.SaveTourForm form) {
@@ -187,7 +188,7 @@ public class TourController {
      * @param id
      * @return ApiResponse
      * @eo.name cancelLikeTour
-     * @eo.url /cancel_like
+     * @eo.url /like
      * @eo.method delete
      * @eo.request-type formdata
      */
@@ -206,7 +207,7 @@ public class TourController {
      * @param id
      * @return ApiResponse
      * @eo.name cancelStarTour
-     * @eo.url /cancel_star
+     * @eo.url /star
      * @eo.method delete
      * @eo.request-type formdata
      */
@@ -288,6 +289,14 @@ public class TourController {
         }
     }
 
+    /**
+     * @eo.name deleteTourById
+     * @eo.url /
+     * @eo.method delete
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
+     */
     @DeleteMapping
     ApiResponse<Void> deleteTourById(@RequestParam(required = false) Long id) {
         try {
