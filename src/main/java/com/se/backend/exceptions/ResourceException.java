@@ -31,7 +31,7 @@ public class ResourceException extends Exception {
         GROUP_NOT_FOUND("Group not found"), GROUP_COLLECTION_NOT_FOUND("Group collection not found"),
 
         TOUR_LIKE_NOT_FOUND("Tour like not found"), TOUR_STAR_NOT_FOUND("Tour star not found"),
-        TOUR_LIKE_EXISTS("tour has been liked"),
+        TOUR_LIKE_EXISTS("tour has been liked"),TOUR_STAR_EXISTS("tour has been starred"),
 
         COMMENT_NOT_FOUND("Comment not found"), COMMENT_LIKE_NOT_FOUND("Comment like not found");
         private final String message;

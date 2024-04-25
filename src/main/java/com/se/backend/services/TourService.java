@@ -218,6 +218,9 @@ public class TourService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
+        if (!tourStarRepository.findByUserIdAndTourId(userId, tourId).isEmpty()) {
+            throw new ResourceException(TOUR_STAR_EXISTS);
+        }
         TourStar NewTourStar = new TourStar();
         NewTourStar.setUser(user);
         NewTourStar.setTour(tour);
