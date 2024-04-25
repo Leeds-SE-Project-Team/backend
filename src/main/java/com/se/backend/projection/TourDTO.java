@@ -49,9 +49,9 @@ public class TourDTO {
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
         var likedByRecords = tour.getLikes();
-        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(like -> like.getUser().getId()).collect(Collectors.toList()) : null;
+        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(like -> like.getUser().getId()).collect(Collectors.toList()) : new ArrayList<>(0);
         var starredByRecords = tour.getStars();
-        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList()) : null;
+        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList()) : new ArrayList<>(0);
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {

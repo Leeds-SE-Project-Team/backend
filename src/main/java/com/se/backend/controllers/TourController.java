@@ -146,7 +146,7 @@ public class TourController {
 
     /**
      * @param user
-     * @param tourId
+     * @param id
      * @return ApiResponse
      * @eo.name likeTour
      * @eo.url /like
@@ -154,9 +154,9 @@ public class TourController {
      * @eo.request-type formdata
      */
     @PostMapping("/like")
-    ApiResponse<Void> likeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+    ApiResponse<Void> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.likeTour(user.getId(), tourId);
+            tourService.likeTour(user.getId(), id);
             return ApiResponse.success("Tour liked successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -165,7 +165,7 @@ public class TourController {
 
     /**
      * @param user
-     * @param tourId
+     * @param id
      * @return ApiResponse
      * @eo.name starTour
      * @eo.url /star
@@ -173,9 +173,9 @@ public class TourController {
      * @eo.request-type formdata
      */
     @PostMapping("/star")
-    ApiResponse<Void> starTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+    ApiResponse<Void> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.starTour(user.getId(), tourId);
+            tourService.starTour(user.getId(), id);
             return ApiResponse.success("Tour starred successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -184,17 +184,17 @@ public class TourController {
 
     /**
      * @param user
-     * @param tourId
+     * @param id
      * @return ApiResponse
      * @eo.name cancelLikeTour
      * @eo.url /cancel_like
      * @eo.method delete
      * @eo.request-type formdata
      */
-    @DeleteMapping("/cancel_like")
-    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+    @DeleteMapping("/like")
+    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.cancelLikeTour(user.getId(), tourId);
+            tourService.cancelLikeTour(user.getId(), id);
             return ApiResponse.success("Tour like was cancelled successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -203,17 +203,17 @@ public class TourController {
 
     /**
      * @param user
-     * @param tourId
+     * @param id
      * @return ApiResponse
      * @eo.name cancelStarTour
      * @eo.url /cancel_star
      * @eo.method delete
      * @eo.request-type formdata
      */
-    @DeleteMapping("/cancel_star")
-    ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long tourId) {
+    @DeleteMapping("/star")
+    ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.cancelStarTour(user.getId(), tourId);
+            tourService.cancelStarTour(user.getId(), id);
             return ApiResponse.success("Tour star was cancelled successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
