@@ -12,6 +12,7 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -228,13 +229,14 @@ public class TourService {
 
         tourStarRepository.saveAndFlush(NewTourStar);
     }
-
+    @Transactional
     public void cancelLikeTour(Long userId, Long tourId) throws ResourceException {
-        List<TourLike> likes = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
-        if (likes.isEmpty()) {
+        Optional<TourLike> like = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
+        if (like.isEmpty()) {
             throw new ResourceException(TOUR_LIKE_NOT_FOUND);
         }
-        tourLikeRepository.deleteAll(likes); // Assuming there could be multiple likes which is usually not the case
+        tourLikeRepository.delete(like.get());
+        System.out.println(like);
     }
 
     public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
