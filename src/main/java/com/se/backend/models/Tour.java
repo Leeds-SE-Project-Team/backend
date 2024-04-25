@@ -15,6 +15,8 @@ public class Tour {
     @ManyToMany
     @JoinTable(name = "tour_highlight_r", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
     List<TourHighlight> highlights;
+    @ManyToMany(mappedBy = "tourLikes", fetch = FetchType.EAGER)
+    List<User> likedBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -57,8 +59,6 @@ public class Tour {
     private List<TourImage> tourImages;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 添加这一行来确保级联删除
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<TourLike> likes;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TourStar> stars;
 

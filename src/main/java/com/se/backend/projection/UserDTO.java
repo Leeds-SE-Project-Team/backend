@@ -1,7 +1,6 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Tour;
-import com.se.backend.models.TourLike;
 import com.se.backend.models.TourStar;
 import com.se.backend.models.User;
 import lombok.Getter;
@@ -43,7 +42,7 @@ public class UserDTO {
         type = user.getType().ordinal();
         registerTime = user.getRegisterTime();
         latestLoginTime = user.getLatestLoginTime();
-        tourLikes = user.getTourLikes().stream().map(TourLike::getTour).map(Tour::getId).collect(Collectors.toList());
+        tourLikes = user.getTourLikes().stream().map(Tour::getId).toList();
         tourStars = user.getTourStars().stream().map(TourStar::getTour).map(Tour::getId).collect(Collectors.toList());
 
         // Extra Information

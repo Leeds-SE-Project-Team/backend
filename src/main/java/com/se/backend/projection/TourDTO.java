@@ -1,6 +1,7 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Tour;
+import com.se.backend.models.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,10 +49,10 @@ public class TourDTO {
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
-        var likedByRecords = tour.getLikes();
-        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(like -> like.getUser().getId()).collect(Collectors.toList()) : new ArrayList<>(0);
+        var likedByRecords = tour.getLikedBy();
+        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
         var starredByRecords = tour.getStars();
-        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList()) : new ArrayList<>(0);
+        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).toList() : new ArrayList<>(0);
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {

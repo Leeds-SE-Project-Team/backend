@@ -32,19 +32,17 @@ public class TourService {
     private final TourCollectionRepository tourCollectionRepository;
     private final PONRepository ponRepository;
 
-    private final TourLikeRepository tourLikeRepository;
     private final TourStarRepository tourStarRepository;
 
     private final UserRepository userRepository;
 
 
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, TourLikeRepository tourLikeRepository, TourStarRepository tourStarRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, TourStarRepository tourStarRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
         this.ponRepository = ponRepository;
         this.userRepository = userRepository;
-        this.tourLikeRepository = tourLikeRepository;
         this.tourStarRepository = tourStarRepository;
     }
 
@@ -201,18 +199,22 @@ public class TourService {
 
     public TourDTO likeTour(Long userId, Long tourId) throws ResourceException {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+
+        List<Tour> tourLiked = user.getTourLikes();
 
         // 检查点赞是否已存在
-        if (!tourLikeRepository.findByUserIdAndTourId(userId, tourId).isEmpty()) {
-            throw new ResourceException(TOUR_LIKE_EXISTS);
+        for (Tour t : tourLiked) {
+            if (t.getId().equals(tourId)) {
+                //  已经存在
+                throw new ResourceException(TOUR_LIKE_EXISTS);
+            }
         }
-        TourLike NewTourLike = new TourLike();
-        NewTourLike.setUser(user);
-        NewTourLike.setTour(tour);
-        NewTourLike.setCreateTime(TimeUtil.getCurrentTimeString());
-        tourLikeRepository.saveAndFlush(NewTourLike);
 
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+
+        tourLiked.add(tour);
+        tour.getLikedBy().add(user);
+        userRepository.saveAndFlush(user);
         return tour.toDTO();
     }
 
@@ -234,13 +236,19 @@ public class TourService {
     }
 
     @Transactional
-    public void cancelLikeTour(Long userId, Long tourId) throws ResourceException {
-        Optional<TourLike> like = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
-        if (like.isEmpty()) {
-            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
-        }
-        tourLikeRepository.delete(like.get());
-        System.out.println(like);
+    public Tour cancelLikeTour(User user, Long tourId) throws ResourceException {
+        Tour existingTour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+//        user.getTourLikes().remove(existingTour);
+//        existingTour.getLikedBy().remove(user);
+//        userRepository.saveAndFlush(user);
+//        tourRepository.saveAndFlush(existingTour);
+        return existingTour;
+//        Optional<TourLike> like = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
+//        if (like.isEmpty()) {
+//            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
+//        }
+//        tourLikeRepository.delete(like.get());
+//        System.out.println(like);
     }
 
     public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
@@ -250,14 +258,14 @@ public class TourService {
         }
         tourStarRepository.deleteAll(stars); // Assuming there could be multiple stars which is usually not the case
     }
-
-    public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {
-        if (!tourRepository.existsById(userId)) {
-            throw new ResourceException(USER_NOT_FOUND);
-        }
-        List<TourLike> likes = tourLikeRepository.findAllByUserId(userId);
-        return TourDTO.toListDTO(likes.stream().map(TourLike::getTour).collect(Collectors.toList()));
-    }
+//
+//    public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {
+//        if (!tourRepository.existsById(userId)) {
+//            throw new ResourceException(USER_NOT_FOUND);
+//        }
+//        List<TourLike> likes = tourLikeRepository.findAllByUserId(userId);
+//        return TourDTO.toListDTO(likes.stream().map(TourLike::getTour).collect(Collectors.toList()));
+//    }
 
     public List<TourDTO> getAllStarredToursByUserId(Long userId) throws ResourceException {
         if (!tourRepository.existsById(userId)) {
@@ -267,13 +275,13 @@ public class TourService {
         return TourDTO.toListDTO(stars.stream().map(TourStar::getTour).collect(Collectors.toList()));
     }
 
-    public List<UserDTO> getAllUsersByLikedTourId(Long tourId) throws ResourceException {
-        if (!tourRepository.existsById(tourId)) {
-            throw new ResourceException(TOUR_NOT_FOUND);
-        }
-        List<TourLike> likes = tourLikeRepository.findAllByTourId(tourId);
-        return UserDTO.toListDTO(likes.stream().map(TourLike::getUser).distinct().collect(Collectors.toList()));
-    }
+//    public List<UserDTO> getAllUsersByLikedTourId(Long tourId) throws ResourceException {
+////        if (!tourRepository.existsById(tourId)) {
+////            throw new ResourceException(TOUR_NOT_FOUND);
+////        }
+////        List<TourLike> likes = tourLikeRepository.findAllByTourId(tourId);
+////        return UserDTO.toListDTO(likes.stream().map(TourLike::getUser).distinct().collect(Collectors.toList()));
+//    }
 
     public List<UserDTO> getAllUsersByStarredTourId(Long tourId) throws ResourceException {
         if (!tourRepository.existsById(tourId)) {
