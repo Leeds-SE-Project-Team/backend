@@ -32,7 +32,7 @@ public class CommentDTO {
         replies = toListDTO(comment.getReplies());
         parentId = Objects.isNull(comment.getParent()) ? null : comment.getParent().getId();
         var LikedByRecords = comment.getLikes();
-        likedBy = Objects.nonNull(LikedByRecords) ? LikedByRecords.stream().map(CommentLike::getUser).map(UserDTO::new).collect(Collectors.toList()) : null;
+        likedBy = Objects.nonNull(LikedByRecords) ? LikedByRecords.stream().map(CommentLike::getUser).map(UserDTO::new).collect(Collectors.toList()) : new ArrayList<>(0);
     }
 
     // convert List<Comment> to List<CommentDTO>

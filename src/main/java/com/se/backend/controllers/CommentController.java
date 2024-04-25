@@ -102,7 +102,7 @@ public class CommentController {
 
     /**
      * @param user
-     * @param commentId
+     * @param id
      * @return ApiResponse
      * @eo.name likeComment
      * @eo.url /like
@@ -110,9 +110,9 @@ public class CommentController {
      * @eo.request-type formdata
      */
     @PostMapping("/like")
-    ApiResponse<Void> likeComment(@RequestAttribute("user") User user, @RequestParam Long commentId) {
+    ApiResponse<Void> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            commentService.likeComment(user.getId(), commentId);
+            commentService.likeComment(user.getId(), id);
             return ApiResponse.success("Comment liked successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -121,7 +121,7 @@ public class CommentController {
 
     /**
      * @param user
-     * @param commentId
+     * @param id
      * @return ApiResponse
      * @eo.name cancelLikeTour
      * @eo.url /like
@@ -129,9 +129,9 @@ public class CommentController {
      * @eo.request-type formdata
      */
     @DeleteMapping("/like")
-    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long commentId) {
+    ApiResponse<Void> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            commentService.cancelLikeComment(user.getId(), commentId);
+            commentService.cancelLikeComment(user.getId(), id);
             return ApiResponse.success("Comment like was cancelled successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
