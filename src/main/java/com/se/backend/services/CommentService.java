@@ -89,7 +89,7 @@ public class CommentService {
         return commentRepository.findAllByTourId(id);
     }
 
-    public void likeComment(Long userId, Long commentId) throws ResourceException {
+    public CommentDTO likeComment(Long userId, Long commentId) throws ResourceException {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
         if (!commentLikeRepository.findByUserIdAndCommentId(userId, commentId).isEmpty()) {
@@ -101,6 +101,8 @@ public class CommentService {
         NewCommentLike.setCreateTime(TimeUtil.getCurrentTimeString());
 
         commentLikeRepository.saveAndFlush(NewCommentLike);
+
+        return comment.toDTO();
     }
     //FIXME:can not delete comment
     public void cancelLikeComment(Long userId, Long commentId) throws ResourceException {

@@ -110,10 +110,10 @@ public class CommentController {
      * @eo.request-type formdata
      */
     @PostMapping("/like")
-    ApiResponse<Void> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
+    ApiResponse<CommentDTO> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            commentService.likeComment(user.getId(), id);
-            return ApiResponse.success("Comment liked successfully");
+            CommentDTO updatedComment= commentService.likeComment(user.getId(), id);
+            return ApiResponse.success("Comment liked successfully",updatedComment);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }

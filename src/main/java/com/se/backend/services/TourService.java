@@ -199,7 +199,7 @@ public class TourService {
         return records;
     }
 
-    public void likeTour(Long userId, Long tourId) throws ResourceException {
+    public TourDTO likeTour(Long userId, Long tourId) throws ResourceException {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
@@ -211,11 +211,13 @@ public class TourService {
         NewTourLike.setUser(user);
         NewTourLike.setTour(tour);
         NewTourLike.setCreatetTime(TimeUtil.getCurrentTimeString());
-        //TODO：return DTO
+
         tourLikeRepository.saveAndFlush(NewTourLike);
+
+        return tour.toDTO();
     }
 
-    public void starTour(Long userId, Long tourId) throws ResourceException {
+    public TourDTO starTour(Long userId, Long tourId) throws ResourceException {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
@@ -228,7 +230,10 @@ public class TourService {
         NewTourStar.setCreatetTime(TimeUtil.getCurrentTimeString());
 
         tourStarRepository.saveAndFlush(NewTourStar);
+
+        return tour.toDTO();
     }
+
     @Transactional
     public void cancelLikeTour(Long userId, Long tourId) throws ResourceException {
         Optional<TourLike> like = tourLikeRepository.findByUserIdAndTourId(userId, tourId);

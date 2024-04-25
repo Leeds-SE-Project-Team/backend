@@ -52,12 +52,12 @@ public class TourController {
 
     /**
      * @param form
+     * @param user
      * @return ApiResponse
      * @eo.name completeTour
      * @eo.url /complete
      * @eo.method post
      * @eo.request-type json
-     * @param user
      */
     @PostMapping(value = "/complete")
     ApiResponse<TourDTO> completeTour(@RequestAttribute("user") User user, @RequestBody TourService.SaveTourForm form) {
@@ -155,10 +155,10 @@ public class TourController {
      * @eo.request-type formdata
      */
     @PostMapping("/like")
-    ApiResponse<Void> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
+    public ApiResponse<TourDTO> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.likeTour(user.getId(), id);
-            return ApiResponse.success("Tour liked successfully");
+            TourDTO updatedTour = tourService.likeTour(user.getId(), id);
+            return ApiResponse.success("Tour liked successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -174,10 +174,10 @@ public class TourController {
      * @eo.request-type formdata
      */
     @PostMapping("/star")
-    ApiResponse<Void> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
+    ApiResponse<TourDTO> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.starTour(user.getId(), id);
-            return ApiResponse.success("Tour starred successfully");
+            TourDTO updatedTour = tourService.starTour(user.getId(), id);
+            return ApiResponse.success("Tour starred successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -290,12 +290,12 @@ public class TourController {
     }
 
     /**
+     * @param id
+     * @return ApiResponse
      * @eo.name deleteTourById
      * @eo.url /
      * @eo.method delete
      * @eo.request-type formdata
-     * @param id
-     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> deleteTourById(@RequestParam(required = false) Long id) {
