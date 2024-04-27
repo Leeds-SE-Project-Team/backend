@@ -100,7 +100,7 @@ public class TourService {
         flushedTour.setPons(attachedPONs);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String jsonContent = objectMapper.writeValueAsString(form.result);
+            String jsonContent = objectMapper.writeValueAsString(form);
             String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
             flushedTour.setDataUrl(getStaticUrl(relativePath));
@@ -110,7 +110,7 @@ public class TourService {
             // Handle the error according to your application's requirements
         }
 
-        GpxUtil.JSONtoGPXFile(form.result, "/tour/" + flushedTour.getId() + "/map.gpx");
+        GpxUtil.JSONtoGPXFile(form, "/tour/" + flushedTour.getId() + "/map.gpx");
 //        String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
 //        GpxUtil.NavigationData data = GpxUtil.JsonGpxConverter.parseJsonToNavigationData((getStaticUrl(relativePath)));
         return tourRepository.saveAndFlush(flushedTour);
@@ -143,8 +143,8 @@ public class TourService {
         String relativePath = "/tour/" + flushedTour.getId() + "/map.gpx";
         saveFileToLocal(file.getInputStream(), relativePath);
         Path path = Paths.get(relativePath);
-        GpxUtil.NavigationData navigationData = GpxUtil.GpxToNavigationDataConverter.parseGpxToNavigationData(path.toString());
-        newTour.setStartLocation(navigationData.getOrigin().toString());
+        CreateTourForm form = GpxUtil.GpxToNavigationDataConverter.parseGpxToNavigationData(path.toString());
+        newTour.setStartLocation(form.result.getOrigin().toString());
         newTour.setEndLocation(navigationData.getDestination().toString());
         List<PON> attachedPONs = new ArrayList<>();
         for (GpxUtil.NavigationData.WayPoint wayPoint : navigationData.getWayPoints()) {
