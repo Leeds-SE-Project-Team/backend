@@ -68,9 +68,6 @@ public class GroupService {
         return groupRepository.saveAndFlush(existingGroup);
     }
 
-    public List<Group> getGroupByUser(User user) {
-        return user.getGroups();
-    }
 
     public void deleteGroup(Long groupId) throws ResourceException {
         Group groupToDelete = getGroupById(groupId);
