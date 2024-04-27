@@ -111,12 +111,23 @@ public class TourService {
         return tourRepository.saveAndFlush(flushedTour);
     }
 
+
+//    public Tour uploadGPXCreateTour (User user,uploadGpxForm from) throws ResourceException{
+        //获取前端传过来的文件
+        //读取GPX文件数据转化到GpxUtil.NavigationData类中
+        //创建new tour 将form中的数据填充数据库
+        //通过 ObjectMapper objectMapper = new ObjectMapper();将其写入带有Tourid的json中
+        //将gpx写入带有Tourid的gpx文件中
+        //删除原先的文件
+        //返回前端Tour的数据
+
     public void deleteTour(Long tourId) throws ResourceException {
         tourRepository.delete(tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
     }
 
     //    public Tour uploadGPX (uploadGpxForm from) throws ResourceException{
 //
+
 //    }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
         Tour existingTour = getTourById(updatedTourInfo.id);
@@ -157,7 +168,6 @@ public class TourService {
                 existingTour.setState(Tour.TourState.ONGOING);
             }
             tourRepository.saveAndFlush(existingTour);
-
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
         }
@@ -309,6 +319,9 @@ public class TourService {
     public static class uploadGpxForm {
         Long tourId;
         String gpxUrl;
+        Tour.TourType type;
+        Long tourCollectionId;
+        String title;
     }
 
     @Getter
