@@ -12,9 +12,12 @@ import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -93,21 +96,84 @@ public class TourService {
         flushedTour.setPons(attachedPONs);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String jsonContent = objectMapper.writeValueAsString(form.result);
+            String jsonContent = objectMapper.writeValueAsString(form);
             String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
-            newTour.setDataUrl(getStaticUrl(relativePath));
+            flushedTour.setDataUrl(getStaticUrl(relativePath));
 //            Files.write(Paths.get("/path/to/your/directory/tour_" + flushedTour.getId() + ".json"), jsonContent.getBytes());
         } catch (IOException e) {
             System.err.println("Error writing JSON to file: " + e.getMessage());
             // Handle the error according to your application's requirements
         }
 
-        GpxUtil.JSONtoGPXFile(form.result, "/tour/" + flushedTour.getId() + "/map.gpx");
+        GpxUtil.JSONtoGPXFile(form, "/tour/" + flushedTour.getId() + "/map.gpx");
 //        String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
 //        GpxUtil.NavigationData data = GpxUtil.JsonGpxConverter.parseJsonToNavigationData((getStaticUrl(relativePath)));
         return tourRepository.saveAndFlush(flushedTour);
     }
+
+    public Tour uploadGPXCreateTour (User user, MultipartFile file, uploadGpxForm form) throws Exception{
+        Tour newTour = new Tour();
+        newTour.setType(form.type);
+        newTour.setCreateTime(TimeUtil.getCurrentTimeString());
+        newTour.setUser(user);
+        newTour.setTitle(form.title);
+
+        newTour.setState(Tour.TourState.UNFINISHED);
+        newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
+        if (Objects.nonNull(form.tourCollectionId)) {
+            TourCollection existingTourCollection = tourCollectionRepository.findById(form.tourCollectionId).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND));
+            if (existingTourCollection.getUser().getId().equals(user.getId())) {
+                newTour.setTourCollection(existingTourCollection);
+            } else {
+                throw new AuthException(TOKEN_EXPIRED);
+            }
+        } else {
+            // TODO: Form validation exception
+        }
+        newTour.setMapUrl("temp");
+        newTour.setDataUrl("temp");
+        newTour.setCompleteUrl("temp");
+        Tour flushedTour = tourRepository.saveAndFlush(newTour);
+        flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+        String relativePath = "/tour/" + flushedTour.getId() + "/map.gpx";
+        saveFileToLocal(file.getInputStream(), relativePath);
+        Path path = Paths.get(relativePath);
+        CreateTourForm form = GpxUtil.GpxToNavigationDataConverter.parseGpxToNavigationData(path.toString());
+        newTour.setStartLocation(form.result.getOrigin().toString());
+        newTour.setEndLocation(navigationData.getDestination().toString());
+        List<PON> attachedPONs = new ArrayList<>();
+        for (GpxUtil.NavigationData.WayPoint wayPoint : navigationData.getWayPoints()) {
+            PON newPon = new PON();
+            newPon.setTour(flushedTour);
+            newPon.setName(wayPoint.getName());
+            newPon.setLocation(wayPoint.getLocation().toString());
+            newPon.setSequence(wayPoint.getSequence());
+            attachedPONs.add(ponRepository.save(newPon)); // Save each PON
+        }
+        flushedTour.setPons(attachedPONs);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String jsonContent = objectMapper.writeValueAsString(navigationData);
+            String relativePath1 = "/tour/" + flushedTour.getId() + "/map.json";
+            saveFileToLocal(stringToInputStream(jsonContent), relativePath1);
+            flushedTour.setDataUrl(getStaticUrl(relativePath1));
+        } catch (IOException e) {
+            System.err.println("Error writing JSON to file: " + e.getMessage());
+            // Handle the error according to your application's requirements
+        }
+
+        return tourRepository.saveAndFlush(flushedTour);
+    }
+
+//    public Tour uploadGPXCreateTour (User user,uploadGpxForm from) throws ResourceException{
+        //获取前端传过来的文件
+        //读取GPX文件数据转化到GpxUtil.NavigationData类中
+        //创建new tour 将form中的数据填充数据库
+        //通过 ObjectMapper objectMapper = new ObjectMapper();将其写入带有Tourid的json中
+        //将gpx写入带有Tourid的gpx文件中
+        //删除原先的文件
+        //返回前端Tour的数据
 
     public void deleteTour(Long tourId) throws ResourceException {
         tourRepository.delete(tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
@@ -115,6 +181,7 @@ public class TourService {
 
     //    public Tour uploadGPX (uploadGpxForm from) throws ResourceException{
 //
+
 //    }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
         Tour existingTour = getTourById(updatedTourInfo.id);
@@ -155,28 +222,13 @@ public class TourService {
                 existingTour.setState(Tour.TourState.ONGOING);
             }
             tourRepository.saveAndFlush(existingTour);
-
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
         }
         return existingTour;
     }
 
-    //add to exist json
-//    private void appendCompletedTourDataToFile(Long tourId, List<CompletedTourData> completedTourDataList) throws IOException {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        File file = new File("/path/to/your/directory/tour_" + tourId + ".json");
-//        GpxUtil.NavigationData tourJson = objectMapper.readValue(file, GpxUtil.NavigationData.class); // 读取原始 JSON 文件内容
-//        // 将完成的 Tour 数据追加到 JSON 结构中的 saveTour 字段中
-//        if (tourJson.getSaveTour() == null) {
-//            tourJson.setSaveTour(completedTourDataList);
-//        } else {
-//            tourJson.getSaveTour().addAll(completedTourDataList);
-//        }
-//
-//        // 将更新后的 JSON 结构写入文件中
-//        objectMapper.writeValue(file, tourJson);
-//    }
+
 
     public List<Tour> getToursByUser(User user) {
         return tourRepository.findAllByUser(user);
@@ -307,8 +359,11 @@ public class TourService {
 
     @Getter
     public static class uploadGpxForm {
-        Long tourId;
-        String gpxUrl;
+//        Long tourId;
+//        String gpxUrl;
+        Tour.TourType type;
+        Long tourCollectionId;
+        String title;
     }
 
     @Getter
