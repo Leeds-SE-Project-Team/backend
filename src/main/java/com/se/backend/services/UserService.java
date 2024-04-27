@@ -19,6 +19,7 @@ import java.util.Objects;
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
 import static com.se.backend.exceptions.AuthException.ErrorType.USER_NOT_FOUND;
 import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
+import static com.se.backend.exceptions.ResourceException.ErrorType.LEADER_JOIN_SELF;
 
 @Service
 public class UserService {
@@ -66,6 +67,12 @@ public class UserService {
         existingUser.setNickname(updatedInfo.getNickname());
         existingUser.setAvatar(updatedInfo.getAvatar());
         existingUser.setEmail(updatedInfo.getEmail());
+        existingUser.setGender(updatedInfo.getGender());
+        existingUser.setAge(updatedInfo.getAge());
+        existingUser.setHeight(updatedInfo.getHeight());
+        existingUser.setWeight(updatedInfo.getWeight());
+        existingUser.setLocation(updatedInfo.getLocation());
+        existingUser.setSignature(updatedInfo.getSignature());
 
         return userRepository.save(existingUser);
     }
@@ -77,14 +84,19 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public User addUserToGroup(Long GroupId, Long UserId) throws AuthException, ResourceException {
-        User existingUser = userRepository.findById(UserId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public void addUserToGroup(Long userId, Long groupId) throws AuthException, ResourceException {
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         // Update the properties of the existing user
-        Group existingGroup = groupRepository.findById(GroupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
+        Group existingGroup = groupRepository.findById(groupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
+
+        // Prevent the leader from adding themselves again to the group they lead
+        if (existingGroup.getLeader().getId().equals(userId)) {
+            throw new ResourceException(LEADER_JOIN_SELF);
+        }
         existingGroup.getMembers().add(existingUser);
         existingUser.getGroups().add(existingGroup);
-        groupRepository.save(existingGroup);
-        return userRepository.save(existingUser);
+        groupRepository.saveAndFlush(existingGroup);
+        userRepository.saveAndFlush(existingUser);
     }
 
     public void deleteUser(Long userId) throws AuthException {
@@ -110,6 +122,13 @@ public class UserService {
         String oldPassword;
         String newPassword;
         User.UserType type;
+
+        String gender;
+        Integer age;
+        Double height;
+        Double weight;
+        String location; // "XX省 XX市"
+        String signature; // 个性签名
     }
     //update 表单 更新Vip字段完成Vip用户的创建
 }

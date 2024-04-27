@@ -1,10 +1,7 @@
 package com.se.backend.controllers;
 
-import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.Group;
 import com.se.backend.projection.GroupCollectionDTO;
-import com.se.backend.projection.TourDTO;
 import com.se.backend.services.GroupCollectionService;
 import com.se.backend.services.GroupService;
 import com.se.backend.utils.ApiResponse;
@@ -12,7 +9,6 @@ import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -100,6 +96,14 @@ public class GroupCollectionController {
         }
     }
 
+    /**
+     * @param id
+     * @return ApiResponse
+     * @eo.name getGroupCollectionById
+     * @eo.url
+     * @eo.method get
+     * @eo.request-type formdata
+     */
     @IgnoreToken
     @GetMapping
     ApiResponse<GroupCollectionDTO> getGroupCollectionById(@RequestParam Long id) {

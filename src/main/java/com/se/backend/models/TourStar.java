@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tour_star")
+@Table(name = "tour_star", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "tour_id"})  // 强制唯一性
+})
 @Getter
 @Setter
 public class TourStar {

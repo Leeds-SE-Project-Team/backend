@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
@@ -46,7 +47,8 @@ public class GroupService {
         Group newGroup = new Group();
 
         newGroup.setLeader(user);
-        newGroup.setMembers(List.of(user));
+//        newGroup.setMembers(List.of(user));
+        newGroup.setMembers(new ArrayList<>(List.of(user))); // Ensure the leader is the first member
         newGroup.setName(form.name);
         newGroup.setDescription(form.description);
         newGroup.setCoverUrl(form.coverUrl);
@@ -92,6 +94,14 @@ public class GroupService {
 
         // Now it is safe to delete the highlight
         groupRepository.delete(groupToDelete);
+    }
+
+    public List<Group> getCreatedGroupsByUser(User user) {
+        return groupRepository.findAllByLeaderId(user.getId());
+    }
+
+    public List<Group> getJoinedGroupsByUser(User user) {
+        return groupRepository.findAllByMembers_IdAndLeaderIdNot(user.getId(), user.getId());
     }
 
     @Getter
