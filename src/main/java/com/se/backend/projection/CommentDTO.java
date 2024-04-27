@@ -1,7 +1,7 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Comment;
-import com.se.backend.models.CommentLike;
+import com.se.backend.models.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,8 +31,8 @@ public class CommentDTO {
         publishTime = comment.getPublishTime();
         replies = toListDTO(comment.getReplies());
         parentId = Objects.isNull(comment.getParent()) ? null : comment.getParent().getId();
-        var LikedByRecords = comment.getLikes();
-        likedBy = Objects.nonNull(LikedByRecords) ? LikedByRecords.stream().map(CommentLike::getUser).map(UserDTO::new).collect(Collectors.toList()) : new ArrayList<>(0);
+        var likedByRecords = comment.getLikedBy();
+        likedBy = Objects.nonNull(likedByRecords) ? UserDTO.toListDTO(likedByRecords.stream().toList()): new ArrayList<>(0);
     }
 
     // convert List<Comment> to List<CommentDTO>

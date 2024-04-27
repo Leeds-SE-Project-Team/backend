@@ -30,6 +30,10 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_stars_tour", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "star_id"))
     Set<Tour> tourStars;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_likes_comment", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    Set<Comment> commentLikes;
     // Extra Information
     @Column
     String gender;
@@ -66,8 +70,8 @@ public class User {
     private List<Token> tokens;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentLike> commentLikes;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<CommentLike> commentLikes;
     //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Tour> tours;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

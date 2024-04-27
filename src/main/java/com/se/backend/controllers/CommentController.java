@@ -112,7 +112,7 @@ public class CommentController {
     @PostMapping("/like")
     ApiResponse<CommentDTO> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            CommentDTO updatedComment= commentService.likeComment(user.getId(), id);
+            CommentDTO updatedComment= commentService.likeComment(user, id);
             return ApiResponse.success("Comment liked successfully",updatedComment);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -131,7 +131,7 @@ public class CommentController {
     @DeleteMapping("/like")
     ApiResponse<Void> cancelLikeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            commentService.cancelLikeComment(user.getId(), id);
+            commentService.cancelLikeComment(user, id);
             return ApiResponse.success("Comment like was cancelled successfully");
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -150,7 +150,7 @@ public class CommentController {
     @GetMapping("/liked/by-user")
     ApiResponse<List<CommentDTO>> getAllLikedCommentsByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all liked comments", commentService.getAllLikedCommentsByUserId(user.getId()));
+            return ApiResponse.success("Retrieved all liked comments", CommentDTO.toListDTO(user.getCommentLikes().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -167,7 +167,7 @@ public class CommentController {
     @GetMapping("/likes/by-comment")
     ApiResponse<List<UserDTO>> getAllUsersByLikedCommentId(@RequestParam Long commentId) {
         try {
-            return ApiResponse.success("Users who liked the comment", commentService.getAllUsersByLikedCommentId(commentId));
+            return ApiResponse.success("Users who liked the comment", UserDTO.toListDTO(commentService.getCommentById(commentId).getLikedBy().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

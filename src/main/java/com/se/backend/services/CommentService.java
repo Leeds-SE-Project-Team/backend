@@ -2,12 +2,10 @@ package com.se.backend.services;
 
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Comment;
-import com.se.backend.models.CommentLike;
 import com.se.backend.models.Tour;
 import com.se.backend.models.User;
 import com.se.backend.projection.CommentDTO;
 import com.se.backend.projection.UserDTO;
-import com.se.backend.repositories.CommentLikeRepository;
 import com.se.backend.repositories.CommentRepository;
 import com.se.backend.repositories.TourRepository;
 import com.se.backend.repositories.UserRepository;
@@ -19,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.*;
@@ -28,7 +27,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    private final CommentLikeRepository commentLikeRepository;
 
     private final TourRepository tourRepository;
 
@@ -36,13 +34,14 @@ public class CommentService {
 
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, CommentLikeRepository commentLikeRepository, TourRepository tourRepository, UserRepository userRepository) {
+    public CommentService(CommentRepository commentRepository, TourRepository tourRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
-        this.commentLikeRepository = commentLikeRepository;
         this.tourRepository = tourRepository;
         this.userRepository = userRepository;
     }
-
+    public Comment getCommentById(Long commentId) throws ResourceException{
+        return commentRepository.findById(commentId).orElseThrow(()->new ResourceException(COMMENT_NOT_FOUND));
+    }
     public Comment createComment(User author, CreateCommentForm form) throws ResourceException {
 
         Comment newComment = new Comment();
@@ -89,45 +88,52 @@ public class CommentService {
         return commentRepository.findAllByTourId(id);
     }
 
-    public CommentDTO likeComment(Long userId, Long commentId) throws ResourceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+    public CommentDTO likeComment(User user, Long commentId) throws ResourceException {
+        Set<Comment> commentLiked = user.getCommentLikes();
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
-        if (!commentLikeRepository.findByUserIdAndCommentId(userId, commentId).isEmpty()) {
-            throw new ResourceException(COMMENT_LIKE_EXISTS);
+
+//        if (tourLiked.contains(tour)) {
+//            throw new ResourceException(TOUR_LIKE_EXISTS);
+//        }
+        // 检查点赞是否已存在
+        for (Comment c : commentLiked) {
+            if (c.getId().equals(commentId)) {
+                //  已经存在
+                throw new ResourceException(COMMENT_LIKE_EXISTS);
+            }
         }
-        CommentLike NewCommentLike = new CommentLike();
-        NewCommentLike.setUser(user);
-        NewCommentLike.setComment(comment);
-        NewCommentLike.setCreateTime(TimeUtil.getCurrentTimeString());
-
-        commentLikeRepository.saveAndFlush(NewCommentLike);
-
+//        tourLiked.add(tour);
+        commentLiked.add(comment);
+        user.setCommentLikes(commentLiked);
+        userRepository.save(user);
         return comment.toDTO();
     }
-    //FIXME:can not delete comment
-    public void cancelLikeComment(Long userId, Long commentId) throws ResourceException {
-        List<CommentLike> likes = commentLikeRepository.findByUserIdAndCommentId(userId, commentId);
-        if (likes.isEmpty()) {
-            throw new ResourceException(COMMENT_NOT_FOUND);
-        }
-        commentLikeRepository.deleteAll(likes); // Assuming there could be multiple likes which is usually not the case
+
+    @Transactional
+    public Comment cancelLikeComment(User user, Long commentId) throws ResourceException {
+        Set<Comment> commentLiked = user.getCommentLikes();
+        commentLiked.removeIf(t -> t.getId().equals(commentId));
+        user.setCommentLikes(commentLiked);
+        userRepository.save(user);
+        return commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
+//        throw new ResourceException(TOUR_LIKE_NOT_FOUND);
     }
 
-    public List<CommentDTO> getAllLikedCommentsByUserId(Long userId) throws ResourceException {
-        if (!commentLikeRepository.existsById(userId)) {
-            throw new ResourceException(USER_NOT_FOUND);
-        }
-        List<CommentLike> likes = commentLikeRepository.findAllByUserId(userId);
-        return CommentDTO.toListDTO(likes.stream().map(CommentLike::getComment).collect(Collectors.toList()));
-    }
-
-    public List<UserDTO> getAllUsersByLikedCommentId(Long commentId) throws ResourceException {
-        if (!commentLikeRepository.existsById(commentId)) {
-            throw new ResourceException(COMMENT_NOT_FOUND);
-        }
-        List<CommentLike> likes = commentLikeRepository.findAllByCommentId(commentId);
-        return UserDTO.toListDTO(likes.stream().map(CommentLike::getUser).distinct().collect(Collectors.toList()));
-    }
+//    public List<CommentDTO> getAllLikedCommentsByUserId(Long userId) throws ResourceException {
+//        if (!commentLikeRepository.existsById(userId)) {
+//            throw new ResourceException(USER_NOT_FOUND);
+//        }
+//        List<CommentLike> likes = commentLikeRepository.findAllByUserId(userId);
+//        return CommentDTO.toListDTO(likes.stream().map(CommentLike::getComment).collect(Collectors.toList()));
+//    }
+//
+//    public List<UserDTO> getAllUsersByLikedCommentId(Long commentId) throws ResourceException {
+//        if (!commentLikeRepository.existsById(commentId)) {
+//            throw new ResourceException(COMMENT_NOT_FOUND);
+//        }
+//        List<CommentLike> likes = commentLikeRepository.findAllByCommentId(commentId);
+//        return UserDTO.toListDTO(likes.stream().map(CommentLike::getUser).distinct().collect(Collectors.toList()));
+//    }
 
     @Getter
     public static class CreateCommentForm {

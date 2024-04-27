@@ -248,7 +248,7 @@ public class TourController {
     @GetMapping("/starred/by-user")
     ApiResponse<List<TourDTO>> getAllStarredToursByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all starred tours", tourService.getAllStarredToursByUserId(user.getId()));
+            return ApiResponse.success("Retrieved all starred tours", TourDTO.toListDTO(user.getTourStars().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -282,7 +282,7 @@ public class TourController {
     @GetMapping("/stars/by-tour")
     ApiResponse<List<UserDTO>> getAllUsersByStarredTourId(@RequestParam Long tourId) {
         try {
-            return ApiResponse.success("Users who starred the tour", tourService.getAllUsersByStarredTourId(tourId));
+            return ApiResponse.success("Users who starred the tour", UserDTO.toListDTO(tourService.getTourById(tourId).getStarredBy().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

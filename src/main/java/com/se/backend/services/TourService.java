@@ -32,18 +32,16 @@ public class TourService {
     private final TourCollectionRepository tourCollectionRepository;
     private final PONRepository ponRepository;
 
-    private final TourStarRepository tourStarRepository;
 
     private final UserRepository userRepository;
 
 
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, TourStarRepository tourStarRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
         this.ponRepository = ponRepository;
         this.userRepository = userRepository;
-        this.tourStarRepository = tourStarRepository;
     }
 
     public List<Tour> getAllTours() {
@@ -263,13 +261,13 @@ public class TourService {
 //        return TourDTO.toListDTO(likes.stream().map(TourLike::getTour).collect(Collectors.toList()));
 //    }
 
-    public List<TourDTO> getAllStarredToursByUserId(Long userId) throws ResourceException {
-        if (!tourRepository.existsById(userId)) {
-            throw new ResourceException(USER_NOT_FOUND);
-        }
-        List<TourStar> stars = tourStarRepository.findAllByUserId(userId);
-        return TourDTO.toListDTO(stars.stream().map(TourStar::getTour).collect(Collectors.toList()));
-    }
+//    public List<TourDTO> getAllStarredToursByUserId(Long userId) throws ResourceException {
+//        if (!tourRepository.existsById(userId)) {
+//            throw new ResourceException(USER_NOT_FOUND);
+//        }
+//        List<TourStar> stars = tourStarRepository.findAllByUserId(userId);
+//        return TourDTO.toListDTO(stars.stream().map(TourStar::getTour).collect(Collectors.toList()));
+//    }
 
 //    public List<UserDTO> getAllUsersByLikedTourId(Long tourId) throws ResourceException {
 ////        if (!tourRepository.existsById(tourId)) {
@@ -279,13 +277,13 @@ public class TourService {
 ////        return UserDTO.toListDTO(likes.stream().map(TourLike::getUser).distinct().collect(Collectors.toList()));
 //    }
 
-    public List<UserDTO> getAllUsersByStarredTourId(Long tourId) throws ResourceException {
-        if (!tourRepository.existsById(tourId)) {
-            throw new ResourceException(TOUR_NOT_FOUND);
-        }
-        List<TourStar> stars = tourStarRepository.findAllByTourId(tourId);
-        return UserDTO.toListDTO(stars.stream().map(TourStar::getUser).distinct().collect(Collectors.toList()));
-    }
+//    public List<UserDTO> getAllUsersByStarredTourId(Long tourId) throws ResourceException {
+//        if (!tourRepository.existsById(tourId)) {
+//            throw new ResourceException(TOUR_NOT_FOUND);
+//        }
+//        List<TourStar> stars = tourStarRepository.findAllByTourId(tourId);
+//        return UserDTO.toListDTO(stars.stream().map(TourStar::getUser).distinct().collect(Collectors.toList()));
+//    }
 
     @Getter
     public static class CreateTourForm {
