@@ -4,6 +4,7 @@
 package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.UserDTO;
 import com.se.backend.services.TokenService;
@@ -40,6 +41,7 @@ public class UserController {
      * userService
      */
     private final UserService userService;
+
     /**
      * tourCollectionService
      */
@@ -204,6 +206,27 @@ public class UserController {
             userService.deleteUser(user.getId());
             return ApiResponse.success("User has been removed");
         } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param user
+     * @param groupId
+     * @return ApiResponse
+     * @eo.name addUserToGroup
+     * @eo.url /addUserToGroup
+     * @eo.method post
+     * @eo.request-type formdata
+     */
+    @PostMapping("/addUserToGroup")
+    public ApiResponse<Void> addUserToGroup(@RequestAttribute("user") User user, @RequestParam Long groupId) {
+        try {
+            userService.addUserToGroup(user.getId(), groupId);
+            return ApiResponse.success("User added to group successfully");
+        } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }

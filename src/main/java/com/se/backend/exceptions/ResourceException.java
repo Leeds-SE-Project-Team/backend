@@ -28,13 +28,11 @@ public class ResourceException extends Exception {
         USER_NOT_FOUND("User not found"),
 
 
-        GROUP_NOT_FOUND("Group not found"), GROUP_COLLECTION_NOT_FOUND("Group collection not found"),
+        GROUP_NOT_FOUND("Group not found"), GROUP_COLLECTION_NOT_FOUND("Group collection not found"), LEADER_JOIN_SELF("Leader can not join themselves again to the group they lead"),
 
-        TOUR_LIKE_NOT_FOUND("Tour like not found"), TOUR_STAR_NOT_FOUND("Tour star not found"),
-        TOUR_LIKE_EXISTS("tour can not be like twice"),TOUR_STAR_EXISTS("tour can not be star twice"),
+        TOUR_LIKE_NOT_FOUND("Tour like not found"), TOUR_STAR_NOT_FOUND("Tour star not found"), TOUR_LIKE_EXISTS("tour can not be like twice"), TOUR_STAR_EXISTS("tour can not be star twice"),
 
-        COMMENT_NOT_FOUND("Comment not found"), COMMENT_LIKE_NOT_FOUND("Comment like not found"),
-        COMMENT_LIKE_EXISTS("comment can not be like twice");
+        COMMENT_NOT_FOUND("Comment not found"), COMMENT_LIKE_NOT_FOUND("Comment like not found"), COMMENT_LIKE_EXISTS("comment can not be like twice");
         private final String message;
 
         ErrorType(String message) {
