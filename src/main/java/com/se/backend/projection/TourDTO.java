@@ -1,11 +1,10 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Tour;
-import com.se.backend.models.PON;
-import com.se.backend.models.TourHighlight;
-import com.se.backend.models.TourSpot;
+import com.se.backend.models.User;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +23,10 @@ public class TourDTO {
     int type;
     int state;
     String createTime;
-    List<Long> pons; // Assuming only IDs are needed
+    List<PONDTO> pons; // Assuming only IDs are needed
     Long tourCollectionId;
-    List<Long> tourHighlightList; // Assuming only IDs are needed
-    List<Long> tourSpotList; // Assuming only IDs are needed
+    List<TourHighlightDTO> tourHighlightList;
+    List<TourSpotDTO> tourSpotList; // Assuming only IDs are needed
     UserDTO user;
     int status;
     List<Long> likedBy; // User IDs who liked this tour
@@ -44,14 +43,16 @@ public class TourDTO {
         completeUrl = tour.getCompleteUrl();
         type = tour.getType().ordinal();
         state = tour.getState().ordinal();
-        pons = tour.getPons().stream().map(PON::getId).collect(Collectors.toList());
+        pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
-        tourHighlightList = tour.getHighlights().stream().map(TourHighlight::getId).collect(Collectors.toList());
-        tourSpotList = tour.getSpots().stream().map(TourSpot::getId).collect(Collectors.toList());
+        tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
+        tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
-        likedBy = tour.getLikes().stream().map(like -> like.getUser().getId()).collect(Collectors.toList());
-        starredBy = tour.getStars().stream().map(star -> star.getUser().getId()).collect(Collectors.toList());
+        var likedByRecords = tour.getLikedBy();
+        likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
+        var starredByRecords = tour.getStars();
+        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).toList() : new ArrayList<>(0);
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
