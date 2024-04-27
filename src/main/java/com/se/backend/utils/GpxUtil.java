@@ -1,6 +1,8 @@
 package com.se.backend.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.se.backend.models.PON;
+import com.se.backend.services.TourService;
 import lombok.Getter;
 import lombok.Setter;
 import org.w3c.dom.Document;
@@ -21,8 +23,8 @@ import static com.se.backend.utils.FileUtil.saveFileToLocal;
 import static com.se.backend.utils.FileUtil.stringToInputStream;
 
 public class GpxUtil {
-    static public void JSONtoGPXFile(NavigationData json, String writingPath) throws IOException {
-        String gpxContent = NavigationData.toGpx(json);
+    static public void JSONtoGPXFile(TourService.CreateTourForm form, String writingPath) throws IOException {
+        String gpxContent = NavigationData.toGpx(form);
         saveFileToLocal(stringToInputStream(gpxContent), writingPath);
     }
 
@@ -37,15 +39,15 @@ public class GpxUtil {
         private List<Route> routes;
         private Location start;
         private Location end;
-        private List<WayPoint> wayPoints;
-
         // Getters and setters
 
         static String formatWaypoint(String tag, List<Double> coordinates, String description) {
             return String.format("<%s lat=\"%f\" lon=\"%f\">\n" + "<ele></ele>\n" + "<time></time>\n" + "<desc>%s</desc>\n" + "<type></type>\n" + "<extensions></extensions>\n" + "</%s>\n", tag, coordinates.get(1), coordinates.get(0), description, tag);
         }
 
-        static String toGpx(NavigationData navigationData) {
+        static String toGpx(TourService.CreateTourForm form) {
+
+            NavigationData navigationData = form.getResult();
             StringBuilder gpxBuilder = new StringBuilder();
             gpxBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             gpxBuilder.append("<gpx version=\"1.1\" creator=\"www.Walcraft.com\">\n");
@@ -86,8 +88,10 @@ public class GpxUtil {
                 gpxBuilder.append(formatWaypoint("wpt", navigationData.getDestination(), "Destination"));
                 gpxBuilder.append("</destination>\n");
                 gpxBuilder.append("<pon>\n");
-                for (WayPoint wayPoint : navigationData.getWayPoints()) {
-                    gpxBuilder.append(formatWaypoint("wpt", wayPoint.getLocation(), wayPoint.type));
+
+                for (PON pon : form.getPons()) {
+                    List<Double> locationList = pon.getLocationAsList(); // This will parse the string into a List<Double>
+                    gpxBuilder.append(formatWaypoint("wpt", locationList, "PON"));
                 }
                 gpxBuilder.append("</pon>\n");
                 gpxBuilder.append("</extensions>\n");
@@ -114,6 +118,7 @@ public class GpxUtil {
             private List<Double> location;
             private String name;
             private String type;
+            private int sequence;
             // Getters and setters
         }
 
@@ -143,7 +148,8 @@ public class GpxUtil {
     }
 
     public static class GpxToNavigationDataConverter {
-        public static NavigationData parseGpxToNavigationData(String filePath) throws Exception {
+        public static TourService.CreateTourForm parseGpxToNavigationData(String filePath) throws Exception {
+            TourService.CreateTourForm form = new TourService.CreateTourForm();
             Path filePath1 = Paths.get(filePath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -156,6 +162,8 @@ public class GpxUtil {
             // Extracting information from the GPX file
             NodeList trkList = doc.getElementsByTagName("trk");
             List<NavigationData.Route> routes = new ArrayList<>();
+            List<NavigationData.WayPoint> wayPoints = new ArrayList<>();
+
             for (int i = 0; i < trkList.getLength(); i++) {
                 Element trkElement = (Element) trkList.item(i);
                 NavigationData.Route route = new NavigationData.Route();
@@ -193,7 +201,6 @@ public class GpxUtil {
                             step.setDistance(Integer.parseInt(extensionstrkptElement.getElementsByTagName("distance").item(0).getTextContent()));
                             step.setTime(Integer.parseInt(extensionstrkptElement.getElementsByTagName("time").item(0).getTextContent()));
                             // Parsing the road from the instruction
-
                         }
                         steps.add(step);
                     }
@@ -211,6 +218,18 @@ public class GpxUtil {
                             Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
                             navigationData.setOrigin(List.of(lat, lon));
                         }
+//                        Element ponElement = (Element) extensionstrksegElement.getElementsByTagName("pon").item(0);
+//                        NodeList ponwptList = ponElement.getElementsByTagName("wpt");
+//                        NavigationData.WayPoint wayPoint = new NavigationData.WayPoint();
+//                        for (int l = 0; l < ponwptList.getLength(); l++) {
+//                            Element wptElement = (Element) ponwptList.item(l); // 从 NodeList 中获取每个 Element
+//                            Double lat = Double.parseDouble(wptElement.getAttribute("lat"));
+//                            Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
+//                            wayPoint.setLocation(List.of(lat, lon));
+//                            wayPoint.setName("PON");
+//                            wayPoint.setSequence(l);
+//                            wayPoints.add(wayPoint);
+//                        }
                         //destinationElement
                         Element destinationElement = (Element) extensionstrksegElement.getElementsByTagName("destination").item(0);
                         NodeList destinationwptList = destinationElement.getElementsByTagName("wpt");
@@ -220,19 +239,16 @@ public class GpxUtil {
                             Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
                             navigationData.setOrigin(List.of(lat, lon));
                         }
-                        //添加 PON的class和解析内容
-
                     }
 
                 }
-
                 route.setSteps(steps);
                 routes.add(route);
-                //可能是route的起点和终点也可能是总的因为有不同
-                //PON判断
             }
             navigationData.setRoutes(routes);
-            return navigationData;
+//            navigationData.setWayPoints(wayPoints);
+
+            return form;
         }
     }
 
@@ -241,6 +257,7 @@ public class GpxUtil {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(Paths.get(filePath).toFile(), NavigationData.class);
         }
+
     }
 
 

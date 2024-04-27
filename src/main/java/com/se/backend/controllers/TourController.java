@@ -10,9 +10,15 @@ import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static com.se.backend.utils.FileUtil.getFileExtension;
+import static com.se.backend.utils.FileUtil.saveFileToLocal;
 
 /**
  * @eo.api-type http
@@ -290,6 +296,28 @@ public class TourController {
     }
 
     /**
+     * @param user
+     * @param file
+     * @param uploadURL
+     * @param uploadGpxForm
+     * @return ApiResponse
+     * @eo.url /upload
+     * @eo.method post
+     * @eo.request-type formdata
+     */
+    @PostMapping("/uploadGPXCreatTour")
+    public ApiResponse<TourDTO> gpxTour(@RequestAttribute("user") User user,@RequestParam("file") MultipartFile file, @RequestParam("uploadURL") String uploadURL, @RequestBody TourService.uploadGpxForm uploadGpxForm) {
+        if (file.isEmpty()) {
+            return ApiResponse.error("File is empty");
+        }
+        try {
+//            return ApiResponse.success("File uploaded successfully", uploadURL.concat("/").concat(fileName));
+            return ApiResponse.success("Gpx Create Tour", tourService.uploadGPXCreateTour(user,file, uploadGpxForm).toDTO());
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
      * @param id
      * @return ApiResponse
      * @eo.name deleteTourById
