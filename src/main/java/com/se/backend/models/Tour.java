@@ -1,11 +1,13 @@
 package com.se.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.se.backend.projection.TourDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "tour")
@@ -15,8 +17,9 @@ public class Tour {
     @ManyToMany
     @JoinTable(name = "tour_highlight_r", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
     List<TourHighlight> highlights;
+    @JsonIgnore
     @ManyToMany(mappedBy = "tourLikes", fetch = FetchType.EAGER)
-    List<User> likedBy;
+    Set<User> likedBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,7 +54,7 @@ public class Tour {
     @JoinColumn
     private GroupCollection groupCollection;
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "user_id")
     private User user; // 确保与User实体正确关联
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpot> spots;

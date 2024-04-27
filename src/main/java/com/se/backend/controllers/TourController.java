@@ -157,7 +157,7 @@ public class TourController {
     @PostMapping("/like")
     public ApiResponse<TourDTO> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            TourDTO updatedTour = tourService.likeTour(user.getId(), id);
+            TourDTO updatedTour = tourService.likeTour(user, id);
             return ApiResponse.success("Tour liked successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -231,7 +231,7 @@ public class TourController {
     @GetMapping("/liked/by-user")
     ApiResponse<List<TourDTO>> getAllLikedToursByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all liked tours", TourDTO.toListDTO(user.getTourLikes()));
+            return ApiResponse.success("Retrieved all liked tours", TourDTO.toListDTO(user.getTourLikes().stream().toList()));
 //            return ApiResponse.success("Retrieved all liked tours", tourService.getAllLikedToursByUserId(user.getId()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
@@ -266,7 +266,7 @@ public class TourController {
     @GetMapping("/likes/by-tour")
     ApiResponse<List<UserDTO>> getAllUsersByLikedTourId(@RequestParam Long tourId) {
         try {
-            return ApiResponse.success("Users who liked the tour", UserDTO.toListDTO(tourService.getTourById(tourId).getLikedBy()));
+            return ApiResponse.success("Users who liked the tour", UserDTO.toListDTO(tourService.getTourById(tourId).getLikedBy().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
