@@ -114,6 +114,7 @@ public class GpxUtil {
             private List<Double> location;
             private String name;
             private String type;
+            private int sequence;
             // Getters and setters
         }
 
@@ -156,6 +157,8 @@ public class GpxUtil {
             // Extracting information from the GPX file
             NodeList trkList = doc.getElementsByTagName("trk");
             List<NavigationData.Route> routes = new ArrayList<>();
+            List<NavigationData.WayPoint> wayPoints = new ArrayList<>();
+
             for (int i = 0; i < trkList.getLength(); i++) {
                 Element trkElement = (Element) trkList.item(i);
                 NavigationData.Route route = new NavigationData.Route();
@@ -193,7 +196,6 @@ public class GpxUtil {
                             step.setDistance(Integer.parseInt(extensionstrkptElement.getElementsByTagName("distance").item(0).getTextContent()));
                             step.setTime(Integer.parseInt(extensionstrkptElement.getElementsByTagName("time").item(0).getTextContent()));
                             // Parsing the road from the instruction
-
                         }
                         steps.add(step);
                     }
@@ -211,6 +213,18 @@ public class GpxUtil {
                             Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
                             navigationData.setOrigin(List.of(lat, lon));
                         }
+                        Element ponElement = (Element) extensionstrksegElement.getElementsByTagName("pon").item(0);
+                        NodeList ponwptList = ponElement.getElementsByTagName("wpt");
+                        NavigationData.WayPoint wayPoint = new NavigationData.WayPoint();
+                        for (int l = 0; l < ponwptList.getLength(); l++) {
+                            Element wptElement = (Element) ponwptList.item(l); // 从 NodeList 中获取每个 Element
+                            Double lat = Double.parseDouble(wptElement.getAttribute("lat"));
+                            Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
+                            wayPoint.setLocation(List.of(lat, lon));
+                            wayPoint.setName("PON");
+                            wayPoint.setSequence(l);
+                            wayPoints.add(wayPoint);
+                        }
                         //destinationElement
                         Element destinationElement = (Element) extensionstrksegElement.getElementsByTagName("destination").item(0);
                         NodeList destinationwptList = destinationElement.getElementsByTagName("wpt");
@@ -220,18 +234,14 @@ public class GpxUtil {
                             Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
                             navigationData.setOrigin(List.of(lat, lon));
                         }
-                        //添加 PON的class和解析内容
-
                     }
 
                 }
-
                 route.setSteps(steps);
                 routes.add(route);
-                //可能是route的起点和终点也可能是总的因为有不同
-                //PON判断
             }
             navigationData.setRoutes(routes);
+            navigationData.setWayPoints(wayPoints);
             return navigationData;
         }
     }
