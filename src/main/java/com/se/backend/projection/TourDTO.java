@@ -8,7 +8,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -51,8 +50,8 @@ public class TourDTO {
         status = tour.getStatus().ordinal();
         var likedByRecords = tour.getLikedBy();
         likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
-        var starredByRecords = tour.getStars();
-        starredBy = Objects.nonNull(starredByRecords) ? tour.getStars().stream().map(star -> star.getUser().getId()).toList() : new ArrayList<>(0);
+        var starredByRecords = tour.getStarredBy();
+        starredBy = Objects.nonNull(starredByRecords) ? starredByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {

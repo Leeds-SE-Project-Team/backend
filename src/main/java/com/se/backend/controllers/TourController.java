@@ -176,7 +176,7 @@ public class TourController {
     @PostMapping("/star")
     ApiResponse<TourDTO> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            TourDTO updatedTour = tourService.starTour(user.getId(), id);
+            TourDTO updatedTour = tourService.starTour(user, id);
             return ApiResponse.success("Tour starred successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -211,10 +211,9 @@ public class TourController {
      * @eo.request-type formdata
      */
     @DeleteMapping("/star")
-    ApiResponse<Void> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long id) {
+    ApiResponse<TourDTO> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            tourService.cancelStarTour(user.getId(), id);
-            return ApiResponse.success("Tour star was cancelled successfully");
+            return ApiResponse.success("Tour star was cancelled successfully", tourService.cancelStarTour(user, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }

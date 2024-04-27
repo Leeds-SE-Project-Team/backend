@@ -218,20 +218,20 @@ public class TourService {
         return tour.toDTO();
     }
 
-    public TourDTO starTour(Long userId, Long tourId) throws ResourceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+    public TourDTO starTour(User user, Long tourId) throws ResourceException {
+        Set<Tour> tourStarred = user.getTourStars();
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
-        if (!tourStarRepository.findByUserIdAndTourId(userId, tourId).isEmpty()) {
-            throw new ResourceException(TOUR_STAR_EXISTS);
+
+        for (Tour t : tourStarred) {
+            if (t.getId().equals(tourId)) {
+                //  已经存在
+                throw new ResourceException(TOUR_STAR_EXISTS);
+            }
         }
-        TourStar NewTourStar = new TourStar();
-        NewTourStar.setUser(user);
-        NewTourStar.setTour(tour);
-        NewTourStar.setCreatetTime(TimeUtil.getCurrentTimeString());
-
-        tourStarRepository.saveAndFlush(NewTourStar);
-
+        tourStarred.add(tour);
+        user.setTourStars(tourStarred);
+        userRepository.save(user);
         return tour.toDTO();
     }
 
@@ -245,12 +245,14 @@ public class TourService {
 //        throw new ResourceException(TOUR_LIKE_NOT_FOUND);
     }
 
-    public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
-        List<TourStar> stars = tourStarRepository.findByUserIdAndTourId(userId, tourId);
-        if (stars.isEmpty()) {
-            throw new ResourceException(TOUR_STAR_NOT_FOUND);
-        }
-        tourStarRepository.deleteAll(stars); // Assuming there could be multiple stars which is usually not the case
+    @Transactional
+
+    public Tour cancelStarTour(User user, Long tourId) throws ResourceException {
+        Set<Tour> tourStarred = user.getTourStars();
+        tourStarred.removeIf(t -> t.getId().equals(tourId));
+        user.setTourStars(tourStarred);
+        userRepository.save(user);
+        return tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
     }
 //
 //    public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {

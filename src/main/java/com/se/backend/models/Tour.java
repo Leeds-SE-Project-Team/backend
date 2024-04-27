@@ -20,6 +20,9 @@ public class Tour {
     @JsonIgnore
     @ManyToMany(mappedBy = "tourLikes", fetch = FetchType.EAGER)
     Set<User> likedBy;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tourStars", fetch = FetchType.EAGER)
+    Set<User> starredBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,8 +65,6 @@ public class Tour {
     private List<TourImage> tourImages;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 添加这一行来确保级联删除
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<TourStar> stars;
 
     public TourDTO toDTO() {
         return new TourDTO(this);
