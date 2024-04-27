@@ -197,11 +197,13 @@ public class TourService {
         return records;
     }
 
-    public TourDTO likeTour(Long userId, Long tourId) throws ResourceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+    public TourDTO likeTour(User user, Long tourId) throws ResourceException {
+        Set<Tour> tourLiked = user.getTourLikes();
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
-        List<Tour> tourLiked = user.getTourLikes();
-
+//        if (tourLiked.contains(tour)) {
+//            throw new ResourceException(TOUR_LIKE_EXISTS);
+//        }
         // 检查点赞是否已存在
         for (Tour t : tourLiked) {
             if (t.getId().equals(tourId)) {
@@ -209,12 +211,10 @@ public class TourService {
                 throw new ResourceException(TOUR_LIKE_EXISTS);
             }
         }
-
-        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-
+//        tourLiked.add(tour);
         tourLiked.add(tour);
-        tour.getLikedBy().add(user);
-        userRepository.saveAndFlush(user);
+        user.setTourLikes(tourLiked);
+        userRepository.save(user);
         return tour.toDTO();
     }
 
@@ -237,18 +237,12 @@ public class TourService {
 
     @Transactional
     public Tour cancelLikeTour(User user, Long tourId) throws ResourceException {
-        Tour existingTour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-//        user.getTourLikes().remove(existingTour);
-//        existingTour.getLikedBy().remove(user);
-//        userRepository.saveAndFlush(user);
-//        tourRepository.saveAndFlush(existingTour);
-        return existingTour;
-//        Optional<TourLike> like = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
-//        if (like.isEmpty()) {
-//            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
-//        }
-//        tourLikeRepository.delete(like.get());
-//        System.out.println(like);
+        Set<Tour> tourLiked = user.getTourLikes();
+        tourLiked.removeIf(t -> t.getId().equals(tourId));
+        user.setTourLikes(tourLiked);
+        userRepository.save(user);
+        return tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+//        throw new ResourceException(TOUR_LIKE_NOT_FOUND);
     }
 
     public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
