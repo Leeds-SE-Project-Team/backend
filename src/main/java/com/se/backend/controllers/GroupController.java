@@ -100,7 +100,7 @@ public class GroupController {
     }
 
     /**
-     * @eo.name getCreatedGroupsByUser
+     * @eo.name getAllCreatedGroupsByUser
      * @eo.url /createdByUser
      * @eo.method get
      * @eo.request-type formdata
@@ -108,12 +108,12 @@ public class GroupController {
      * @return ApiResponse
      */
     @GetMapping("/createdByUser")
-    ApiResponse<List<GroupDTO>> getCreatedGroupsByUser(@RequestAttribute("user") User user) {
-        return ApiResponse.success("Group created by user found successfully!", GroupDTO.toListDTO(groupService.getCreatedGroupsByUser(user)));
+    ApiResponse<List<GroupDTO>> getAllCreatedGroupsByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Group created by user found successfully!", GroupDTO.toListDTO(groupService.getAllCreatedGroupsByUser(user)));
     }
 
     /**
-     * @eo.name getJoinedGroupsByUser
+     * @eo.name getAllJoinedGroupsByUser
      * @eo.url /joinedByUser
      * @eo.method get
      * @eo.request-type formdata
@@ -121,8 +121,8 @@ public class GroupController {
      * @return ApiResponse
      */
     @GetMapping("/joinedByUser")
-    ApiResponse<List<GroupDTO>> getJoinedGroupsByUser(@RequestAttribute("user") User user) {
-        return ApiResponse.success("Group created by user found successfully!", GroupDTO.toListDTO(groupService.getJoinedGroupsByUser(user)));
+    ApiResponse<List<GroupDTO>> getAllJoinedGroupsByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Group joined by user found successfully!", GroupDTO.toListDTO(groupService.getAllJoinedGroupsByUser(user)));
     }
 
     /**

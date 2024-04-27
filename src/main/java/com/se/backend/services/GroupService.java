@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
-import static com.se.backend.exceptions.ResourceException.ErrorType.USER_NOT_FOUND;
 
 
 @Service
@@ -53,10 +52,9 @@ public class GroupService {
         newGroup.setDescription(form.description);
         newGroup.setCoverUrl(form.coverUrl);
 
-        User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        existingUser.getGroups().add(newGroup);
-
-        groupRepository.saveAndFlush(newGroup);
+//        User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        user.getGroups().add(groupRepository.saveAndFlush(newGroup));
+        userRepository.saveAndFlush(user);
 
     }
 
@@ -96,18 +94,18 @@ public class GroupService {
         groupRepository.delete(groupToDelete);
     }
 
-    public List<Group> getCreatedGroupsByUser(User user) {
+    public List<Group> getAllCreatedGroupsByUser(User user) {
         return groupRepository.findAllByLeaderId(user.getId());
     }
 
-    public List<Group> getJoinedGroupsByUser(User user) {
+    public List<Group> getAllJoinedGroupsByUser(User user) {
         return groupRepository.findAllByMembers_IdAndLeaderIdNot(user.getId(), user.getId());
     }
 
     @Getter
     public static class CreateGroupForm {
 
-        Long leaderId;
+        //        Long leaderId;
         String name;
         String coverUrl;
         String description;
