@@ -42,7 +42,7 @@ public class GroupService {
         return groupRepository.findById(groupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
     }
 
-    public void createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
+    public Group createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
         Group newGroup = new Group();
 
         newGroup.setLeader(user);
@@ -56,6 +56,7 @@ public class GroupService {
         user.getGroups().add(groupRepository.saveAndFlush(newGroup));
         userRepository.saveAndFlush(user);
 
+        return newGroup;
     }
 
     // need User?

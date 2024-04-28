@@ -45,10 +45,9 @@ public class GroupController {
      * @eo.request-type json
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createGroup(@RequestAttribute("user") User user, @RequestBody GroupService.CreateGroupForm form) {
+    ApiResponse<GroupDTO> createGroup(@RequestAttribute("user") User user, @RequestBody GroupService.CreateGroupForm form) {
         try {
-            groupService.createGroup(user, form);
-            return ApiResponse.success("Create group succeed");
+            return ApiResponse.success("Create group succeed", groupService.createGroup(user, form).toDTO());
         } catch (ResourceException | AuthException | IOException e) {
             return ApiResponse.error(e.getMessage());
         }

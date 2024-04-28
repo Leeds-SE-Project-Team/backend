@@ -45,11 +45,10 @@ public class GroupCollectionController {
     @PostMapping(value = "/create")
     ApiResponse<GroupCollectionDTO> createGroupCollection(@RequestBody GroupCollectionService.CreateGroupCollectionForm form) {
         try {
-            return ApiResponse.success("Create tour succeed", groupCollectionService.createGroupCollection(form).toDTO());
+            return ApiResponse.success("Create group collection succeed", groupCollectionService.createGroupCollection(form).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
-
     }
 
 

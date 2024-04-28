@@ -43,13 +43,12 @@ public class CommentController {
      * @eo.request-type json
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createComment(@RequestAttribute("user") User user, @RequestBody CommentService.CreateCommentForm form) {
+    ApiResponse<CommentDTO> createComment(@RequestAttribute("user") User user, @RequestBody CommentService.CreateCommentForm form) {
         try {
-            commentService.createComment(user, form);
+            return ApiResponse.success("Create comment succeed", commentService.createComment(user, form).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
-        return ApiResponse.success("Post comment succeed");
     }
 
 
@@ -112,8 +111,8 @@ public class CommentController {
     @PostMapping("/like")
     ApiResponse<CommentDTO> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            CommentDTO updatedComment= commentService.likeComment(user, id);
-            return ApiResponse.success("Comment liked successfully",updatedComment);
+            CommentDTO updatedComment = commentService.likeComment(user, id);
+            return ApiResponse.success("Comment liked successfully", updatedComment);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }

@@ -41,9 +41,9 @@ public class TourCollectionController {
      * @eo.request-type json
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
-        tourCollectionService.createTourCollection(user, form);
-        return ApiResponse.success("Create tour collection succeed");
+    ApiResponse<TourCollectionDTO> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
+        return ApiResponse.success("Create tour collection succeed", tourCollectionService.createTourCollection(user, form).toDTO());
+
     }
 
     /**
