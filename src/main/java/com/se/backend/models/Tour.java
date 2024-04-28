@@ -65,6 +65,10 @@ public class Tour {
     private List<TourImage> tourImages;
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments; // 添加这一行来确保级联删除
+    //Tour 与 TourRecordData 单向关系
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "record_id")
+    private TourRecordData tourRecordData;
 
     public TourDTO toDTO() {
         return new TourDTO(this);

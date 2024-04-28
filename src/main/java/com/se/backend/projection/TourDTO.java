@@ -30,6 +30,7 @@ public class TourDTO {
     int status;
     List<Long> likedBy; // User IDs who liked this tour
     List<Long> starredBy; // User IDs who starred this tour
+    TourRecordDataDTO tourRecordData;
 
     public TourDTO(Tour tour) {
         id = tour.getId();
@@ -52,6 +53,7 @@ public class TourDTO {
         likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
         var starredByRecords = tour.getStarredBy();
         starredBy = Objects.nonNull(starredByRecords) ? starredByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
+        tourRecordData = tour.getTourRecordData().toDTO();
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
