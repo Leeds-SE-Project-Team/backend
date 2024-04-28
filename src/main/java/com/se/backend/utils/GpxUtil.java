@@ -158,17 +158,15 @@ public class GpxUtil {
 
             // Assume a structure similar to the one used to create GPX in your toGpx method
             NavigationData navigationData = new NavigationData();
-
             // Extracting information from the GPX file
             NodeList trkList = doc.getElementsByTagName("trk");
             List<NavigationData.Route> routes = new ArrayList<>();
-            List<NavigationData.WayPoint> wayPoints = new ArrayList<>();
-
+            List<PON> attachedPONs = new ArrayList<>();
+//            List<NavigationData.WayPoint> wayPoints = new ArrayList<>();
             for (int i = 0; i < trkList.getLength(); i++) {
                 Element trkElement = (Element) trkList.item(i);
                 NavigationData.Route route = new NavigationData.Route();
                 List<NavigationData.Step> steps = new ArrayList<>();
-
                 NodeList trksegList = trkElement.getElementsByTagName("trkseg");
                 for (int j = 0; j < trksegList.getLength(); j++) {
                     Element trksegElement = (Element) trksegList.item(j);
@@ -176,7 +174,6 @@ public class GpxUtil {
                     for (int k = 0; k < trkptList.getLength(); k++) {
                         NavigationData.Step step = new NavigationData.Step();
                         Element trkptElement = (Element) trkptList.item(k);
-
                         NodeList wptList = trkptElement.getElementsByTagName("wpt");
                         List<List<Double>> path = new ArrayList<>();
                         for (int l = 0; l < wptList.getLength(); l++) {
@@ -218,18 +215,19 @@ public class GpxUtil {
                             Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
                             navigationData.setOrigin(List.of(lat, lon));
                         }
-//                        Element ponElement = (Element) extensionstrksegElement.getElementsByTagName("pon").item(0);
-//                        NodeList ponwptList = ponElement.getElementsByTagName("wpt");
+                        Element ponElement = (Element) extensionstrksegElement.getElementsByTagName("pon").item(0);
+                        NodeList ponwptList = ponElement.getElementsByTagName("wpt");
 //                        NavigationData.WayPoint wayPoint = new NavigationData.WayPoint();
-//                        for (int l = 0; l < ponwptList.getLength(); l++) {
-//                            Element wptElement = (Element) ponwptList.item(l); // 从 NodeList 中获取每个 Element
-//                            Double lat = Double.parseDouble(wptElement.getAttribute("lat"));
-//                            Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
-//                            wayPoint.setLocation(List.of(lat, lon));
-//                            wayPoint.setName("PON");
-//                            wayPoint.setSequence(l);
-//                            wayPoints.add(wayPoint);
-//                        }
+                        for (int l = 0; l < ponwptList.getLength(); l++) {
+                            PON pon = new PON();
+                            Element wptElement = (Element) ponwptList.item(l); // 从 NodeList 中获取每个 Element
+                            Double lat = Double.parseDouble(wptElement.getAttribute("lat"));
+                            Double lon = Double.parseDouble(wptElement.getAttribute("lon"));
+                            pon.setLocation(List.of(lat, lon).toString());
+                            pon.setName("PON");
+                            pon.setSequence(l+1);
+                            attachedPONs.add(pon);
+                        }
                         //destinationElement
                         Element destinationElement = (Element) extensionstrksegElement.getElementsByTagName("destination").item(0);
                         NodeList destinationwptList = destinationElement.getElementsByTagName("wpt");
@@ -246,7 +244,10 @@ public class GpxUtil {
                 routes.add(route);
             }
             navigationData.setRoutes(routes);
-//            navigationData.setWayPoints(wayPoints);
+            form.setPons(attachedPONs);
+            form.setResult(navigationData);
+            form.setStartLocation(navigationData.getOrigin().toString());
+            form.setEndLocation(navigationData.getDestination().toString());
 
             return form;
         }

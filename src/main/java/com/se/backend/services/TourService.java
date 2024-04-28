@@ -10,6 +10,7 @@ import com.se.backend.repositories.*;
 import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,7 +123,6 @@ public class TourService {
         newTour.setCreateTime(TimeUtil.getCurrentTimeString());
         newTour.setUser(user);
         newTour.setTitle(form.title);
-
         newTour.setState(Tour.TourState.UNFINISHED);
         newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
         if (Objects.nonNull(form.tourCollectionId)) {
@@ -143,22 +143,26 @@ public class TourService {
         String relativePath = "/tour/" + flushedTour.getId() + "/map.gpx";
         saveFileToLocal(file.getInputStream(), relativePath);
         Path path = Paths.get(relativePath);
-        CreateTourForm form = GpxUtil.GpxToNavigationDataConverter.parseGpxToNavigationData(path.toString());
-        newTour.setStartLocation(form.result.getOrigin().toString());
-        newTour.setEndLocation(navigationData.getDestination().toString());
+
+        CreateTourForm formgpx = GpxUtil.GpxToNavigationDataConverter.parseGpxToNavigationData(path.toString());
+        newTour.setStartLocation(formgpx.result.getOrigin().toString());
+        newTour.setEndLocation(formgpx.result.getDestination().toString());
         List<PON> attachedPONs = new ArrayList<>();
-        for (GpxUtil.NavigationData.WayPoint wayPoint : navigationData.getWayPoints()) {
+        for (PON pon : formgpx.getPons()) {
             PON newPon = new PON();
             newPon.setTour(flushedTour);
-            newPon.setName(wayPoint.getName());
-            newPon.setLocation(wayPoint.getLocation().toString());
-            newPon.setSequence(wayPoint.getSequence());
+            newPon.setName(pon.getName());
+            newPon.setLocation(pon.getLocation());
+            newPon.setSequence(pon.getSequence());
             attachedPONs.add(ponRepository.save(newPon)); // Save each PON
         }
         flushedTour.setPons(attachedPONs);
+        formgpx.setTourId(flushedTour.getId());
+        formgpx.setTitle(form.title);
+        formgpx.setType(form.type);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String jsonContent = objectMapper.writeValueAsString(navigationData);
+            String jsonContent = objectMapper.writeValueAsString(formgpx);
             String relativePath1 = "/tour/" + flushedTour.getId() + "/map.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath1);
             flushedTour.setDataUrl(getStaticUrl(relativePath1));
@@ -166,7 +170,6 @@ public class TourService {
             System.err.println("Error writing JSON to file: " + e.getMessage());
             // Handle the error according to your application's requirements
         }
-
         return tourRepository.saveAndFlush(flushedTour);
     }
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
@@ -296,6 +299,7 @@ public class TourService {
     }
 
     @Getter
+    @Setter
     public static class CreateTourForm {
         Long tourId;
         String startLocation;
