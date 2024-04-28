@@ -210,19 +210,20 @@ public class UserController {
         }
     }
 
+
     /**
-     * @param user
-     * @param groupId
-     * @return ApiResponse
      * @eo.name addUserToGroup
      * @eo.url /addUserToGroup
      * @eo.method post
      * @eo.request-type formdata
+     * @param InvitedId
+     * @param groupId
+     * @return ApiResponse
      */
     @PostMapping("/addUserToGroup")
-    public ApiResponse<Void> addUserToGroup(@RequestAttribute("user") User user, @RequestParam Long groupId) {
+    public ApiResponse<Void> addUserToGroup(@RequestParam Long InvitedId, Long groupId) {
         try {
-            userService.addUserToGroup(user.getId(), groupId);
+            userService.addUserToGroup(InvitedId, groupId);
             return ApiResponse.success("User added to group successfully");
         } catch (AuthException e) {
             return ApiResponse.error(e.getMessage());
