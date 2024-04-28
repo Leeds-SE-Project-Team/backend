@@ -141,7 +141,7 @@ public class UserController {
      * @eo.method get
      * @eo.request-type formdata
      */
-    @AdminToken
+//    @AdminToken
     @GetMapping
     public ApiResponse<UserDTO> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
         try {
