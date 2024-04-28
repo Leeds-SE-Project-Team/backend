@@ -272,6 +272,7 @@ public class UserController {
      * @eo.method get
      * @eo.request-type formdata
      */
+    @IgnoreToken
     @GetMapping("/token/{value}")
     public ApiResponse<UserDTO> validateToken(@PathVariable("value") String token) {
         try {
