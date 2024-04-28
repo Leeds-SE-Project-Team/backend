@@ -53,10 +53,11 @@ public class GroupService {
         newGroup.setCoverUrl(form.coverUrl);
 
 //        User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        user.getGroups().add(groupRepository.saveAndFlush(newGroup));
+        Group flushedGroup = groupRepository.saveAndFlush(newGroup);
+        user.getGroups().add(flushedGroup);
         userRepository.saveAndFlush(user);
 
-        return newGroup;
+        return flushedGroup;
     }
 
     // need User?
