@@ -70,7 +70,7 @@ public class User {
     private List<Token> tokens;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<CommentLike> commentLikes;
     //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Tour> tours;
@@ -87,7 +87,7 @@ public class User {
 
     @Getter
     public enum UserType {
-        COMMON("common"), VIP("vip"), ADMIN("admin");
+        COMMON("common"), VIP("vip"), SVIP("svip"), ADMIN("admin");
 
         private final String type;
 
