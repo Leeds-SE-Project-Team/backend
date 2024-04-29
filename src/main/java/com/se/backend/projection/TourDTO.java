@@ -1,6 +1,7 @@
 package com.se.backend.projection;
 
 import com.se.backend.models.Tour;
+import com.se.backend.models.TourRecordData;
 import com.se.backend.models.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,7 +54,9 @@ public class TourDTO {
         likedBy = Objects.nonNull(likedByRecords) ? likedByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
         var starredByRecords = tour.getStarredBy();
         starredBy = Objects.nonNull(starredByRecords) ? starredByRecords.stream().map(User::getId).toList() : new ArrayList<>(0);
-        tourRecordData = tour.getTourRecordData().toDTO();
+//        tourRecordData = tour.getTourRecordData().toDTO();
+        TourRecordData tourRecordDataRaw = tour.getTourRecordData();
+        tourRecordData = Objects.nonNull(tourRecordDataRaw) ? tourRecordDataRaw.toDTO() : null;
     }
 
     public static List<TourDTO> toListDTO(List<Tour> tourList) {
