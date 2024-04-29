@@ -4,6 +4,7 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.GroupDTO;
+import com.se.backend.projection.TourDTO;
 import com.se.backend.services.GroupService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
@@ -85,6 +86,23 @@ public class GroupController {
         return ApiResponse.success("Get all groups", GroupDTO.toListDTO(groupService.getAllGroups()));
     }
 
+    /**
+     * @eo.name getGroupById
+     * @eo.url /
+     * @eo.method get
+     * @eo.request-type formdata
+     * @param id
+     * @return ApiResponse
+     */
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<GroupDTO> getGroupById(@RequestParam Long id) {
+        try {
+            return ApiResponse.success("Get group", groupService.getGroupById(id).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
 
     /**
      * @param user
