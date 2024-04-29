@@ -14,13 +14,13 @@ import java.util.Set;
 @Getter
 @Setter
 public class Comment {
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_likes_comment", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    Set<User> likedBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "commentLikes", fetch = FetchType.EAGER)
-    Set<User> likedBy;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Tour tour; // 移除级联删除，防止删除Comment时影响Tour

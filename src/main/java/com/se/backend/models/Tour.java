@@ -18,10 +18,12 @@ public class Tour {
     @JoinTable(name = "tour_highlight_r", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "highlight_id"))
     List<TourHighlight> highlights;
     @JsonIgnore
-    @ManyToMany(mappedBy = "tourLikes", fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_likes_tour", joinColumns = @JoinColumn(name = "tour_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     Set<User> likedBy;
     @JsonIgnore
-    @ManyToMany(mappedBy = "tourStars", fetch = FetchType.EAGER)
+    @JoinTable(name = "user_stars_tour", joinColumns = @JoinColumn(name = "star_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @ManyToMany(cascade = CascadeType.MERGE)
     Set<User> starredBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

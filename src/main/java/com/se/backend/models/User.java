@@ -23,16 +23,13 @@ public class User {
     List<Group> groups;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_likes_tour", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tour_id"))
+    @ManyToMany(mappedBy = "likedBy", fetch = FetchType.EAGER)
     Set<Tour> tourLikes;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_stars_tour", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "star_id"))
+    @ManyToMany(mappedBy = "starredBy", fetch = FetchType.EAGER)
     Set<Tour> tourStars;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_likes_comment", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    @ManyToMany(mappedBy = "likedBy", fetch = FetchType.EAGER)
     Set<Comment> commentLikes;
     // Extra Information
     @Column
@@ -74,7 +71,7 @@ public class User {
 //    private List<CommentLike> commentLikes;
     //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Tour> tours;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourCollection> tourCollections;
     //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 //    private List<TourLike> tourLikes;

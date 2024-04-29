@@ -177,6 +177,7 @@ public class TourService {
     //删除原先的文件
     //返回前端Tour的数据
 
+    @Transactional
     public void deleteTour(Long tourId) throws ResourceException {
         tourRepository.delete(tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
     }
