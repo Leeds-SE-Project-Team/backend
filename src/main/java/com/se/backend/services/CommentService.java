@@ -4,8 +4,6 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Comment;
 import com.se.backend.models.Tour;
 import com.se.backend.models.User;
-import com.se.backend.projection.CommentDTO;
-import com.se.backend.projection.UserDTO;
 import com.se.backend.repositories.CommentRepository;
 import com.se.backend.repositories.TourRepository;
 import com.se.backend.repositories.UserRepository;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.*;
 
@@ -39,11 +36,12 @@ public class CommentService {
         this.tourRepository = tourRepository;
         this.userRepository = userRepository;
     }
-    public Comment getCommentById(Long commentId) throws ResourceException{
-        return commentRepository.findById(commentId).orElseThrow(()->new ResourceException(COMMENT_NOT_FOUND));
-    }
-    public Comment createComment(User author, CreateCommentForm form) throws ResourceException {
 
+    public Comment getCommentById(Long commentId) throws ResourceException {
+        return commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
+    }
+
+    public Comment createComment(User author, CreateCommentForm form) throws ResourceException {
         Comment newComment = new Comment();
         newComment.setContent(form.content);
         newComment.setAuthor(author);
@@ -51,12 +49,9 @@ public class CommentService {
             Comment parentComment = commentRepository.findById(form.parentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
             newComment.setParent(parentComment);
         }
-
         newComment.setPublishTime(TimeUtil.getCurrentTimeString());
-
         Tour existingTour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
         newComment.setTour(existingTour);
-
         return commentRepository.saveAndFlush(newComment);
 
     }
@@ -87,6 +82,7 @@ public class CommentService {
     public List<Comment> getCommentsByTourId(Long id) {
         return commentRepository.findAllByTourId(id);
     }
+
     @Transactional
     public Comment likeComment(User user, Long commentId) throws ResourceException {
         Set<Comment> commentLikes = user.getCommentLikes();
@@ -109,8 +105,8 @@ public class CommentService {
 
     @Transactional
     public Comment cancelLikeComment(User user, Long commentId) throws ResourceException {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(()->new ResourceException(COMMENT_NOT_FOUND));
-        comment.getLikedBy().removeIf(u->u.getId().equals(user.getId()));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
+        comment.getLikedBy().removeIf(u -> u.getId().equals(user.getId()));
         return commentRepository.saveAndFlush(comment);
     }
 

@@ -24,6 +24,7 @@ public class TourDTO {
     int state;
     String createTime;
     List<PONDTO> pons; // Assuming only IDs are needed
+    List<CommentDTO> comments;
     Long tourCollectionId;
     List<TourHighlightDTO> tourHighlightList;
     List<TourSpotDTO> tourSpotList; // Assuming only IDs are needed
@@ -48,6 +49,7 @@ public class TourDTO {
         tourCollectionId = tour.getTourCollection().getId();
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
+        comments = CommentDTO.toListDTO(tour.getComments());
         user = tour.getUser().toDTO();
         status = tour.getStatus().ordinal();
         var likedByRecords = tour.getLikedBy();

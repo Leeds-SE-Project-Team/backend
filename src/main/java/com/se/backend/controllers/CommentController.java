@@ -31,7 +31,6 @@ public class CommentController {
     @Autowired
     public CommentController(CommentService commentService, UserService userService) {
         this.commentService = commentService;
-
         this.userService = userService;
     }
 
@@ -48,7 +47,8 @@ public class CommentController {
     @PostMapping(value = "/create")
     ApiResponse<CommentDTO> createComment(@RequestAttribute("user") User user, @RequestBody CommentService.CreateCommentForm form) {
         try {
-            return ApiResponse.success("Create comment succeed", commentService.createComment(user, form).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Create comment succeed", commentService.createComment(eagerredUser, form).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
