@@ -5,6 +5,7 @@ import com.se.backend.models.User;
 import com.se.backend.projection.CommentDTO;
 import com.se.backend.projection.UserDTO;
 import com.se.backend.services.CommentService;
+import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ import java.util.Objects;
 public class CommentController {
 
     private final CommentService commentService;
+    private final UserService userService;
 
     @Autowired
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, UserService userService) {
         this.commentService = commentService;
 
+        this.userService = userService;
     }
 
 
@@ -111,7 +114,8 @@ public class CommentController {
     @PostMapping("/like")
     ApiResponse<CommentDTO> likeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            CommentDTO updatedComment = commentService.likeComment(user, id);
+            User eagerredUser = userService.getUserById(user.getId());
+            CommentDTO updatedComment = commentService.likeComment(eagerredUser, id).toDTO();
             return ApiResponse.success("Comment liked successfully", updatedComment);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -128,10 +132,10 @@ public class CommentController {
      * @eo.request-type formdata
      */
     @DeleteMapping("/like")
-    ApiResponse<Void> cancelLikeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
+    ApiResponse<CommentDTO> cancelLikeComment(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            commentService.cancelLikeComment(user, id);
-            return ApiResponse.success("Comment like was cancelled successfully");
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Comment like cancelled", commentService.cancelLikeComment(eagerredUser, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -149,7 +153,9 @@ public class CommentController {
     @GetMapping("/liked/by-user")
     ApiResponse<List<CommentDTO>> getAllLikedCommentsByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all liked comments", CommentDTO.toListDTO(user.getCommentLikes().stream().toList()));
+            User eagerredUser = userService.getUserById(user.getId());
+
+            return ApiResponse.success("Retrieved all liked comments", CommentDTO.toListDTO(eagerredUser.getCommentLikes().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }

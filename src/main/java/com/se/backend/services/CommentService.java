@@ -87,36 +87,31 @@ public class CommentService {
     public List<Comment> getCommentsByTourId(Long id) {
         return commentRepository.findAllByTourId(id);
     }
-
-    public CommentDTO likeComment(User user, Long commentId) throws ResourceException {
-        Set<Comment> commentLiked = user.getCommentLikes();
+    @Transactional
+    public Comment likeComment(User user, Long commentId) throws ResourceException {
+        Set<Comment> commentLikes = user.getCommentLikes();
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
 
 //        if (tourLiked.contains(tour)) {
 //            throw new ResourceException(TOUR_LIKE_EXISTS);
 //        }
         // 检查点赞是否已存在
-        for (Comment c : commentLiked) {
+        for (Comment c : commentLikes) {
             if (c.getId().equals(commentId)) {
                 //  已经存在
                 throw new ResourceException(COMMENT_LIKE_EXISTS);
             }
         }
 //        tourLiked.add(tour);
-        commentLiked.add(comment);
-        user.setCommentLikes(commentLiked);
-        userRepository.save(user);
-        return comment.toDTO();
+        comment.getLikedBy().add(user);
+        return commentRepository.saveAndFlush(comment);
     }
 
     @Transactional
     public Comment cancelLikeComment(User user, Long commentId) throws ResourceException {
-        Set<Comment> commentLiked = user.getCommentLikes();
-        commentLiked.removeIf(t -> t.getId().equals(commentId));
-        user.setCommentLikes(commentLiked);
-        userRepository.save(user);
-        return commentRepository.findById(commentId).orElseThrow(() -> new ResourceException(COMMENT_NOT_FOUND));
-//        throw new ResourceException(TOUR_LIKE_NOT_FOUND);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()->new ResourceException(COMMENT_NOT_FOUND));
+        comment.getLikedBy().removeIf(u->u.getId().equals(user.getId()));
+        return commentRepository.saveAndFlush(comment);
     }
 
 //    public List<CommentDTO> getAllLikedCommentsByUserId(Long userId) throws ResourceException {
