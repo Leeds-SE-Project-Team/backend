@@ -10,7 +10,6 @@ import com.se.backend.projection.UserDTO;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.TourCollectionService;
 import com.se.backend.services.UserService;
-import com.se.backend.utils.AdminToken;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
@@ -86,8 +85,8 @@ public class UserController {
         try {
             userService.getUserByEmail(req.email);
             return ApiResponse.error("User already exist");
-        } catch (AuthException e) {
-            if (e.getType().equals(AuthException.ErrorType.USER_NOT_FOUND)) {
+        } catch (ResourceException e) {
+            if (e.getType().equals(ResourceException.ErrorType.USER_NOT_FOUND)) {
                 User newUser = new User();
                 newUser.setNickname(req.nickname);
                 newUser.setAvatar(User.DEFAULT_AVATAR);
@@ -126,7 +125,7 @@ public class UserController {
                 userService.getUserByEmail(email);
                 return ApiResponse.success("GET user succeed with email");
             }
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.error("Both id and email cannot be null");
@@ -150,7 +149,7 @@ public class UserController {
             } else if (email != null) {
                 return ApiResponse.success("GET user succeed with email", userService.getUserByEmail(email).toDTO());
             }
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.error("Both id and email cannot be null");
@@ -169,7 +168,7 @@ public class UserController {
     ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo).toDTO());
-        } catch (AuthException e) {
+        } catch (AuthException | ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
@@ -187,7 +186,7 @@ public class UserController {
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
@@ -205,20 +204,20 @@ public class UserController {
         try {
             userService.deleteUser(user.getId());
             return ApiResponse.success("User has been removed");
-        } catch (AuthException e) {
+        } catch (ResourceException | AuthException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
 
 
     /**
+     * @param inviteId
+     * @param groupId
+     * @return ApiResponse
      * @eo.name addUserToGroup
      * @eo.url /addUserToGroup
      * @eo.method post
      * @eo.request-type formdata
-     * @param inviteId
-     * @param groupId
-     * @return ApiResponse
      */
     @PostMapping("/addUserToGroup")
     public ApiResponse<Void> addUserToGroup(@RequestParam Long inviteId, Long groupId) {

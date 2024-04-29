@@ -2,6 +2,7 @@ package com.se.backend.interceptor;
 
 import com.alibaba.fastjson2.JSON;
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
@@ -67,7 +68,7 @@ public class JWTInterceptor implements HandlerInterceptor {
             if (Objects.nonNull(id)) {
                 try {
                     request.setAttribute("user", userService.getUserById(Long.valueOf(id)));
-                } catch (AuthException e) {
+                } catch (ResourceException e) {
                     Object json = JSON.toJSON(ApiResponse.error(e.getMessage()));
                     response.getWriter().println(json);
                     return false;

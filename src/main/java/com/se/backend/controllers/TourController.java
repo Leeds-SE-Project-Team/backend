@@ -6,6 +6,7 @@ import com.se.backend.models.User;
 import com.se.backend.projection.TourDTO;
 import com.se.backend.projection.UserDTO;
 import com.se.backend.services.TourService;
+import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,12 @@ import java.util.List;
 @RequestMapping("/tours")
 public class TourController {
     private final TourService tourService;
+    private final UserService userService;
 
     @Autowired
-    public TourController(TourService tourService) {
+    public TourController(TourService tourService, UserService userService) {
         this.tourService = tourService;
+        this.userService = userService;
     }
 
 
@@ -44,19 +47,20 @@ public class TourController {
     @PostMapping(value = "/create")
     ApiResponse<TourDTO> createTour(@RequestAttribute("user") User user, @RequestBody TourService.CreateTourForm form) {
         try {
-            return ApiResponse.success("Create tour succeed", tourService.createTour(user, form).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Create tour succeed", tourService.createTour(eagerredUser, form).toDTO());
         } catch (ResourceException | AuthException | IOException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
 
     /**
+     * @param form
+     * @return ApiResponse
      * @eo.name completeTour
      * @eo.url /complete
      * @eo.method post
      * @eo.request-type json
-     * @param form
-     * @return ApiResponse
      */
     @PostMapping(value = "/complete")
     ApiResponse<TourDTO> completeTour(@RequestBody TourService.SaveTourForm form) {
@@ -156,7 +160,8 @@ public class TourController {
     @PostMapping("/like")
     public ApiResponse<TourDTO> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            TourDTO updatedTour = tourService.likeTour(user, id);
+            User eagerredUser = userService.getUserById(user.getId());
+            TourDTO updatedTour = tourService.likeTour(eagerredUser, id);
             return ApiResponse.success("Tour liked successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -175,7 +180,8 @@ public class TourController {
     @PostMapping("/star")
     ApiResponse<TourDTO> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            TourDTO updatedTour = tourService.starTour(user, id);
+            User eagerredUser = userService.getUserById(user.getId());
+            TourDTO updatedTour = tourService.starTour(eagerredUser, id);
             return ApiResponse.success("Tour starred successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -194,7 +200,8 @@ public class TourController {
     @DeleteMapping("/like")
     ApiResponse<TourDTO> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            return ApiResponse.success("Tour like was cancelled successfully", tourService.cancelLikeTour(user, id).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Tour like was cancelled successfully", tourService.cancelLikeTour(eagerredUser, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -212,7 +219,8 @@ public class TourController {
     @DeleteMapping("/star")
     ApiResponse<TourDTO> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
-            return ApiResponse.success("Tour star was cancelled successfully", tourService.cancelStarTour(user, id).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Tour star was cancelled successfully", tourService.cancelStarTour(eagerredUser, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -229,7 +237,8 @@ public class TourController {
     @GetMapping("/liked/by-user")
     ApiResponse<List<TourDTO>> getAllLikedToursByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all liked tours", TourDTO.toListDTO(user.getTourLikes().stream().toList()));
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Retrieved all liked tours", TourDTO.toListDTO(eagerredUser.getTourLikes().stream().toList()));
 //            return ApiResponse.success("Retrieved all liked tours", tourService.getAllLikedToursByUserId(user.getId()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
@@ -247,7 +256,8 @@ public class TourController {
     @GetMapping("/starred/by-user")
     ApiResponse<List<TourDTO>> getAllStarredToursByUserId(@RequestAttribute("user") User user) {
         try {
-            return ApiResponse.success("Retrieved all starred tours", TourDTO.toListDTO(user.getTourStars().stream().toList()));
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Retrieved all starred tours", TourDTO.toListDTO(eagerredUser.getTourStars().stream().toList()));
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -311,12 +321,12 @@ public class TourController {
 //    }
 
     /**
+     * @param id
+     * @return ApiResponse
      * @eo.name deleteTourById
      * @eo.url /
      * @eo.method delete
      * @eo.request-type formdata
-     * @param id
-     * @return ApiResponse
      */
     /*
      * @param id

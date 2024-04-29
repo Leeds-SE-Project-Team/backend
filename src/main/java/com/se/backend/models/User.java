@@ -18,18 +18,18 @@ import java.util.Set;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/avatar.jpg");
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
     List<Group> groups;
 
 
-    @ManyToMany(mappedBy = "likedBy", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "likedBy")
     Set<Tour> tourLikes;
 
-    @ManyToMany(mappedBy = "starredBy", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "starredBy")
     Set<Tour> tourStars;
 
-    @ManyToMany(mappedBy = "likedBy", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "likedBy")
     Set<Comment> commentLikes;
     // Extra Information
     @Column

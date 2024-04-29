@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByEmail(String email);
-
 //    @Query("SELECT new com.se.backend.projection.UserDTO(u) FROM User u")
 //    List<CommentDTO> findAllDTO();
 }

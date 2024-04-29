@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
-import static com.se.backend.exceptions.AuthException.ErrorType.USER_NOT_FOUND;
-import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
-import static com.se.backend.exceptions.ResourceException.ErrorType.LEADER_JOIN_SELF;
+import static com.se.backend.exceptions.ResourceException.ErrorType.*;
 
 @Service
 public class UserService {
@@ -38,12 +36,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long userId) throws AuthException {
-        return userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public User getUserById(Long userId) throws ResourceException {
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
     }
 
-    public User getUserByEmail(String email) throws AuthException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public User getUserByEmail(String email) throws ResourceException {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
     }
 
 
@@ -51,8 +49,8 @@ public class UserService {
         return userRepository.saveAndFlush(user);
     }
 
-    public User updateUser(Long id, ReqUpdateForm updatedInfo) throws AuthException {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public User updateUser(Long id, ReqUpdateForm updatedInfo) throws ResourceException, AuthException {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
 
         // 验证旧密码，仅当用户想要更改密码时
         if (Objects.nonNull(updatedInfo.getOldPassword()) && !updatedInfo.getOldPassword().isEmpty()) {
@@ -77,15 +75,15 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public User updateUserType(Long id, ReqUpdateForm updatedInfo) throws AuthException {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public User updateUserType(Long id, ReqUpdateForm updatedInfo) throws ResourceException {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
 
         existingUser.setType(updatedInfo.getType());
         return userRepository.save(existingUser);
     }
 
     public void addUserToGroup(Long userId, Long groupId) throws AuthException, ResourceException {
-        User existingUser = userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         // Update the properties of the existing user
         Group existingGroup = groupRepository.findById(groupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
 
@@ -99,13 +97,13 @@ public class UserService {
         userRepository.saveAndFlush(existingUser);
     }
 
-    public void deleteUser(Long userId) throws AuthException {
-        userRepository.findById(userId).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public void deleteUser(Long userId) throws AuthException, ResourceException {
+        userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         userRepository.deleteById(userId);
     }
 
-    public User pwdLogin(String email, String password) throws AuthException {
-        User targetUser = userRepository.findByEmail(email).orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+    public User pwdLogin(String email, String password) throws AuthException, ResourceException {
+        User targetUser = userRepository.findByEmail(email).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         if (!targetUser.getPassword().equals(password)) {
             throw new AuthException(PASSWORD_NOT_MATCH);
         }

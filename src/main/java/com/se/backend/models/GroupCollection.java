@@ -33,7 +33,7 @@ public class GroupCollection {
     @Column
     private String description;
 
-    @OneToMany(mappedBy = "groupCollection", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "groupCollection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tour> tours;
 
 

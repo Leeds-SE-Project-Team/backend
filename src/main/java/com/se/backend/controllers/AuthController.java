@@ -1,6 +1,7 @@
 package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
@@ -43,7 +44,7 @@ public class AuthController {
         try {
             User userRecord = userService.pwdLogin(req.email, req.password);
             resData = tokenService.generateTokenRecord(userRecord, "pc").getToken();
-        } catch (AuthException e) {
+        } catch (AuthException | ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.success("login succeed", resData);
