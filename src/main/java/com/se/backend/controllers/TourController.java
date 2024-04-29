@@ -201,7 +201,7 @@ public class TourController {
     ApiResponse<TourDTO> cancelLikeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
-            return ApiResponse.success("Tour like was cancelled successfully", tourService.cancelLikeTour(eagerredUser, id).toDTO());
+            return ApiResponse.success("Tour like cancelled", tourService.cancelLikeTour(eagerredUser, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -220,7 +220,7 @@ public class TourController {
     ApiResponse<TourDTO> cancelStarTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
-            return ApiResponse.success("Tour star was cancelled successfully", tourService.cancelStarTour(eagerredUser, id).toDTO());
+            return ApiResponse.success("Tour star cancelled", tourService.cancelStarTour(eagerredUser, id).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
