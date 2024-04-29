@@ -161,7 +161,7 @@ public class TourController {
     public ApiResponse<TourDTO> likeTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
-            TourDTO updatedTour = tourService.likeTour(eagerredUser, id);
+            TourDTO updatedTour = tourService.likeTour(eagerredUser, id).toDTO();
             return ApiResponse.success("Tour liked successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
@@ -181,7 +181,7 @@ public class TourController {
     ApiResponse<TourDTO> starTour(@RequestAttribute("user") User user, @RequestParam Long id) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
-            TourDTO updatedTour = tourService.starTour(eagerredUser, id);
+            TourDTO updatedTour = tourService.starTour(eagerredUser, id).toDTO();
             return ApiResponse.success("Tour starred successfully", updatedTour);
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());

@@ -3,10 +3,7 @@ package com.se.backend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
-import com.se.backend.models.PON;
-import com.se.backend.models.Tour;
-import com.se.backend.models.TourCollection;
-import com.se.backend.models.User;
+import com.se.backend.models.*;
 import com.se.backend.projection.TourDTO;
 import com.se.backend.repositories.PONRepository;
 import com.se.backend.repositories.TourCollectionRepository;
@@ -224,7 +221,19 @@ public class TourService {
             } else {
                 existingTour.setState(Tour.TourState.ONGOING);
             }
+            //TODO:record data to database
+            TourRecordData saveTourRecordData = new TourRecordData();
+
+            saveTourRecordData.setAvgSpeed(saveTourForm.getRecordData().getAvgSpeed());
+            saveTourRecordData.setTimeTaken(saveTourForm.getRecordData().getTimeTaken());
+            saveTourRecordData.setTotalDistance(saveTourForm.getRecordData().getTotalDistance());
+            saveTourRecordData.setTimeInMotion(saveTourForm.getRecordData().getTimeInMotion());
+            saveTourRecordData.setCalorie(saveTourForm.getRecordData().getCalorie());
+
+            existingTour.setTourRecordData(saveTourRecordData);
             tourRepository.saveAndFlush(existingTour);
+
+
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
         }
@@ -249,7 +258,9 @@ public class TourService {
         return records;
     }
 
-    public TourDTO likeTour(User user, Long tourId) throws ResourceException {
+    public Tour likeTour(User user, Long tourId) throws ResourceException {
+
+
         Set<Tour> tourLiked = user.getTourLikes();
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
@@ -264,13 +275,15 @@ public class TourService {
             }
         }
 //        tourLiked.add(tour);
-        tourLiked.add(tour);
-        user.setTourLikes(tourLiked);
-        userRepository.save(user);
-        return tour.toDTO();
+        tour.getLikedBy().add(user);
+//        tourLiked.add(tour);
+//        user.setTourLikes(tourLiked);
+//        userRepository.save(user);
+
+        return tourRepository.saveAndFlush(tour);
     }
 
-    public TourDTO starTour(User user, Long tourId) throws ResourceException {
+    public Tour starTour(User user, Long tourId) throws ResourceException {
         Set<Tour> tourStarred = user.getTourStars();
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
 
@@ -284,7 +297,7 @@ public class TourService {
         tourStarred.add(tour);
         user.setTourStars(tourStarred);
         userRepository.save(user);
-        return tour.toDTO();
+        return tour;
     }
 
     @Transactional
