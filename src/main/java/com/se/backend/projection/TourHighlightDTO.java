@@ -14,6 +14,7 @@ import java.util.Objects;
 public class TourHighlightDTO {
     Long id;
     String title;
+    String description;
     List<TourImageDTO> tourImages;
     String location;
     List<Long> toursId;
@@ -23,6 +24,7 @@ public class TourHighlightDTO {
         title = tourHighlight.getTitle();
         tourImages = TourImageDTO.toListDTO(tourHighlight.getTourImages());
         location = tourHighlight.getLocation();
+        description = tourHighlight.getDescription();
         toursId = tourHighlight.getTours().stream().map(Tour::getId).toList();
     }
 
