@@ -55,6 +55,6 @@ public class UserDTO {
         if (Objects.isNull(userList)) {
             return new ArrayList<>(0);
         }
-        return userList.stream().map(User::toDTO).toList();
+        return userList.stream().distinct().map(User::toDTO).toList();
     }
 }
