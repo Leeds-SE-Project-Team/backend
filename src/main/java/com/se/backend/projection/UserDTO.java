@@ -30,6 +30,7 @@ public class UserDTO {
     Double weight;
     String location; // "XX省 XX市"
     String signature; // 个性签名
+    String vipExpireTime;
 
 
     public UserDTO(User user) {
@@ -49,6 +50,7 @@ public class UserDTO {
         weight = user.getWeight();
         location = user.getLocation();
         signature = user.getSignature();
+        vipExpireTime = user.getVipExpireTime();
     }
 
     public static List<UserDTO> toListDTO(List<User> userList) {
