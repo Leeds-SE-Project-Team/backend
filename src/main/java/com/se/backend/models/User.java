@@ -61,6 +61,8 @@ public class User {
     private User.UserType type; // 添加出行类型字段
     @Column(length = 50, nullable = false)
     private String latestLoginTime;
+    @Column(length = 50)
+    private String vipExpireTime;
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Group> leadingGroups;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -84,7 +86,7 @@ public class User {
 
     @Getter
     public enum UserType {
-        COMMON("common"), VIP("vip"), SVIP("svip"), ADMIN("admin");
+        COMMON("common"), VIP("vip"), ADMIN("admin");
 
         private final String type;
 

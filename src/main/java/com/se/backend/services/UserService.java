@@ -13,6 +13,9 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +25,8 @@ import static com.se.backend.exceptions.ResourceException.ErrorType.*;
 @Service
 public class UserService {
 
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
@@ -82,6 +87,14 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public User updateVipExpireTime(Long id) throws ResourceException {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        // 根据当前时间往后推迟一个月
+        LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC")).plusMonths(1);
+        existingUser.setVipExpireTime(newExpireTime.format(formatter));
+        return userRepository.save(existingUser);
+    }
+
     public void addUserToGroup(Long userId, Long groupId) throws AuthException, ResourceException {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
         // Update the properties of the existing user
@@ -120,6 +133,7 @@ public class UserService {
         String oldPassword;
         String newPassword;
         User.UserType type;
+
 
         String gender;
         Integer age;

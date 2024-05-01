@@ -96,6 +96,7 @@ public class UserController {
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 newUser.setType(User.UserType.COMMON);
+                newUser.setVipExpireTime(null);
                 // 用户注册时创建一个默认的 Tour Collection
                 tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "http://walcraft.wmzspace.space/static/tour/example/1.png", "Default Collection"));
                 return ApiResponse.success("Signup succeed!");
@@ -186,6 +187,15 @@ public class UserController {
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/expire")
+    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user) {
+        try {
+            return ApiResponse.success("Vip expire time updated", userService.updateVipExpireTime(user.getId()).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
