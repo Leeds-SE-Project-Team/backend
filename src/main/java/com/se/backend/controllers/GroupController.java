@@ -6,6 +6,7 @@ import com.se.backend.models.User;
 import com.se.backend.projection.GroupDTO;
 import com.se.backend.projection.TourDTO;
 import com.se.backend.services.GroupService;
+import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,15 @@ import java.util.List;
 @RequestMapping("/groups")
 public class GroupController {
     private final GroupService groupService;
+    private final UserService userService;
 
     @Autowired
 
 
-    public GroupController(GroupService groupService) {
+    public GroupController(GroupService groupService, UserService userService) {
         this.groupService = groupService;
 
+        this.userService = userService;
     }
 
 
@@ -48,7 +51,8 @@ public class GroupController {
     @PostMapping(value = "/create")
     ApiResponse<GroupDTO> createGroup(@RequestAttribute("user") User user, @RequestBody GroupService.CreateGroupForm form) {
         try {
-            return ApiResponse.success("Create group succeed", groupService.createGroup(user, form).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Create group succeed", groupService.createGroup(eagerredUser, form).toDTO());
         } catch (ResourceException | AuthException | IOException e) {
             return ApiResponse.error(e.getMessage());
         }
