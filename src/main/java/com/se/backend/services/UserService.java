@@ -3,11 +3,14 @@
  */
 package com.se.backend.services;
 
+import com.se.backend.controllers.UserController;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Group;
+import com.se.backend.models.Profit;
 import com.se.backend.models.User;
 import com.se.backend.repositories.GroupRepository;
+import com.se.backend.repositories.ProfitRepository;
 import com.se.backend.repositories.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +32,13 @@ public class UserService {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final ProfitRepository profitRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, GroupRepository groupRepository) {
+    public UserService(UserRepository userRepository, GroupRepository groupRepository, ProfitRepository profitRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.profitRepository = profitRepository;
     }
 
 
@@ -87,12 +92,27 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public User updateVipExpireTime(Long id) throws ResourceException {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        // 根据当前时间往后推迟一个月
-        LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC")).plusMonths(1);
-        existingUser.setVipExpireTime(newExpireTime.format(formatter));
-        return userRepository.save(existingUser);
+    public User buyVip(User user, UserController.VipPackage vipPackage) throws ResourceException {
+        // 获取交易时间
+        LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC"));
+
+        // 新建交易记录
+        Profit profit = new Profit();
+        profit.setUserId(user.getId());
+        profit.setAmount(vipPackage.getAmount());
+        profit.setBuyTime(newExpireTime.format(formatter));
+        profitRepository.saveAndFlush(profit);
+
+        // 修改用户VIP记录
+        switch (vipPackage) {
+            case MONTHLY -> newExpireTime = newExpireTime.plusMonths(1);
+            case QUARTERLY -> newExpireTime = newExpireTime.plusMonths(3);
+            case YEARLY -> newExpireTime = newExpireTime.plusYears(1);
+            case FOREVER -> newExpireTime = newExpireTime.plusYears(100);
+        }
+        user.setVipExpireTime(newExpireTime.format(formatter));
+        user.setType(User.UserType.VIP);
+        return userRepository.save(user);
     }
 
     public void addUserToGroup(Long userId, Long groupId) throws AuthException, ResourceException {

@@ -192,10 +192,11 @@ public class UserController {
         }
     }
 
-    @PutMapping(value = "/expire")
-    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user) {
+    @PutMapping(value = "/buy_vip")
+    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam VipPackage vipPackage) {
         try {
-            return ApiResponse.success("Vip expire time updated", userService.updateVipExpireTime(user.getId()).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Vip opened successfully", userService.buyVip(eagerredUser, vipPackage).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -290,6 +291,19 @@ public class UserController {
             return ApiResponse.success("Token is valid", user.toDTO());
         } catch (AuthException e) {
             return ApiResponse.error("Invalid token");
+        }
+    }
+
+    @Getter
+    public enum VipPackage {
+        MONTHLY(6D), QUARTERLY(16D), YEARLY(60D), FOREVER(160D);
+
+        private final String name;
+        private final Double amount;
+
+        VipPackage(Double amount) {
+            this.name = this.name();
+            this.amount = amount;
         }
     }
 

@@ -15,10 +15,10 @@ public class Profit {
     private Long id;
 
     @Column(nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false)
-    private Integer amount;
+    private Double amount;
 
     @Column(length = 50, nullable = false)
     private String buyTime;
