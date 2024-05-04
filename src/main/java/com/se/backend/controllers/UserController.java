@@ -192,6 +192,15 @@ public class UserController {
         }
     }
 
+    /**
+     * @eo.name updateVipExpireTime
+     * @eo.url /buy_vip
+     * @eo.method put
+     * @eo.request-type formdata
+     * @param user
+     * @param vipPackage
+     * @return ApiResponse
+     */
     @PutMapping(value = "/buy_vip")
     ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam VipPackage vipPackage) {
         try {
