@@ -20,6 +20,7 @@ public class UserDTO {
     //    String password;
     String registerTime;
     String latestLoginTime;
+    List<Long> tours; // IDs of tours this user has starred
     List<Long> tourLikes; // IDs of tours this user likes
     List<Long> tourStars; // IDs of tours this user has starred
 
@@ -41,6 +42,7 @@ public class UserDTO {
         type = user.getType().ordinal();
         registerTime = user.getRegisterTime();
         latestLoginTime = user.getLatestLoginTime();
+        tours = user.getTourLikes().stream().map(Tour::getId).toList();
         tourLikes = user.getTourLikes().stream().map(Tour::getId).toList();
         tourStars = user.getTourStars().stream().map(Tour::getId).toList();
         // Extra Information

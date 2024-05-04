@@ -18,10 +18,9 @@ import java.util.Set;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     public static final String DEFAULT_AVATAR = GlobalConfig.getStaticUrl("user/default/avatar/avatar.jpg");
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
     List<Group> groups;
-
 
     @ManyToMany(mappedBy = "likedBy")
     Set<Tour> tourLikes;
@@ -75,10 +74,8 @@ public class User {
 //    private List<Tour> tours;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourCollection> tourCollections;
-    //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    private List<TourLike> tourLikes;
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    private List<TourStar> tourStars;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tour> tours;
 
     public UserDTO toDTO() {
         return new UserDTO(this);

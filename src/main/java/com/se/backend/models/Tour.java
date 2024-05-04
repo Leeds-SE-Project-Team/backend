@@ -56,10 +56,8 @@ public class Tour {
     @JoinColumn(nullable = false)
     private TourCollection tourCollection;
     @ManyToOne
-    @JoinColumn
     private GroupCollection groupCollection;
     @ManyToOne
-    @JoinColumn(nullable = false, name = "user_id")
     private User user; // 确保与User实体正确关联
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourSpot> spots;
