@@ -193,16 +193,16 @@ public class UserController {
     }
 
     /**
+     * @param user
+     * @param vipPackage
+     * @return ApiResponse
      * @eo.name updateVipExpireTime
      * @eo.url /buy_vip
      * @eo.method put
      * @eo.request-type formdata
-     * @param user
-     * @param vipPackage
-     * @return ApiResponse
      */
     @PutMapping(value = "/buy_vip")
-    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam VipPackage vipPackage) {
+    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam User.VipPackage vipPackage) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
             return ApiResponse.success("Vip opened successfully", userService.buyVip(eagerredUser, vipPackage).toDTO());
@@ -303,18 +303,6 @@ public class UserController {
         }
     }
 
-    @Getter
-    public enum VipPackage {
-        MONTHLY(6D), QUARTERLY(16D), YEARLY(60D), FOREVER(160D);
-
-        private final String name;
-        private final Double amount;
-
-        VipPackage(Double amount) {
-            this.name = this.name();
-            this.amount = amount;
-        }
-    }
 
     // Signup request form from client
     @Getter

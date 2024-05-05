@@ -91,6 +91,20 @@ public class User {
             this.type = type;
         }
     }
+
+    @Getter
+    public enum VipPackage {
+        MONTHLY(6D), QUARTERLY(16D), YEARLY(60D), FOREVER(160D);
+
+        private final String name;
+        private final Double amount;
+
+        VipPackage(Double amount) {
+            this.name = this.name();
+            this.amount = amount;
+        }
+    }
+
 }
 
 

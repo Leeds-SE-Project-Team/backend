@@ -3,7 +3,6 @@
  */
 package com.se.backend.services;
 
-import com.se.backend.controllers.UserController;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.Group;
@@ -13,6 +12,7 @@ import com.se.backend.repositories.GroupRepository;
 import com.se.backend.repositories.ProfitRepository;
 import com.se.backend.repositories.UserRepository;
 import lombok.Getter;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,7 +92,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public User buyVip(User user, UserController.VipPackage vipPackage) throws ResourceException {
+    public User buyVip(User user, User.VipPackage vipPackage) throws ResourceException {
         // 获取交易时间
         LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC"));
 
@@ -114,6 +114,22 @@ public class UserService {
         user.setType(User.UserType.VIP);
         return userRepository.save(user);
     }
+
+    public Double predictRevenue() {
+        List<Object[]> yearlyData = profitRepository.yearlyRevenueSum();
+        SimpleRegression regression = new SimpleRegression();
+
+        yearlyData.forEach(data -> {
+            Integer year = (Integer) data[0];
+            Double totalAmount = (Double) data[1];
+            regression.addData(year, totalAmount);
+        });
+
+        // Assume you want to predict the revenue for the next year
+        int nextYear = LocalDateTime.now().getYear() + 1;
+        return regression.predict(nextYear);
+    }
+
 
     public void addUserToGroup(Long userId, Long groupId) throws AuthException, ResourceException {
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
