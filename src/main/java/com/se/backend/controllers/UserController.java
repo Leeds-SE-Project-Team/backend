@@ -266,17 +266,12 @@ public class UserController {
         if (file.isEmpty()) {
             return ApiResponse.error("File is empty");
         }
-
-
         try {
             // 生成一个随机的文件名或沿用参数
             String fileName = Objects.nonNull(filename) ? filename : UUID.randomUUID() + getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
-
             // 保存文件到本地
             saveFileToLocal(file.getInputStream(), uploadURL.concat("/").concat(fileName));
-
             // 如果需要保存到数据库或者其他操作，可以在这里进行处理
-
             return ApiResponse.success("File uploaded successfully", uploadURL.concat("/").concat(fileName));
         } catch (IOException e) {
             e.printStackTrace();
