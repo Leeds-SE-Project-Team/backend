@@ -212,11 +212,23 @@ public class UserController {
             return ApiResponse.error(e.getMessage());
         }
     }
-//
-//    @GetMapping(value = "/predict_revenue")
-//    ApiResponse<List<Object[]>> predictRevenue() {
-//        return userService.predictWeeklyRevenue();
-//    }
+
+    /**
+     * @eo.name predictWeeklyRevenue
+     * @eo.url /predict_weekly_revenue
+     * @eo.method get
+     * @eo.request-type formdata
+     * @return ApiResponse
+     */
+    @GetMapping("/predict_weekly_revenue")
+    ApiResponse<List<Object[]>> predictWeeklyRevenue() {
+        try {
+            List<Object[]> weeklyRevenuePredictions = userService.predictWeeklyRevenue();
+            return ApiResponse.success("Weekly revenue predictions retrieved successfully", weeklyRevenuePredictions);
+        } catch (Exception e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
 
     /**
      * @param user

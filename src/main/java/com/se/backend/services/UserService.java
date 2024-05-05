@@ -121,11 +121,9 @@ public class UserService {
     public List<Object[]> predictWeeklyRevenue() {
         List<Object[]> weeklyData = profitRepository.weeklyRevenueSum();
         SimpleRegression regression = new SimpleRegression();
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-'W'ww");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
         LocalDate currentDate = LocalDate.now();
-        int currentWeekOfYear = currentDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-        int currentYear = currentDate.getYear();
 
         weeklyData.forEach(data -> {
             String yearWeek = (String) data[0];
@@ -136,12 +134,14 @@ public class UserService {
         });
 
         List<Object[]> predictions = new ArrayList<>();
-        // from this year to next year,predict weekly
+        // Predict weekly revenue from this year to next year
         for (int i = -52; i <= 52; i++) {
             LocalDate predictionWeek = currentDate.plusWeeks(i);
             int weekOfYear = predictionWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
             double predicted = regression.predict(weekOfYear);
-            predictions.add(new Object[]{predictionWeek, predicted});
+            // Format predictionWeek date
+            String formattedDate = predictionWeek.format(dateTimeFormatter);
+            predictions.add(new Object[]{formattedDate, predicted});
         }
 
         return predictions;
