@@ -204,21 +204,29 @@ public class UserController {
      * @eo.request-type formdata
      */
     @PutMapping(value = "/buy_vip")
-    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam User.VipPackage vipPackage) {
+    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam String vipPackage) {
         try {
+            // Convert the string to the enum type, handling invalid values
+            User.VipPackage enumVipPackage;
+            try {
+                enumVipPackage = User.VipPackage.valueOf(vipPackage.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ApiResponse.error("Invalid VIP package");
+            }
+
             User eagerredUser = userService.getUserById(user.getId());
-            return ApiResponse.success("Vip opened successfully", userService.buyVip(eagerredUser, vipPackage).toDTO());
+            return ApiResponse.success("Vip opened successfully", userService.buyVip(eagerredUser, enumVipPackage).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
 
     /**
+     * @return ApiResponse
      * @eo.name predictWeeklyRevenue
      * @eo.url /predict_weekly_revenue
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @GetMapping("/predict_weekly_revenue")
     ApiResponse<List<Object[]>> predictWeeklyRevenue() {

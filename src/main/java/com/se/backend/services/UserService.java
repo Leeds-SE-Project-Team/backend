@@ -104,6 +104,7 @@ public class UserService {
         profit.setUserId(user.getId());
         profit.setAmount(vipPackage.getAmount());
         profit.setBuyTime(newExpireTime.format(formatter));
+        profit.setDescription(vipPackage.getName());
         profitRepository.saveAndFlush(profit);
 
         // 修改用户VIP记录
