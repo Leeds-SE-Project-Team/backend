@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -229,9 +231,9 @@ public class UserController {
      * @eo.request-type formdata
      */
     @GetMapping("/predict_weekly_revenue")
-    ApiResponse<List<Object[]>> predictWeeklyRevenue() {
+    ApiResponse<List<Map.Entry<LocalDate, Double>>> predictWeeklyRevenue() {
         try {
-            List<Object[]> weeklyRevenuePredictions = userService.predictWeeklyRevenue();
+            List<Map.Entry<LocalDate, Double>> weeklyRevenuePredictions = userService.predictWeeklyRevenue();
             return ApiResponse.success("Weekly revenue predictions retrieved successfully", weeklyRevenuePredictions);
         } catch (Exception e) {
             return ApiResponse.error(e.getMessage());

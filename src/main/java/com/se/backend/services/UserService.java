@@ -22,10 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
@@ -123,7 +120,7 @@ public class UserService {
     }
 
     //TODO
-    public List<Object[]> predictWeeklyRevenue() {
+    public List<Map.Entry<LocalDate, Double>> predictWeeklyRevenue() {
         List<Profit> profits = profitRepository.findAll();
         SimpleRegression regression = new SimpleRegression(true);
 
@@ -138,14 +135,18 @@ public class UserService {
         });
 
         // 预测过去一年和未来一年的利润
-        List<Object[]> predictions = new ArrayList<>();
-        for (int i = -52; i <= 52; i++) {
-            LocalDate predictionDate = minDate.plusWeeks(i);
+        Map<LocalDate, Double> predictions = new HashMap<>(0);
+        for (int i = 1; i <= 52; i++) {
+            LocalDate predictionDate = LocalDate.now().plusWeeks(i);
             double predictedValue = regression.predict(ChronoUnit.WEEKS.between(minDate, predictionDate));
-            predictions.add(new Object[]{predictionDate.format(formatter), predictedValue});
+            predictions.put(predictionDate, (double) Math.round(predictedValue));
         }
 
-        return predictions;
+        predictions.putAll(weeklySums);
+
+        var result = new ArrayList<>(predictions.entrySet().stream().toList());
+        result.sort(Map.Entry.comparingByKey());
+        return result;
     }
 
 
