@@ -16,9 +16,12 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.IsoFields;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -115,19 +118,33 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Double predictRevenue() {
-        List<Object[]> yearlyData = profitRepository.yearlyRevenueSum();
+    public List<Object[]> predictWeeklyRevenue() {
+        List<Object[]> weeklyData = profitRepository.weeklyRevenueSum();
         SimpleRegression regression = new SimpleRegression();
 
-        yearlyData.forEach(data -> {
-            Integer year = (Integer) data[0];
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-'W'ww");
+        LocalDate currentDate = LocalDate.now();
+        int currentWeekOfYear = currentDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        int currentYear = currentDate.getYear();
+
+        weeklyData.forEach(data -> {
+            String yearWeek = (String) data[0];
+            LocalDate date = LocalDate.parse(yearWeek + "-1", formatter);
+            int weekOfYear = date.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
             Double totalAmount = (Double) data[1];
-            regression.addData(year, totalAmount);
+            regression.addData(weekOfYear, totalAmount);
         });
 
-        // Assume you want to predict the revenue for the next year
-        int nextYear = LocalDateTime.now().getYear() + 1;
-        return regression.predict(nextYear);
+        List<Object[]> predictions = new ArrayList<>();
+        // from this year to next year,predict weekly
+        for (int i = -52; i <= 52; i++) {
+            LocalDate predictionWeek = currentDate.plusWeeks(i);
+            int weekOfYear = predictionWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            double predicted = regression.predict(weekOfYear);
+            predictions.add(new Object[]{predictionWeek, predicted});
+        }
+
+        return predictions;
     }
 
 

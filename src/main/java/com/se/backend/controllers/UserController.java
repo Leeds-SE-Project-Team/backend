@@ -168,7 +168,8 @@ public class UserController {
     @PutMapping
     ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
-            return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("User information updated", userService.updateUser(eagerredUser.getId(), updatedInfo).toDTO());
         } catch (AuthException | ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -186,7 +187,8 @@ public class UserController {
     @PutMapping(value = "/type")
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
-            return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("User Type updated", userService.updateUserType(eagerredUser.getId(), updatedInfo).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -210,6 +212,11 @@ public class UserController {
             return ApiResponse.error(e.getMessage());
         }
     }
+//
+//    @GetMapping(value = "/predict_revenue")
+//    ApiResponse<List<Object[]>> predictRevenue() {
+//        return userService.predictWeeklyRevenue();
+//    }
 
     /**
      * @param user

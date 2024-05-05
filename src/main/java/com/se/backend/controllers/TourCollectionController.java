@@ -4,6 +4,7 @@ import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.TourCollectionDTO;
 import com.se.backend.services.TourCollectionService;
+import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,12 @@ public class TourCollectionController {
 
 
     private final TourCollectionService tourCollectionService;
+    private final UserService userService;
 
     @Autowired
-    public TourCollectionController(TourCollectionService tourCollectionService) {
+    public TourCollectionController(TourCollectionService tourCollectionService, UserService userService) {
         this.tourCollectionService = tourCollectionService;
+        this.userService = userService;
     }
 
 
@@ -41,8 +44,9 @@ public class TourCollectionController {
      * @eo.request-type json
      */
     @PostMapping(value = "/create")
-    ApiResponse<TourCollectionDTO> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) {
-        return ApiResponse.success("Create tour collection succeed", tourCollectionService.createTourCollection(user, form).toDTO());
+    ApiResponse<TourCollectionDTO> createTourCollection(@RequestAttribute("user") User user, @RequestBody TourCollectionService.CreateTourCollectionForm form) throws ResourceException {
+        User eagerredUser = userService.getUserById(user.getId());
+        return ApiResponse.success("Create tour collection succeed", tourCollectionService.createTourCollection(eagerredUser, form).toDTO());
 
     }
 
