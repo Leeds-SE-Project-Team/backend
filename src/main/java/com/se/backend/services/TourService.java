@@ -245,6 +245,10 @@ public class TourService {
         return records;
     }
 
+    @Transactional
+    public void deleteTour(Long tourId) throws ResourceException {
+        tourRepository.delete(tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND)));
+    }
 
     @Transactional
     public Tour likeTour(User user, Long tourId) throws ResourceException {
