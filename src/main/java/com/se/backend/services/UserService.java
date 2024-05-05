@@ -16,14 +16,17 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.IsoFields;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.se.backend.exceptions.AuthException.ErrorType.PASSWORD_NOT_MATCH;
 import static com.se.backend.exceptions.ResourceException.ErrorType.*;
@@ -119,30 +122,27 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //TODO
     public List<Object[]> predictWeeklyRevenue() {
-        List<Object[]> weeklyData = profitRepository.weeklyRevenueSum();
-        SimpleRegression regression = new SimpleRegression();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-'W'ww");
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-        LocalDate currentDate = LocalDate.now();
+        List<Profit> profits = profitRepository.findAll();
+        SimpleRegression regression = new SimpleRegression(true);
 
-        weeklyData.forEach(data -> {
-            String yearWeek = (String) data[0];
-            LocalDate date = LocalDate.parse(yearWeek + "-1", formatter);
-            int weekOfYear = date.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-            Double totalAmount = (Double) data[1];
-            regression.addData(weekOfYear, totalAmount);
+        // 将收入数据按周聚合
+        Map<LocalDate, Double> weeklySums = profits.stream().collect(Collectors.groupingBy(profit -> LocalDateTime.parse(profit.getBuyTime(), formatter).toLocalDate().with(DayOfWeek.MONDAY), Collectors.summingDouble(Profit::getAmount)));
+
+        // 填充回归模型数据
+        LocalDate minDate = weeklySums.keySet().stream().min(LocalDate::compareTo).orElse(LocalDate.now());
+        weeklySums.forEach((week, sum) -> {
+            long x = ChronoUnit.WEEKS.between(minDate, week);
+            regression.addData(x, sum);
         });
 
+        // 预测过去一年和未来一年的利润
         List<Object[]> predictions = new ArrayList<>();
-        // Predict weekly revenue from this year to next year
         for (int i = -52; i <= 52; i++) {
-            LocalDate predictionWeek = currentDate.plusWeeks(i);
-            int weekOfYear = predictionWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-            double predicted = regression.predict(weekOfYear);
-            // Format predictionWeek date
-            String formattedDate = predictionWeek.format(dateTimeFormatter);
-            predictions.add(new Object[]{formattedDate, predicted});
+            LocalDate predictionDate = minDate.plusWeeks(i);
+            double predictedValue = regression.predict(ChronoUnit.WEEKS.between(minDate, predictionDate));
+            predictions.add(new Object[]{predictionDate.format(formatter), predictedValue});
         }
 
         return predictions;
