@@ -97,7 +97,7 @@ public class UserService {
 
     public User buyVip(User user, User.VipPackage vipPackage) throws ResourceException {
         // 获取交易时间
-        LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC"));
+        LocalDateTime newExpireTime = LocalDateTime.now(ZoneId.of("UTC")).plusHours(8);
 
         // 新建交易记录
         Profit profit = new Profit();
