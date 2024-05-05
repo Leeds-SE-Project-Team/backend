@@ -52,6 +52,7 @@ dependencies {
     implementation 'com.auth0:java-jwt:3.19.2'
 //    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
     implementation 'com.alibaba.fastjson2:fastjson2:2.0.47'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
     /*
       Uncomment this next dependency if you are using:
        - JDK 10 or earlier, and you want to use RSASSA-PSS (PS256, PS384, PS512) signature algorithms.
