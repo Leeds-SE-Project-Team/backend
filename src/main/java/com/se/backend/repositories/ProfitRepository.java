@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ProfitRepository extends JpaRepository<Profit, Long>, JpaSpecificationExecutor<Profit> {
-    @Query(value = "SELECT DATE_FORMAT(p.buyTime, '%X-%V') as yearWeek, SUM(p.amount) as totalAmount FROM Profit p GROUP BY yearWeek ORDER BY yearWeek", nativeQuery = true)
+    @Query(value = "SELECT DATE_FORMAT(p.buy_time, '%X-%V') as yearWeek, SUM(p.amount) as totalAmount FROM profit p GROUP BY yearWeek ORDER BY yearWeek", nativeQuery = true)
     List<Object[]> weeklyRevenueSum();
 }
