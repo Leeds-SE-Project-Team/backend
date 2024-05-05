@@ -35,7 +35,6 @@ public class GpxUtil {
         private List<Double> origin;
         private List<Double> destination;
         private int count;
-
         private List<Route> routes;
         private Location start;
         private Location end;
@@ -57,6 +56,7 @@ public class GpxUtil {
             gpxBuilder.append("<metadata>\n");
             gpxBuilder.append(String.format("<name>%s</name>\n", "Your Route Name")); // Example, replace with actual data if available
             gpxBuilder.append(String.format("<email>%s</email>\n", "Your Route email")); // Example, replace with actual data if available
+            gpxBuilder.append(String.format("<type>%s</type>\n", form.getType())); // Example, replace with actual data if available
 
             gpxBuilder.append("</metadata>\n");
 
@@ -66,17 +66,44 @@ public class GpxUtil {
                 gpxBuilder.append("<desc></desc>\n"); // Description, empty as per requirement
                 gpxBuilder.append(String.format("<type>%s</type>\n", navigationData.getCount()));
                 gpxBuilder.append("<trkseg>\n");
-                for (Step step : route.getSteps()) {
-                    gpxBuilder.append("<trkpt>\n");
-                    for (List<Double> point : step.getPath()) {
-                        gpxBuilder.append(formatWaypoint("wpt", point, ""));
+//                for (Step step : route.getSteps()) {
+//                    gpxBuilder.append("<trkpt>\n");
+//                    for (List<Double> point : step.getPath()) {
+//                        gpxBuilder.append(formatWaypoint("wpt", point, ""));
+//                    }
+//                    gpxBuilder.append("<extensions>\n");
+//                    gpxBuilder.append(String.format("<instruction>%s</instruction>\n", step.getInstruction()));
+//                    gpxBuilder.append(String.format("<distance>%s</distance>\n", step.getDistance()));
+//                    gpxBuilder.append(String.format("<time>%s</time>\n", step.getTime()));
+//                    gpxBuilder.append("</extensions>\n");
+//                    gpxBuilder.append("</trkpt>\n");
+//                }
+                if (route.getSteps() != null && !route.getSteps().isEmpty()) {
+                    for (Step step : route.getSteps()) {
+                        gpxBuilder.append("<trkpt>\n");
+                        for (List<Double> point : step.getPath()) {
+                            gpxBuilder.append(formatWaypoint("wpt", point, ""));
+                        }
+                        gpxBuilder.append("<extensions>\n");
+                        gpxBuilder.append(String.format("<instruction>%s</instruction>\n", step.getInstruction()));
+                        gpxBuilder.append(String.format("<distance>%s</distance>\n", step.getDistance()));
+                        gpxBuilder.append(String.format("<time>%s</time>\n", step.getTime()));
+                        gpxBuilder.append("</extensions>\n");
+                        gpxBuilder.append("</trkpt>\n");
                     }
-                    gpxBuilder.append("<extensions>\n");
-                    gpxBuilder.append(String.format("<instruction>%s</instruction>\n", step.getInstruction()));
-                    gpxBuilder.append(String.format("<distance>%s</distance>\n", step.getDistance()));
-                    gpxBuilder.append(String.format("<time>%s</time>\n", step.getTime()));
-                    gpxBuilder.append("</extensions>\n");
-                    gpxBuilder.append("</trkpt>\n");
+                } else if (route.getRides() != null && !route.getRides().isEmpty()) {
+                    for (Step ride : route.getRides()) {
+                        gpxBuilder.append("<trkpt>\n");
+                        for (List<Double> point : ride.getPath()) {
+                            gpxBuilder.append(formatWaypoint("wpt", point, ""));
+                        }
+                        gpxBuilder.append("<extensions>\n");
+                        gpxBuilder.append(String.format("<instruction>%s</instruction>\n", ride.getInstruction()));
+                        gpxBuilder.append(String.format("<distance>%s</distance>\n", ride.getDistance()));
+                        gpxBuilder.append(String.format("<time>%s</time>\n", ride.getTime()));
+                        gpxBuilder.append("</extensions>\n");
+                        gpxBuilder.append("</trkpt>\n");
+                    }
                 }
                 gpxBuilder.append("<extensions>\n");
                 gpxBuilder.append(String.format("<distance>%s</distance>\n", route.getDistance()));
@@ -109,6 +136,7 @@ public class GpxUtil {
             private int distance;
             private int time;
             private List<Step> steps;
+            private List<Step> rides;
             // Getters and setters
         }
         @Setter
