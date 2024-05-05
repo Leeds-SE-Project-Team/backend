@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Group {
-    @ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "groups")
     List<User> members;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class Group {
     private String coverUrl;
     @Column
     private String description;
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupCollection> groupCollections;
 
     public GroupDTO toDTO() {

@@ -44,6 +44,7 @@ public class TourHighlightService {
         TourHighlight newHighlight = new TourHighlight();
         newHighlight.setTitle(form.title);
         newHighlight.setLocation(form.location);
+        newHighlight.setDescription(form.description);
 
         Tour existingTour = tourRepository.findById(form.tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
         existingTour.getHighlights().add(newHighlight);
@@ -75,6 +76,7 @@ public class TourHighlightService {
         existingHighlight.setTitle(form.title);
 //        existingHighlight.setImageUrl(form.imageUrl);
         existingHighlight.setLocation(form.location);
+        existingHighlight.setDescription(form.description);
 
         return tourHighlightRepository.saveAndFlush(existingHighlight);
     }
@@ -121,6 +123,7 @@ public class TourHighlightService {
         String location;
         Long tourId;
         String imageUrl;
+        String description;
 //        List<String> imageURLs;
     }
 

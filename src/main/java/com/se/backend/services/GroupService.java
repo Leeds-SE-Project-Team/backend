@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.se.backend.exceptions.ResourceException.ErrorType.GROUP_NOT_FOUND;
-import static com.se.backend.exceptions.ResourceException.ErrorType.USER_NOT_FOUND;
 
 
 @Service
@@ -42,20 +42,22 @@ public class GroupService {
         return groupRepository.findById(groupId).orElseThrow(() -> new ResourceException(GROUP_NOT_FOUND));
     }
 
-    public void createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
+    public Group createGroup(User user, CreateGroupForm form) throws ResourceException, AuthException, IOException {
         Group newGroup = new Group();
 
         newGroup.setLeader(user);
-        newGroup.setMembers(List.of(user));
+//        newGroup.setMembers(List.of(user));
+        newGroup.setMembers(new ArrayList<>(List.of(user))); // Ensure the leader is the first member
         newGroup.setName(form.name);
         newGroup.setDescription(form.description);
         newGroup.setCoverUrl(form.coverUrl);
 
-        User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        existingUser.getGroups().add(newGroup);
+//        User existingUser = userRepository.findById(form.leaderId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        Group flushedGroup = groupRepository.saveAndFlush(newGroup);
+        user.getGroups().add(flushedGroup);
+        userRepository.saveAndFlush(user);
 
-        groupRepository.saveAndFlush(newGroup);
-
+        return flushedGroup;
     }
 
     // need User?
@@ -68,9 +70,6 @@ public class GroupService {
         return groupRepository.saveAndFlush(existingGroup);
     }
 
-    public List<Group> getGroupByUser(User user) {
-        return user.getGroups();
-    }
 
     public void deleteGroup(Long groupId) throws ResourceException {
         Group groupToDelete = getGroupById(groupId);
@@ -94,10 +93,18 @@ public class GroupService {
         groupRepository.delete(groupToDelete);
     }
 
+    public List<Group> getAllCreatedGroupsByUser(User user) {
+        return groupRepository.findAllByLeaderId(user.getId());
+    }
+
+    public List<Group> getAllJoinedGroupsByUser(User user) {
+        return groupRepository.findAllByMembers_IdAndLeaderIdNot(user.getId(), user.getId());
+    }
+
     @Getter
     public static class CreateGroupForm {
 
-        Long leaderId;
+        //        Long leaderId;
         String name;
         String coverUrl;
         String description;

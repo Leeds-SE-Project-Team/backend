@@ -20,8 +20,10 @@ public class TourHighlight {
     @Column(nullable = false)
     private String title;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
 //    private String imageUrl;
+    @Column
+    private String description;
 
     @Column(nullable = false)
     private String location;

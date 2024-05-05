@@ -4,21 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.*;
-import com.se.backend.projection.TourDTO;
-import com.se.backend.projection.UserDTO;
-import com.se.backend.repositories.*;
+import com.se.backend.repositories.PONRepository;
+import com.se.backend.repositories.TourCollectionRepository;
+import com.se.backend.repositories.TourRepository;
+import com.se.backend.repositories.UserRepository;
 import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -36,20 +34,16 @@ public class TourService {
     private final TourCollectionRepository tourCollectionRepository;
     private final PONRepository ponRepository;
 
-    private final TourLikeRepository tourLikeRepository;
-    private final TourStarRepository tourStarRepository;
 
     private final UserRepository userRepository;
 
 
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, TourLikeRepository tourLikeRepository, TourStarRepository tourStarRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
         this.ponRepository = ponRepository;
         this.userRepository = userRepository;
-        this.tourLikeRepository = tourLikeRepository;
-        this.tourStarRepository = tourStarRepository;
     }
 
     public List<Tour> getAllTours() {
@@ -70,7 +64,7 @@ public class TourService {
         newTour.setEndLocation(form.endLocation);
         newTour.setTitle(form.title);
         newTour.setState(Tour.TourState.UNFINISHED);
-        newTour.setStatus(Tour.TourStatus.AWAIT_APPROVAL);
+        newTour.setStatus(Tour.TourStatus.ONLINE);
 
         if (Objects.nonNull(form.tourCollectionId)) {
             TourCollection existingTourCollection = tourCollectionRepository.findById(form.tourCollectionId).orElseThrow(() -> new ResourceException(TOUR_COLLECTION_NOT_FOUND));
@@ -172,12 +166,23 @@ public class TourService {
         }
         return tourRepository.saveAndFlush(flushedTour);
     }
+
     public Tour updateTour(UpdateTourForm updatedTourInfo) throws ResourceException {
-        Tour existingTour = getTourById(updatedTourInfo.tourId);
+        Tour existingTour = getTourById(updatedTourInfo.id);
         existingTour.setStartLocation(updatedTourInfo.getStartLocation());
         existingTour.setEndLocation(updatedTourInfo.getEndLocation());
         existingTour.setType(updatedTourInfo.getType());
-        existingTour.setPons(updatedTourInfo.getPons());
+//        List<PON> attachedPONs = existingTour.getPons();
+//        attachedPONs.clear();
+//        for (PON pon : updatedTourInfo.getPons()) {
+//            PON newPon = new PON();
+//            newPon.setTour(existingTour);
+//            newPon.setName(pon.getName());
+//            newPon.setLocation(pon.getLocation());
+//            newPon.setSequence(pon.getSequence());
+//            attachedPONs.add(ponRepository.save(newPon)); // Save each PON
+//        }
+//        existingTour.setPons(attachedPONs);
         existingTour.setTitle(updatedTourInfo.getTitle());
         existingTour.setState(updatedTourInfo.getState());
         existingTour.setStatus(updatedTourInfo.status);
@@ -195,18 +200,29 @@ public class TourService {
             String relativePath = "/tour/" + existingTour.getId() + "/complete.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
             existingTour.setCompleteUrl(getStaticUrl(relativePath));
-            if (saveTourForm.isComplete){
+            if (saveTourForm.isComplete) {
                 existingTour.setState(Tour.TourState.FINISHED);
             } else {
                 existingTour.setState(Tour.TourState.ONGOING);
             }
+            //TODO:record data to database
+            TourRecordData saveTourRecordData = new TourRecordData();
+
+            saveTourRecordData.setAvgSpeed(saveTourForm.getRecordData().getAvgSpeed());
+            saveTourRecordData.setTimeTaken(saveTourForm.getRecordData().getTimeTaken());
+            saveTourRecordData.setTotalDistance(saveTourForm.getRecordData().getTotalDistance());
+            saveTourRecordData.setTimeInMotion(saveTourForm.getRecordData().getTimeInMotion());
+            saveTourRecordData.setCalorie(saveTourForm.getRecordData().getCalorie());
+
+            existingTour.setTourRecordData(saveTourRecordData);
             tourRepository.saveAndFlush(existingTour);
+
+
         } catch (IOException e) {
             System.err.println("Error writing Complete JSON to file: " + e.getMessage());
         }
         return existingTour;
     }
-
 
 
     public List<Tour> getToursByUser(User user) {
@@ -226,82 +242,50 @@ public class TourService {
         return records;
     }
 
-    public void likeTour(Long userId, Long tourId) throws ResourceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+
+    @Transactional
+    public Tour likeTour(User user, Long tourId) throws ResourceException {
+        Set<Tour> tourLikes = user.getTourLikes();
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-
-        TourLike NewTourLike = new TourLike();
-        NewTourLike.setUser(user);
-        NewTourLike.setTour(tour);
-        NewTourLike.setCreatetTime(TimeUtil.getCurrentTimeString());
-
-        tourLikeRepository.saveAndFlush(NewTourLike);
+        for (Tour t : tourLikes) {
+            if (t.getId().equals(tourId)) {
+                throw new ResourceException(TOUR_LIKE_EXISTS);
+            }
+        }
+        tour.getLikedBy().add(user);
+        return tourRepository.saveAndFlush(tour);
     }
 
-    public void starTour(Long userId, Long tourId) throws ResourceException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+    @Transactional
+    public Tour starTour(User user, Long tourId) throws ResourceException {
+        Set<Tour> tourStars = user.getTourStars();
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
-
-        TourStar NewTourStar = new TourStar();
-        NewTourStar.setUser(user);
-        NewTourStar.setTour(tour);
-        NewTourStar.setCreatetTime(TimeUtil.getCurrentTimeString());
-
-        tourStarRepository.saveAndFlush(NewTourStar);
+        for (Tour t : tourStars) {
+            if (t.getId().equals(tourId)) {
+                throw new ResourceException(TOUR_LIKE_EXISTS);
+            }
+        }
+        tour.getStarredBy().add(user);
+        return tourRepository.saveAndFlush(tour);
     }
 
-    public void cancelLikeTour(Long userId, Long tourId) throws ResourceException {
-        List<TourLike> likes = tourLikeRepository.findByUserIdAndTourId(userId, tourId);
-        if (likes.isEmpty()) {
-            throw new ResourceException(TOUR_LIKE_NOT_FOUND);
-        }
-        tourLikeRepository.deleteAll(likes); // Assuming there could be multiple likes which is usually not the case
+    @Transactional
+    public Tour cancelLikeTour(User user, Long tourId) throws ResourceException {
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+        tour.getLikedBy().removeIf(u -> u.getId().equals(user.getId()));
+        return tourRepository.saveAndFlush(tour);
     }
 
-    public void cancelStarTour(Long userId, Long tourId) throws ResourceException {
-        List<TourStar> stars = tourStarRepository.findByUserIdAndTourId(userId, tourId);
-        if (stars.isEmpty()) {
-            throw new ResourceException(TOUR_STAR_NOT_FOUND);
-        }
-        tourStarRepository.deleteAll(stars); // Assuming there could be multiple stars which is usually not the case
-    }
-
-    public List<TourDTO> getAllLikedToursByUserId(Long userId) throws ResourceException {
-        if (!tourRepository.existsById(userId)) {
-            throw new ResourceException(USER_NOT_FOUND);
-        }
-        List<TourLike> likes = tourLikeRepository.findAllByUserId(userId);
-        return TourDTO.toListDTO(likes.stream().map(TourLike::getTour).collect(Collectors.toList()));
-    }
-
-    public List<TourDTO> getAllStarredToursByUserId(Long userId) throws ResourceException {
-        if (!tourRepository.existsById(userId)) {
-            throw new ResourceException(USER_NOT_FOUND);
-        }
-        List<TourStar> stars = tourStarRepository.findAllByUserId(userId);
-        return TourDTO.toListDTO(stars.stream().map(TourStar::getTour).collect(Collectors.toList()));
-    }
-
-    public List<UserDTO> getAllUsersByLikedTourId(Long tourId) throws ResourceException {
-        if (!tourRepository.existsById(tourId)) {
-            throw new ResourceException(TOUR_NOT_FOUND);
-        }
-        List<TourLike> likes = tourLikeRepository.findAllByTourId(tourId);
-        return UserDTO.toListDTO(likes.stream().map(TourLike::getUser).distinct().collect(Collectors.toList()));
-    }
-
-    public List<UserDTO> getAllUsersByStarredTourId(Long tourId) throws ResourceException {
-        if (!tourRepository.existsById(tourId)) {
-            throw new ResourceException(TOUR_NOT_FOUND);
-        }
-        List<TourStar> stars = tourStarRepository.findAllByTourId(tourId);
-        return UserDTO.toListDTO(stars.stream().map(TourStar::getUser).distinct().collect(Collectors.toList()));
+    @Transactional
+    public Tour cancelStarTour(User user, Long tourId) throws ResourceException {
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new ResourceException(TOUR_NOT_FOUND));
+        tour.getStarredBy().removeIf(u -> u.getId().equals(user.getId()));
+        return tourRepository.saveAndFlush(tour);
     }
 
     @Getter
     @Setter
     public static class CreateTourForm {
-        Long tourId;
         String startLocation;
         String endLocation;
         Tour.TourType type;
@@ -315,24 +299,28 @@ public class TourService {
 
     @Getter
     public static class UpdateTourForm extends CreateTourForm {
+        Long id;
         Tour.TourStatus status;
         Tour.TourState state;
     }
+
     @Getter
     public static class uploadGpxForm {
-//        Long tourId;
+        //        Long tourId;
 //        String gpxUrl;
         Tour.TourType type;
         Long tourCollectionId;
         String title;
     }
+
     @Getter
     public static class SaveTourForm {
         Long tourId;
-        boolean isComplete;
+        Boolean isComplete;
         CompletedTourData recordData;
         private List<RecordDataInstant> trackList;
     }
+
     @Getter
     public static class CompletedTourData {
         private Double avgSpeed;
@@ -341,6 +329,7 @@ public class TourService {
         private Double timeTaken;
         private Double calorie;
     }
+
     @Getter
     public static class RecordDataInstant {
         private List<Double> location;

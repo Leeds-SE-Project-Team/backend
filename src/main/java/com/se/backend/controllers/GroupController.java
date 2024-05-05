@@ -4,11 +4,9 @@ import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.GroupDTO;
-
-
+import com.se.backend.projection.TourDTO;
 import com.se.backend.services.GroupService;
-
-
+import com.se.backend.services.UserService;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,30 +27,32 @@ import java.util.List;
 @RequestMapping("/groups")
 public class GroupController {
     private final GroupService groupService;
+    private final UserService userService;
 
     @Autowired
 
 
-    public GroupController( GroupService groupService) {
+    public GroupController(GroupService groupService, UserService userService) {
         this.groupService = groupService;
 
+        this.userService = userService;
     }
 
 
     /**
+     * @param user
+     * @param form
+     * @return ApiResponse
      * @eo.name createGroup
      * @eo.url /create
      * @eo.method post
      * @eo.request-type json
-     * @param user
-     * @param form
-     * @return ApiResponse
      */
     @PostMapping(value = "/create")
-    ApiResponse<Void> createGroup(@RequestAttribute("user") User user, @RequestBody GroupService.CreateGroupForm form) {
+    ApiResponse<GroupDTO> createGroup(@RequestAttribute("user") User user, @RequestBody GroupService.CreateGroupForm form) {
         try {
-            groupService.createGroup(user,form);
-            return ApiResponse.success("Create group succeed");
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Create group succeed", groupService.createGroup(eagerredUser, form).toDTO());
         } catch (ResourceException | AuthException | IOException e) {
             return ApiResponse.error(e.getMessage());
         }
@@ -60,15 +60,15 @@ public class GroupController {
 
 
     /**
+     * @param updatedGroupInfo
+     * @return ApiResponse
      * @eo.name updateGroup
      * @eo.url /
      * @eo.method put
      * @eo.request-type json
-     * @param updatedGroupInfo
-     * @return ApiResponse
      */
     @PutMapping
-    ApiResponse<GroupDTO> updateGroup( @RequestBody GroupService.UpdateGroupForm updatedGroupInfo) {
+    ApiResponse<GroupDTO> updateGroup(@RequestBody GroupService.UpdateGroupForm updatedGroupInfo) {
         try {
             return ApiResponse.success("Tour information updated", groupService.updateGroup(updatedGroupInfo).toDTO());
         } catch (ResourceException e) {
@@ -78,11 +78,11 @@ public class GroupController {
     }
 
     /**
+     * @return ApiResponse
      * @eo.name getAllGroup
      * @eo.url /all
      * @eo.method get
      * @eo.request-type formdata
-     * @return ApiResponse
      */
     @IgnoreToken
     @GetMapping(value = "/all")
@@ -91,25 +91,56 @@ public class GroupController {
     }
 
     /**
-     * @eo.name getGroupByUser
-     * @eo.url /user
+     * @eo.name getGroupById
+     * @eo.url /
      * @eo.method get
      * @eo.request-type formdata
-     * @param user
+     * @param id
      * @return ApiResponse
      */
-    @GetMapping(value = "/user")
-    ApiResponse<List<GroupDTO>> getGroupByUser(@RequestAttribute("user") User user) {
-        return ApiResponse.success("Group Collections found by user successfully!", GroupDTO.toListDTO(groupService.getGroupByUser(user)));
+    @IgnoreToken
+    @GetMapping
+    ApiResponse<GroupDTO> getGroupById(@RequestParam Long id) {
+        try {
+            return ApiResponse.success("Get group", groupService.getGroupById(id).toDTO());
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
     }
 
     /**
+     * @param user
+     * @return ApiResponse
+     * @eo.name getAllCreatedGroupsByUser
+     * @eo.url /createdByUser
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/createdByUser")
+    ApiResponse<List<GroupDTO>> getAllCreatedGroupsByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Group created by user found successfully!", GroupDTO.toListDTO(groupService.getAllCreatedGroupsByUser(user)));
+    }
+
+    /**
+     * @param user
+     * @return ApiResponse
+     * @eo.name getAllJoinedGroupsByUser
+     * @eo.url /joinedByUser
+     * @eo.method get
+     * @eo.request-type formdata
+     */
+    @GetMapping("/joinedByUser")
+    ApiResponse<List<GroupDTO>> getAllJoinedGroupsByUser(@RequestAttribute("user") User user) {
+        return ApiResponse.success("Group joined by user found successfully!", GroupDTO.toListDTO(groupService.getAllJoinedGroupsByUser(user)));
+    }
+
+    /**
+     * @param id
+     * @return ApiResponse
      * @eo.name deleteGroup
      * @eo.url /
      * @eo.method delete
      * @eo.request-type formdata
-     * @param id
-     * @return ApiResponse
      */
     @DeleteMapping
     ApiResponse<Void> deleteGroup(@RequestParam(required = false) Long id) {
@@ -121,6 +152,8 @@ public class GroupController {
             return ApiResponse.error(e.getMessage());
         }
     }
+
+
 }
 
 

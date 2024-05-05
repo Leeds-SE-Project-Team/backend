@@ -1,21 +1,26 @@
 package com.se.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.se.backend.projection.CommentDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @Setter
 public class Comment {
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_likes_comment", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    Set<User> likedBy;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(nullable = false)
     private Tour tour; // 移除级联删除，防止删除Comment时影响Tour
@@ -30,7 +35,7 @@ public class Comment {
     @Column(length = 50, nullable = false)
     private String publishTime;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies; // 仅在移除父评论时删除子评论
 
     @ManyToOne

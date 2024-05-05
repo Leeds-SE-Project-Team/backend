@@ -18,6 +18,7 @@ public class GroupCollectionDTO {
     String coverUrl;
     String description;
     List<TourDTO> tours;
+    List<UserDTO> members;
 
     public GroupCollectionDTO(GroupCollection groupCollection) {
         id = groupCollection.getId();
@@ -27,6 +28,7 @@ public class GroupCollectionDTO {
         coverUrl = groupCollection.getCoverUrl();
         description = groupCollection.getDescription();
         tours = TourDTO.toListDTO(groupCollection.getTours());
+        members = UserDTO.toListDTO(groupCollection.getGroup().getMembers());
     }
 
     public static List<GroupCollectionDTO> toListDTO(List<GroupCollection> groupCollectionList) {

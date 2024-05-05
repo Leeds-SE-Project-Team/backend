@@ -1,6 +1,7 @@
 package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.UserService;
@@ -29,22 +30,21 @@ public class AuthController {
     }
 
     /**
+     * @param req
+     * @return ApiResponse
      * @eo.name pwdLogin
      * @eo.url /pwd
      * @eo.method post
      * @eo.request-type json
-     * @param req
-     * @return ApiResponse
      */
     @IgnoreToken
     @PostMapping("/pwd")
     public ApiResponse<String> pwdLogin(@RequestBody ReqLoginForm req) {
         String resData;
         try {
-            System.out.println(req.toString());
             User userRecord = userService.pwdLogin(req.email, req.password);
             resData = tokenService.generateTokenRecord(userRecord, "pc").getToken();
-        } catch (AuthException e) {
+        } catch (AuthException | ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.success("login succeed", resData);

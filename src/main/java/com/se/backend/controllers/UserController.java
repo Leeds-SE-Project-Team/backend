@@ -4,12 +4,12 @@
 package com.se.backend.controllers;
 
 import com.se.backend.exceptions.AuthException;
+import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.User;
 import com.se.backend.projection.UserDTO;
 import com.se.backend.services.TokenService;
 import com.se.backend.services.TourCollectionService;
 import com.se.backend.services.UserService;
-import com.se.backend.utils.AdminToken;
 import com.se.backend.utils.ApiResponse;
 import com.se.backend.utils.IgnoreToken;
 import com.se.backend.utils.TimeUtil;
@@ -40,6 +40,7 @@ public class UserController {
      * userService
      */
     private final UserService userService;
+
     /**
      * tourCollectionService
      */
@@ -84,8 +85,8 @@ public class UserController {
         try {
             userService.getUserByEmail(req.email);
             return ApiResponse.error("User already exist");
-        } catch (AuthException e) {
-            if (e.getType().equals(AuthException.ErrorType.USER_NOT_FOUND)) {
+        } catch (ResourceException e) {
+            if (e.getType().equals(ResourceException.ErrorType.USER_NOT_FOUND)) {
                 User newUser = new User();
                 newUser.setNickname(req.nickname);
                 newUser.setAvatar(User.DEFAULT_AVATAR);
@@ -95,6 +96,7 @@ public class UserController {
                 newUser.setRegisterTime(TimeUtil.getCurrentTimeString());
                 newUser.setLatestLoginTime(TimeUtil.getCurrentTimeString());
                 newUser.setType(User.UserType.COMMON);
+                newUser.setVipExpireTime(null);
                 // 用户注册时创建一个默认的 Tour Collection
                 tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "http://walcraft.wmzspace.space/static/tour/example/1.png", "Default Collection"));
                 return ApiResponse.success("Signup succeed!");
@@ -124,7 +126,7 @@ public class UserController {
                 userService.getUserByEmail(email);
                 return ApiResponse.success("GET user succeed with email");
             }
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.error("Both id and email cannot be null");
@@ -139,7 +141,7 @@ public class UserController {
      * @eo.method get
      * @eo.request-type formdata
      */
-    @AdminToken
+//    @AdminToken
     @GetMapping
     public ApiResponse<UserDTO> getSingleUser(@RequestParam(required = false) Long id, @RequestParam(required = false) String email) {
         try {
@@ -148,7 +150,7 @@ public class UserController {
             } else if (email != null) {
                 return ApiResponse.success("GET user succeed with email", userService.getUserByEmail(email).toDTO());
             }
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
         return ApiResponse.error("Both id and email cannot be null");
@@ -167,7 +169,7 @@ public class UserController {
     ApiResponse<UserDTO> updateUser(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User information updated", userService.updateUser(user.getId(), updatedInfo).toDTO());
-        } catch (AuthException e) {
+        } catch (AuthException | ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
@@ -185,7 +187,26 @@ public class UserController {
     ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
         try {
             return ApiResponse.success("User Type updated", userService.updateUserType(user.getId(), updatedInfo).toDTO());
-        } catch (AuthException e) {
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @param user
+     * @param vipPackage
+     * @return ApiResponse
+     * @eo.name updateVipExpireTime
+     * @eo.url /buy_vip
+     * @eo.method put
+     * @eo.request-type formdata
+     */
+    @PutMapping(value = "/buy_vip")
+    ApiResponse<UserDTO> updateVipExpireTime(@RequestAttribute("user") User user, @RequestParam User.VipPackage vipPackage) {
+        try {
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("Vip opened successfully", userService.buyVip(eagerredUser, vipPackage).toDTO());
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
@@ -203,7 +224,29 @@ public class UserController {
         try {
             userService.deleteUser(user.getId());
             return ApiResponse.success("User has been removed");
+        } catch (ResourceException | AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * @param inviteId
+     * @param groupId
+     * @return ApiResponse
+     * @eo.name addUserToGroup
+     * @eo.url /addUserToGroup
+     * @eo.method post
+     * @eo.request-type formdata
+     */
+    @PostMapping("/addUserToGroup")
+    public ApiResponse<Void> addUserToGroup(@RequestParam Long inviteId, Long groupId) {
+        try {
+            userService.addUserToGroup(inviteId, groupId);
+            return ApiResponse.success("User added to group successfully");
         } catch (AuthException e) {
+            return ApiResponse.error(e.getMessage());
+        } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }
     }
@@ -244,6 +287,7 @@ public class UserController {
      * @eo.method get
      * @eo.request-type formdata
      */
+    @IgnoreToken
     @GetMapping("/token/{value}")
     public ApiResponse<UserDTO> validateToken(@PathVariable("value") String token) {
         try {
@@ -253,6 +297,7 @@ public class UserController {
             return ApiResponse.error("Invalid token");
         }
     }
+
 
     // Signup request form from client
     @Getter

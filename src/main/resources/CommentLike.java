@@ -1,12 +1,11 @@
-package com.se.backend.models;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "comment_like")
-//TODO: Use Many to Many instead
+@Table(name = "comment_like", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "comment_id"})  // 强制唯一性
+})
 @Getter
 @Setter
 public class CommentLike {
@@ -14,14 +13,14 @@ public class CommentLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @Column(length = 50, nullable = false)
-    private String time;
+    private String createTime;
 }
