@@ -90,7 +90,7 @@ public class TourService {
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
         String tourDirectoryPath = "/tour/" + flushedTour.getId();
         // Clear the directory before adding new files
-        File tourDirectory = new File(tourDirectoryPath);
+        File tourDirectory = new File("/static" + tourDirectoryPath);
         FileUtils.cleanDirectory(tourDirectory); // Requires Apache Commons IO
 
         flushedTour.setMapUrl(getStaticUrl(tourDirectoryPath + "/map_screenshot.jpg"));
