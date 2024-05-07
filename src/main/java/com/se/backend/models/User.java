@@ -52,7 +52,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String avatar;
-    @Column(length = 20)
+    @Column(length = 50)
     private String password;
     @Column(length = 50, nullable = false)
     private String registerTime;
