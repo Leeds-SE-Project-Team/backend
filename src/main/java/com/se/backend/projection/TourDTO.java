@@ -47,7 +47,7 @@ public class TourDTO {
         type = tour.getType().ordinal();
         state = tour.getState().ordinal();
         pons = PONDTO.toListDTO(tour.getPons());
-        tourCollectionId = tour.getTourCollection().getId();
+        tourCollectionId = tour.getTourCollection() != null ? tour.getTourCollection().getId() : -1;
         groupCollectionId = tour.getGroupCollection() != null ? tour.getGroupCollection().getId() : -1;
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
