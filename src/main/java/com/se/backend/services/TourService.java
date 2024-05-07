@@ -9,14 +9,13 @@ import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -89,7 +88,12 @@ public class TourService {
         newTour.setDataUrl("temp");
         newTour.setCompleteUrl("temp");
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
-        flushedTour.setMapUrl(getStaticUrl("/tour/" + flushedTour.getId() + "/map_screenshot.jpg"));
+        String tourDirectoryPath = "/tour/" + flushedTour.getId();
+        // Clear the directory before adding new files
+        File tourDirectory = new File(tourDirectoryPath);
+        FileUtils.cleanDirectory(tourDirectory); // Requires Apache Commons IO
+
+        flushedTour.setMapUrl(getStaticUrl(tourDirectoryPath + "/map_screenshot.jpg"));
 
         List<PON> attachedPONs = new ArrayList<>();
         for (PON pon : form.pons) {
@@ -105,16 +109,15 @@ public class TourService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonContent = objectMapper.writeValueAsString(form);
-            String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
+            String relativePath = tourDirectoryPath + "/map.json";
             saveFileToLocal(stringToInputStream(jsonContent), relativePath);
             flushedTour.setDataUrl(getStaticUrl(relativePath));
-//            Files.write(Paths.get("/path/to/your/directory/tour_" + flushedTour.getId() + ".json"), jsonContent.getBytes());
         } catch (IOException e) {
             System.err.println("Error writing JSON to file: " + e.getMessage());
             // Handle the error according to your application's requirements
         }
 
-        GpxUtil.JSONtoGPXFile(form, "/tour/" + flushedTour.getId() + "/map.gpx");
+        GpxUtil.JSONtoGPXFile(form, tourDirectoryPath + "/map.gpx");
 //        String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
 //        GpxUtil.NavigationData data = GpxUtil.JsonGpxConverter.parseJsonToNavigationData((getStaticUrl(relativePath)));
         return tourRepository.saveAndFlush(flushedTour);
