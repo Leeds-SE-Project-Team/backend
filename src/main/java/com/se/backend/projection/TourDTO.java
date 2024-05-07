@@ -26,6 +26,7 @@ public class TourDTO {
     List<PONDTO> pons; // Assuming only IDs are needed
     List<CommentDTO> comments;
     Long tourCollectionId;
+    Long groupCollectionId;
     List<TourHighlightDTO> tourHighlightList;
     List<TourSpotDTO> tourSpotList; // Assuming only IDs are needed
     UserDTO user;
@@ -47,6 +48,7 @@ public class TourDTO {
         state = tour.getState().ordinal();
         pons = PONDTO.toListDTO(tour.getPons());
         tourCollectionId = tour.getTourCollection().getId();
+        groupCollectionId = tour.getGroupCollection() != null ? tour.getGroupCollection().getId() : -1;
         tourHighlightList = TourHighlightDTO.toListDTO(tour.getHighlights());
         tourSpotList = TourSpotDTO.toListDTO(tour.getSpots());
         comments = CommentDTO.toListDTO(tour.getComments());

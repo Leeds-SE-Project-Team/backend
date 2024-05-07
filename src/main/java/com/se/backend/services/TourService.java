@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.backend.exceptions.AuthException;
 import com.se.backend.exceptions.ResourceException;
 import com.se.backend.models.*;
-import com.se.backend.repositories.PONRepository;
-import com.se.backend.repositories.TourCollectionRepository;
-import com.se.backend.repositories.TourRepository;
-import com.se.backend.repositories.UserRepository;
+import com.se.backend.repositories.*;
 import com.se.backend.utils.GpxUtil;
 import com.se.backend.utils.TimeUtil;
 import lombok.Getter;
@@ -37,16 +34,19 @@ public class TourService {
     private final TourCollectionRepository tourCollectionRepository;
     private final PONRepository ponRepository;
 
+    private final GroupCollectionRepository groupCollectionRepository;
+
 
     private final UserRepository userRepository;
 
 
     @Autowired
-    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository) {
+    public TourService(TourRepository tourRepository, TourCollectionRepository tourCollectionRepository, UserRepository userRepository, PONRepository ponRepository, GroupCollectionRepository groupCollectionRepository) {
         this.tourRepository = tourRepository;
         this.tourCollectionRepository = tourCollectionRepository;
         this.ponRepository = ponRepository;
         this.userRepository = userRepository;
+        this.groupCollectionRepository = groupCollectionRepository;
     }
 
     public List<Tour> getAllTours() {
@@ -79,6 +79,12 @@ public class TourService {
         } else {
             // TODO: Form validation exception
         }
+        //Add tour to group collection
+        if (Objects.nonNull(form.groupCollectionId) && form.groupCollectionId != -1) {
+            GroupCollection existingGroupCollection = groupCollectionRepository.findById(form.groupCollectionId).orElseThrow(() -> new ResourceException(GROUP_COLLECTION_NOT_FOUND));
+            newTour.setGroupCollection(existingGroupCollection);
+        }
+
         newTour.setMapUrl("temp");
         newTour.setDataUrl("temp");
         newTour.setCompleteUrl("temp");
@@ -300,6 +306,7 @@ public class TourService {
         // FIXME : create PON structure
         List<PON> pons;
         Long tourCollectionId;
+        Long groupCollectionId;
         String title;
         GpxUtil.NavigationData result;
     }
