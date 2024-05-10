@@ -89,13 +89,22 @@ public class TourService {
         newTour.setCompleteUrl("temp");
         Tour flushedTour = tourRepository.saveAndFlush(newTour);
         String tourDirectoryPath = "/tour/" + flushedTour.getId();
-        // Clear the directory before adding new files
-        try {
-            File tourDirectory = new File("./static" + tourDirectoryPath);
-            FileUtils.cleanDirectory(tourDirectory); // Requires Apache Commons IO
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        // Ensure the directory exists before trying to clean it
+        File tourDirectory = new File("./static" + tourDirectoryPath);
+        if (tourDirectory.exists() && tourDirectory.isDirectory()) {
+            try {
+                FileUtils.cleanDirectory(tourDirectory); // Clear the directory if it exists
+            } catch (Exception e) {
+                System.err.println("Error cleaning directory: " + e.getMessage());
+            }
+        } else {
+            // Optionally, create the directory if it does not exist
+//            if (!tourDirectory.exists()) {
+//                tourDirectory.mkdirs(); // Create the directory structure if not present
+//            }
         }
+
+        // Clear the directory before adding new files
 
         flushedTour.setMapUrl(getStaticUrl(tourDirectoryPath + "/map_screenshot.jpg"));
 
