@@ -93,7 +93,7 @@ public class TourService {
         try {
             File tourDirectory = new File("./static" + tourDirectoryPath);
             FileUtils.cleanDirectory(tourDirectory); // Requires Apache Commons IO
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
@@ -108,22 +108,22 @@ public class TourService {
             newPon.setSequence(pon.getSequence());
             attachedPONs.add(ponRepository.save(newPon)); // Save each PON
         }
-
         flushedTour.setPons(attachedPONs);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String jsonContent = objectMapper.writeValueAsString(form);
-            String relativePath = tourDirectoryPath + "/map.json";
-            saveFileToLocal(stringToInputStream(jsonContent), relativePath);
-            flushedTour.setDataUrl(getStaticUrl(relativePath));
-        } catch (IOException e) {
-            System.err.println("Error writing JSON to file: " + e.getMessage());
-            // Handle the error according to your application's requirements
+
+        if(form.getResult() != null){
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                String jsonContent = objectMapper.writeValueAsString(form);
+                String relativePath = tourDirectoryPath + "/map.json";
+                saveFileToLocal(stringToInputStream(jsonContent), relativePath);
+                flushedTour.setDataUrl(getStaticUrl(relativePath));
+                GpxUtil.JSONtoGPXFile(form, tourDirectoryPath + "/map.gpx");
+            } catch (IOException e) {
+                System.err.println("Error writing JSON to file: " + e.getMessage());
+                // Handle the error according to your application's requirements
+            }
         }
 
-        GpxUtil.JSONtoGPXFile(form, tourDirectoryPath + "/map.gpx");
-//        String relativePath = "/tour/" + flushedTour.getId() + "/map.json";
-//        GpxUtil.NavigationData data = GpxUtil.JsonGpxConverter.parseJsonToNavigationData((getStaticUrl(relativePath)));
         return tourRepository.saveAndFlush(flushedTour);
     }
 
@@ -309,7 +309,6 @@ public class TourService {
         String startLocation;
         String endLocation;
         Tour.TourType type;
-
         // FIXME : create PON structure
         List<PON> pons;
         Long tourCollectionId;
