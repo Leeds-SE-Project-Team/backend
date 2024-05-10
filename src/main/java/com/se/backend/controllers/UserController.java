@@ -187,7 +187,7 @@ public class UserController {
      * @eo.request-type json
      */
     @PutMapping(value = "/type")
-    ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.ReqUpdateForm updatedInfo) {
+    ApiResponse<UserDTO> updateUserType(@RequestAttribute("user") User user, @RequestBody UserService.UpdateUserTypeForm updatedInfo) {
         try {
             User eagerredUser = userService.getUserById(user.getId());
             return ApiResponse.success("User Type updated", userService.updateUserType(eagerredUser.getId(), updatedInfo).toDTO());
@@ -217,6 +217,24 @@ public class UserController {
 
             return ApiResponse.error("Invalid VIP package");
 
+        } catch (ResourceException e) {
+            return ApiResponse.error(e.getMessage());
+        }
+    }
+
+    /**
+     * @eo.name cancelVip
+     * @eo.url /cancel_vip
+     * @eo.method put
+     * @eo.request-type formdata
+     * @param user
+     * @return ApiResponse
+     */
+    @PutMapping(value = "/cancel_vip")
+    ApiResponse<UserDTO> cancelVip(@RequestAttribute("user") User user) {
+        try {
+            User eagerredUser = userService.getUserById(user.getId());
+            return ApiResponse.success("User vip is expired", userService.cancelVip(eagerredUser.getId()).toDTO());
         } catch (ResourceException e) {
             return ApiResponse.error(e.getMessage());
         }

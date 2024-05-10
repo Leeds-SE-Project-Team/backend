@@ -88,7 +88,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public User updateUserType(Long id, ReqUpdateForm updatedInfo) throws ResourceException {
+    public User updateUserType(Long id, UpdateUserTypeForm updatedInfo) throws ResourceException {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
 
         existingUser.setType(updatedInfo.getType());
@@ -118,6 +118,13 @@ public class UserService {
         user.setType(User.UserType.VIP);
         return userRepository.save(user);
     }
+
+    public User cancelVip(Long id) throws ResourceException {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        existingUser.setType(User.UserType.COMMON);
+        return userRepository.save(existingUser);
+    }
+
 
     //TODO
     public List<Map.Entry<LocalDate, Double>> predictWeeklyRevenue() {
@@ -196,6 +203,11 @@ public class UserService {
         Double weight;
         String location; // "XX省 XX市"
         String signature; // 个性签名
+    }
+
+    @Getter
+    public static class UpdateUserTypeForm{
+        User.UserType type;
     }
     //update 表单 更新Vip字段完成Vip用户的创建
 }
