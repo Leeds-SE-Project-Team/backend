@@ -93,7 +93,7 @@ public class TourService {
         try {
             File tourDirectory = new File("./static" + tourDirectoryPath);
             FileUtils.cleanDirectory(tourDirectory); // Requires Apache Commons IO
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
