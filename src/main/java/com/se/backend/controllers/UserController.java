@@ -100,7 +100,7 @@ public class UserController {
                 newUser.setType(User.UserType.COMMON);
                 newUser.setVipExpireTime(null);
                 // 用户注册时创建一个默认的 Tour Collection
-                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "http://walcraft.wmzspace.space/static/tour/example/1.png", "Default Collection"));
+                tourCollectionService.createTourCollection(userService.createUser(newUser), new TourCollectionService.CreateTourCollectionForm("Default Collection", "Default Collection", "https://file.wmzspace.space/tour/example/1.png", "Default Collection"));
                 return ApiResponse.success("Signup succeed!");
             } else {
                 return ApiResponse.error(e.getMessage());
@@ -223,12 +223,12 @@ public class UserController {
     }
 
     /**
+     * @param user
+     * @return ApiResponse
      * @eo.name cancelVip
      * @eo.url /cancel_vip
      * @eo.method put
      * @eo.request-type formdata
-     * @param user
-     * @return ApiResponse
      */
     @PutMapping(value = "/cancel_vip")
     ApiResponse<UserDTO> cancelVip(@RequestAttribute("user") User user) {
