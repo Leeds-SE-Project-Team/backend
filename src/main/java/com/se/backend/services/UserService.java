@@ -173,8 +173,14 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) throws AuthException, ResourceException {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
-        userRepository.deleteById(userId);
+        User targetUser = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        targetUser.getGroups().forEach(group -> group.getMembers().removeIf(user -> user.getId().equals(userId)));
+        targetUser.getLeadingGroups().forEach(group -> group.getGroupCollections().clear());
+        groupRepository.deleteAll(targetUser.getLeadingGroups());
+        groupRepository.saveAllAndFlush(targetUser.getGroups());
+        targetUser.getGroups().clear();
+        targetUser = userRepository.saveAndFlush(targetUser);
+        userRepository.delete(targetUser);
     }
 
     public User pwdLogin(String email, String password) throws AuthException, ResourceException {
@@ -206,7 +212,7 @@ public class UserService {
     }
 
     @Getter
-    public static class UpdateUserTypeForm{
+    public static class UpdateUserTypeForm {
         User.UserType type;
     }
     //update 表单 更新Vip字段完成Vip用户的创建
