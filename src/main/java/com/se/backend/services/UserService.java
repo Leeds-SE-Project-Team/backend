@@ -174,6 +174,10 @@ public class UserService {
 
     public void deleteUser(Long userId) throws AuthException, ResourceException {
         User targetUser = userRepository.findById(userId).orElseThrow(() -> new ResourceException(USER_NOT_FOUND));
+        User finalTargetUser = targetUser;
+        targetUser.getTourLikes().forEach(tour -> tour.getLikedBy().remove(finalTargetUser));
+        targetUser.getTourStars().forEach(tour -> tour.getStarredBy().remove(finalTargetUser));
+        targetUser.getCommentLikes().forEach(comment -> comment.getLikedBy().remove(finalTargetUser));
         targetUser.getGroups().forEach(group -> group.getMembers().removeIf(user -> user.getId().equals(userId)));
         targetUser.getLeadingGroups().forEach(group -> group.getGroupCollections().clear());
         groupRepository.deleteAll(targetUser.getLeadingGroups());
