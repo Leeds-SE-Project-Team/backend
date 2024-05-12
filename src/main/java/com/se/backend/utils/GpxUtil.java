@@ -41,7 +41,7 @@ public class GpxUtil {
         // Getters and setters
 
         static String formatWaypoint(String tag, List<Double> coordinates, String description) {
-            return String.format("<%s lat=\"%f\" lon=\"%f\">\n" + "<ele></ele>\n" + "<time></time>\n" + "<desc>%s</desc>\n" + "<type></type>\n" + "<extensions></extensions>\n" + "</%s>\n", tag, coordinates.get(0), coordinates.get(1), description, tag);
+            return String.format("<%s lat=\"%f\" lon=\"%f\">\n" + "<ele></ele>\n" + "<time></time>\n" + "<desc>%s</desc>\n" + "<type></type>\n" + "<extensions></extensions>\n" + "</%s>\n", tag, coordinates.get(1), coordinates.get(0), description, tag);
         }
 
         static String toGpx(TourService.CreateTourForm form) {
